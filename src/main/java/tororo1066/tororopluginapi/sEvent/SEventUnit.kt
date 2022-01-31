@@ -9,7 +9,7 @@ import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.function.Consumer
 
-class SEventUnit<T : Event>(val eventClass: Class<T>, val plugin : JavaPlugin ,val handlers : List<Consumer<in T>>) : Listener, EventExecutor {
+class SEventUnit<T : Event>(private val eventClass: Class<T>, val plugin : JavaPlugin, private val handlers : List<Consumer<in T>>) : Listener, EventExecutor {
 
     var priority = EventPriority.NORMAL
 

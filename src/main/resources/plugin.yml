@@ -1,7 +1,0 @@
-name: TororoPluginAPI
-version: '${version}'
-main: tororo1066.tororopluginapi.TororoPluginAPI
-api-version: 1.17
-
-commands:
-  tororo:

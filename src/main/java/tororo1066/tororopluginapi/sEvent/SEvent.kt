@@ -7,7 +7,7 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.function.Consumer
 
-class SEvent(val plugin : JavaPlugin) {
+class SEvent(private val plugin : JavaPlugin) {
 
     fun <T : Event>register(clazz: Class<T> , consumer: Consumer<T>) : SEventUnit<T> {
         return register(clazz, EventPriority.NORMAL, listOf(consumer))
