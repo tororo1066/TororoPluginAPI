@@ -23,7 +23,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compileOnly fileTree(dir: 'libs', include: '*.jar')
+    compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -58,7 +58,7 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 dependencies {
-    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    compile "com.github.MilkBowl:VaultAPI:1.7"
 }
 
 tasks.withType(JavaCompile) {
