@@ -53,10 +53,6 @@ abstract class SInventory(val plugin: JavaPlugin) {
         this.inv = Bukkit.createInventory(null,row,name)
     }
 
-    fun setInvName(){
-
-    }
-
     fun setItem(slot : Int, item : SInventoryItem){
         items[slot] = item
         inv.setItem(slot,item)

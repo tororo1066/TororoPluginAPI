@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi
 
+import com.google.gson.JsonObject
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
 import java.util.*

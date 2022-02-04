@@ -2,17 +2,43 @@ package tororo1066.tororopluginapi.sItem
 
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.util.io.BukkitObjectInputStream
+import org.bukkit.util.io.BukkitObjectOutputStream
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
+
+/**
+ * ItemStackを継承したクラス。
+ * @constructor Material
+ */
 open class SItem(itemStack: ItemStack) : ItemStack(itemStack) {
 
     constructor(material: Material) : this(ItemStack(material)){
 
     }
 
-    constructor(sItem: SItem) : this(sItem as ItemStack){
+    companion object{
 
+        /**
+         * @param data Base64
+         * @return SItem
+         */
+        fun fromBase64(data: String): SItem? {
+            return try {
+
+                val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(data))
+                val dataInput = BukkitObjectInputStream(inputStream)
+                val item = dataInput.readObject() as ItemStack
+
+                dataInput.close()
+                return SItem(item)
+            } catch (e: Exception) {
+                null
+            }
+        }
     }
 
     /**
@@ -87,8 +113,29 @@ open class SItem(itemStack: ItemStack) : ItemStack(itemStack) {
         return itemMeta?.customModelData?:0
     }
 
+    /**
+     * @return SInventoryItem
+     */
     fun toSInventoryItem(): SInventoryItem {
         return SInventoryItem(this)
+    }
+
+    /**
+     * @return  変換後のBase64
+     */
+    fun toBase64(): String {
+        return try {
+            val outputStream = ByteArrayOutputStream()
+            val dataOutput = BukkitObjectOutputStream(outputStream)
+            dataOutput.writeInt(1)
+            dataOutput.writeObject(this as ItemStack)
+            dataOutput.close()
+            Base64Coder.encodeLines(outputStream.toByteArray())
+
+        } catch (e: Exception) {
+            "Error"
+        }
+
     }
 
 
