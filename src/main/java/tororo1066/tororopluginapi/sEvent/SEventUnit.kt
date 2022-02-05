@@ -33,6 +33,10 @@ class SEventUnit<T : Event>(private val eventClass: Class<T>, val plugin : JavaP
         }
     }
 
+    /**
+     * イベント解除
+     * しっかり解除しとこう
+     */
     fun unregister(){
         HandlerList.unregisterAll(this)
     }

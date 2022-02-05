@@ -4,8 +4,10 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.bukkit.Material
 import java.io.File
-import java.nio.file.Files
 
+/**
+ * 言語を簡単にいじれるようにしたクラス
+ */
 class SLang {
 
     init {
@@ -15,6 +17,12 @@ class SLang {
         }
     }
 
+
+    /**
+     * 言語ファイルを取得する。
+     * @param file File名(拡張子不要)
+     * @return JsonObject。失敗するとデフォルトを持ってくる。それもなかったらエラーを吐く
+     */
     fun getLangFile(file : String): JsonObject {
         return try {
             Gson().fromJson(File("plugins/LangFolder/${file}.json").bufferedReader().readText(),JsonObject::class.java)
@@ -23,10 +31,16 @@ class SLang {
         }
     }
 
+    /**
+     * 日本語の言語ファイルを取得する
+     */
     fun getJapanese(): JsonObject {
         return getLangFile("ja_jp")
     }
 
+    /**
+     * 英語の言語ファイルを取得する
+     */
     fun getEnglish(): JsonObject {
         return getLangFile("en_us")
     }
@@ -38,6 +52,11 @@ class SLang {
     }
 
     companion object{
+        /**
+         * materialを言語名にする
+         * @param material Material
+         * @return 失敗すると空の文字列が返ってくる
+         */
         fun JsonObject.materialToText(material: Material): String {
             val string = StringBuilder()
             if (material.isBlock){

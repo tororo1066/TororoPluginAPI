@@ -11,6 +11,10 @@ enum class SCommandArgType {
     WORLD,
     BOOLEAN;
 
+    /**
+     * 文字列がtypeと一致するかどうか
+     * @param s 文字列
+     */
     fun match(s : String): Boolean {
         when(this){
             BOOLEAN->{

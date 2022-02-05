@@ -1,6 +1,7 @@
 package tororo1066.tororopluginapi.sMySQL;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -30,6 +31,9 @@ public class SMySQLResult{
     }
     public long getLong(String colName){
         return (Long) result.get(colName);
+    }
+    public Date getDate(String colName){
+        return (Date) result.get(colName);
     }
 
     public Object getObject(String colName) {

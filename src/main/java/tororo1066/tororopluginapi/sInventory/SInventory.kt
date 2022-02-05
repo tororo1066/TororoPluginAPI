@@ -20,6 +20,9 @@ import java.util.function.Consumer
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
+/**
+ * 拡張機能を持たせたInventory
+ */
 abstract class SInventory(val plugin: JavaPlugin) {
 
     private var name = "Inventory"
@@ -53,53 +56,103 @@ abstract class SInventory(val plugin: JavaPlugin) {
         this.inv = Bukkit.createInventory(null,row,name)
     }
 
+    /**
+     * アイテムをインベントリにセットする
+     * @param slot 位置(0~row*9)
+     * @param item SInventoryItem
+     */
     fun setItem(slot : Int, item : SInventoryItem){
         items[slot] = item
         inv.setItem(slot,item)
     }
 
+    /**
+     * アイテムをインベントリにセットする
+     * @param slot 位置(0~row*9)
+     * @param item SItem
+     */
+    fun setItem(slot : Int, item : SItem){
+        setItem(slot, SInventoryItem(item))
+    }
+
+    /**
+     * アイテムをインベントリにセットする
+     * @param slot 位置(0~row*9)
+     * @param item ItemStack
+     */
     fun setItem(slot : Int, item : ItemStack){
         setItem(slot, SInventoryItem(item))
     }
 
+    /**
+     * アイテムをインベントリにセットする
+     * @param slot 位置(0~row*9)
+     * @param material Material
+     */
     fun setItem(slot : Int, material : Material){
         setItem(slot, SInventoryItem(material))
     }
 
+    /**
+     * 指定したスロットにアイテムをセットする
+     * @param slot 位置(List)
+     * @param item SInventoryItem
+     */
     fun setItems(slot : List<Int>, item: SInventoryItem){
         for (i in slot){
             setItem(i, item)
         }
     }
 
+    /**
+     * 指定したスロットにアイテムをセットする
+     * @param slot 位置(List)
+     * @param item SItem
+     */
     fun setItems(slot : List<Int>, item: SItem){
         setItems(slot, SInventoryItem(item))
     }
 
+    /**
+     * 指定したスロットにアイテムをセットする
+     * @param slot 位置(List)
+     * @param item ItemStack
+     */
     fun setItems(slot : List<Int>, item: ItemStack){
         setItems(slot, SInventoryItem(item))
     }
 
+    /**
+     * 指定したスロットにアイテムをセットする
+     * @param slot 位置(List)
+     * @param material Material
+     */
     fun setItems(slot : List<Int>, material: Material){
         setItems(slot, SInventoryItem(material))
     }
 
+    /**
+     * インベントリをクリアする
+     */
     fun clear(){
         items.clear()
         inv.clear()
-
     }
 
 
-
-
-
+    /**
+     * 指定したスロットのアイテムを削除する
+     * @param slot 位置
+     */
     fun removeItem(slot : Int){
         items.remove(slot)
-        inv.setItem(slot,null)
+        inv.clear(slot)
     }
 
-
+    /**
+     * アイテムを敷き詰める
+     * @param item SInventoryItem
+     */
     fun fillItem(item: SInventoryItem){
         for (i in 0..row*9){
             items[i] = item
@@ -107,50 +160,93 @@ abstract class SInventory(val plugin: JavaPlugin) {
         }
     }
 
+
+    /**
+     * アイテムを敷き詰める
+     * @param item SItem
+     */
     fun fillItem(item: SItem){
         fillItem(SInventoryItem(item))
     }
 
+    /**
+     * アイテムを敷き詰める
+     * @param item ItemStack
+     */
     fun fillItem(item: ItemStack){
         fillItem(SInventoryItem(item))
     }
 
+    /**
+     * アイテムを敷き詰める
+     * @param material Material
+     */
     fun fillItem(material: Material){
         fillItem(SInventoryItem(material))
     }
 
 
-
+    /**
+     * インベントリを閉じたときに行う処理
+     * @param event 処理
+     */
     fun setOnClose(event : Consumer<InventoryCloseEvent>){
         onClose.add(event)
     }
 
+    /**
+     * インベントリを閉じたときに非同期で行う処理
+     * @param event 処理
+     */
     fun setAsyncOnClose(event : Consumer<InventoryCloseEvent>){
         asyncOnClose.add(event)
     }
 
+    /**
+     * インベントリを開いたときに行う処理
+     * @param event 処理
+     */
     fun setOnOpen(event : Consumer<SPlayer>){
         onOpen.add(event)
     }
 
+    /**
+     * インベントリを開いたときに非同期で行う処理
+     * @param event 処理
+     */
     fun setAsyncOnOpen(event : Consumer<SPlayer>){
         asyncOnOpen.add(event)
     }
 
+    /**
+     * インベントリをクリックしたときに行う処理
+     * @param event 処理
+     */
     fun setOnClick(event : Consumer<InventoryClickEvent>){
         onClick.add(event)
     }
 
+    /**
+     * インベントリをクリックしたときに非同期で行う処理
+     * @param event 処理
+     */
     fun setAsyncOnClick(event : Consumer<InventoryClickEvent>){
         asyncOnClick.add(event)
     }
 
+    /**
+     * インベントリを開かせる
+     * @param p Player
+     */
     fun open(p : Player){
         open(SBukkit.getSPlayer(p))
     }
 
 
-
+    /**
+     * インベントリを開かせる
+     * @param p SPlayer
+     */
     fun open(p : SPlayer){
         plugin.server.scheduler.runTask(plugin, Runnable {
             if (!renderMenu()) return@Runnable
@@ -196,10 +292,17 @@ abstract class SInventory(val plugin: JavaPlugin) {
         })
     }
 
+    /**
+     * 読み込み時に行う処理
+     * @return falseでそのあとの処理を実行しない
+     */
     open fun renderMenu() : Boolean{
         return true
     }
 
+    /**
+     * 読み込み後に行う処理
+     */
     open fun afterRenderMenu(){
 
     }

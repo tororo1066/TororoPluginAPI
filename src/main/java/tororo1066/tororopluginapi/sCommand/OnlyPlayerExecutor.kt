@@ -7,6 +7,9 @@ import org.bukkit.entity.Player
 import tororo1066.tororopluginapi.entity.SPlayer
 import tororo1066.tororopluginapi.frombukkit.SBukkit
 
+/**
+ * プレイヤー限定のExecutor
+ */
 interface OnlyPlayerExecutor : CommandExecutor {
     fun onCommand(sender: SPlayer, command: Command, label: String, args: Array<out String>): Boolean
 

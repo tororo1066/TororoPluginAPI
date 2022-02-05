@@ -4,15 +4,19 @@ import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import tororo1066.tororopluginapi.sItem.SItem
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.Consumer
 
+/**
+ * SInventoryに使えるitem。eventとか入れられる
+ */
 class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
 
-    val clickEvent = ArrayList<Consumer<InventoryClickEvent>>()
-    val asyncClickEvent = ArrayList<Consumer<InventoryClickEvent>>()
+    private val clickEvent = ArrayList<Consumer<InventoryClickEvent>>()
+    private val asyncClickEvent = ArrayList<Consumer<InventoryClickEvent>>()
     var canClick = true
-    val thread = Executors.newCachedThreadPool()
+    private val thread: ExecutorService = Executors.newCachedThreadPool()
 
     constructor(material: Material) : this(ItemStack(material))
 
@@ -22,16 +26,28 @@ class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
         setClickEvent { if (!canClick) it.isCancelled = true }
     }
 
+    /**
+     * このアイテムをクリックしたときに行う処理
+     * @param event 処理
+     */
     fun setClickEvent(event : Consumer<InventoryClickEvent>): SInventoryItem {
         clickEvent.add(event)
         return this
     }
 
+    /**
+     * このアイテムをクリックしたときに非同期で行う処理
+     * @param event 処理
+     */
     fun setAsyncClickEvent(event : Consumer<InventoryClickEvent>): SInventoryItem {
         asyncClickEvent.add(event)
         return this
     }
 
+    /**
+     * クリック可能かを設定する
+     * @param boolean trueならキャンセルする、falseならしない
+     */
     @JvmName("setCanClick1")
     fun setCanClick(boolean: Boolean): SInventoryItem {
         canClick = boolean
