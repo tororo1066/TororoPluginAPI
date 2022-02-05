@@ -55,10 +55,11 @@ compileTestKotlin {
     }
 }
 repositories {
+    mavenLocal()
     maven { url 'https://jitpack.io' }
 }
 dependencies {
-    compile "com.github.MilkBowl:VaultAPI:1.7"
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
 }
 
 tasks.withType(JavaCompile) {

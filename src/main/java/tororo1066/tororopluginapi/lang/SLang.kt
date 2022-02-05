@@ -2,11 +2,7 @@ package tororo1066.tororopluginapi.lang
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.plugin.java.JavaPlugin
-import java.io.BufferedInputStream
-import java.io.BufferedReader
 import java.io.File
 import java.nio.file.Files
 
@@ -21,7 +17,7 @@ class SLang {
 
     fun getLangFile(file : String): JsonObject {
         return try {
-            Gson().fromJson(Files.readString(File("plugins/LangFolder/${file}.json").toPath()),JsonObject::class.java)
+            Gson().fromJson(File("plugins/LangFolder/${file}.json").bufferedReader().readText(),JsonObject::class.java)
         } catch (e : Exception){
             Gson().fromJson(loadDefaultFile(file),JsonObject::class.java)
         }

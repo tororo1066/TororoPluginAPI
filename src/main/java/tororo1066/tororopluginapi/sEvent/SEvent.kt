@@ -23,10 +23,4 @@ class SEvent(private val plugin : JavaPlugin) {
         handlerList.unregister(listener)
     }
 
-
-
-
-
-
-
 }

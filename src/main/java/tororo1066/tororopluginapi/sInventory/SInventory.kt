@@ -87,6 +87,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
     fun clear(){
         items.clear()
         inv.clear()
+
     }
 
 
