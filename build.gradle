@@ -66,4 +66,14 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'foo'
+            artifactId = 'bar'
+            version = '0.1'
 
+            from components.java
+        }
+    }
+}
