@@ -52,6 +52,45 @@ class SMySQL(val plugin : JavaPlugin) {
 
     private val thread: ExecutorService = Executors.newCachedThreadPool()
 
+    companion object{
+        fun insertQuery(table: String ,column: HashMap<String,Any>): String {
+            val string = StringBuilder("insert into $table (")
+            for (data in column){
+                string.append(data.key + ",")
+            }
+
+            string.deleteAt(string.length-1)
+            string.append(") values (")
+
+            for (data in column){
+                when(data.value.javaClass){
+                    Integer::class.java,java.lang.Double::class.java,java.lang.Long::class.java,BigDecimal::class.java->{
+                        string.append(data.value.toString() + ",")
+                    }
+                    java.lang.String::class.java->{
+                        if ((data.value as String) == "now()"){
+                            string.append(data.value.toString() + ",")
+                        }else{
+                            string.append("'${data.value}'" + ",")
+                        }
+                    }
+                    Date::class.java->{
+                        val date = data.value as Date
+                        string.append("'${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)}'")
+                    }
+                    else->{
+                        string.append("'${data.value}'" + ",")
+                    }
+                }
+            }
+
+            string.deleteAt(string.length-1)
+            string.append(")")
+
+            return string.toString()
+        }
+    }
+
     fun open(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver")
@@ -124,42 +163,7 @@ class SMySQL(val plugin : JavaPlugin) {
         }
     }
 
-    fun insertQuery(table: String ,column: HashMap<String,Any>): String {
-        val string = StringBuilder("insert into $table (")
-        for (data in column){
-            string.append(data.key + ",")
-        }
 
-        string.deleteAt(string.length-1)
-        string.append(") values (")
-
-        for (data in column){
-            when(data.value.javaClass){
-                Integer::class.java,java.lang.Double::class.java,java.lang.Long::class.java,BigDecimal::class.java->{
-                    string.append(data.value.toString() + ",")
-                }
-                java.lang.String::class.java->{
-                    if ((data.value as String) == "now()"){
-                        string.append(data.value.toString() + ",")
-                    }else{
-                        string.append("'${data.value}'" + ",")
-                    }
-                }
-                Date::class.java->{
-                    val date = data.value as Date
-                    string.append("'${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)}'")
-                }
-                else->{
-                    string.append("'${data.value}'" + ",")
-                }
-            }
-        }
-
-        string.deleteAt(string.length-1)
-        string.append(")")
-
-        return string.toString()
-    }
 
     fun asyncExecute(query: String): Boolean {
         return try {

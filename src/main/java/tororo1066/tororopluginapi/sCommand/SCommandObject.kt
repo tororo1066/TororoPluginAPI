@@ -19,6 +19,7 @@ class SCommandObject {
     private val consumerExecutors = ArrayList<Consumer<SCommandData>>()
     private val onlyPlayerExecutors = ArrayList<OnlyPlayerExecutor>()
     private val onlyPlayerConsumerExecutors = ArrayList<Consumer<SCommandOnlyPlayerData>>()
+    private var noLimit = false
 
     private val info = ArrayList<String>()
 
@@ -27,6 +28,11 @@ class SCommandObject {
 
     fun setMode(mode : Mode): SCommandObject {
         this.mode = mode
+        return this
+    }
+
+    fun noLimit(boolean: Boolean): SCommandObject {
+        this.noLimit = boolean
         return this
     }
 
@@ -42,6 +48,7 @@ class SCommandObject {
 
     fun setExecutor(executor: CommandExecutor): SCommandObject {
         if (executor is OnlyPlayerExecutor){
+            setMode(Mode.PLAYER)
             this.onlyPlayerExecutors.add(executor)
             return this
         }
@@ -56,6 +63,7 @@ class SCommandObject {
 
     @JvmName("setExecutor1")
     fun setExecutor(executor: Consumer<SCommandOnlyPlayerData>): SCommandObject {
+        setMode(Mode.PLAYER)
         this.onlyPlayerConsumerExecutors.add(executor)
         return this
     }
@@ -73,8 +81,10 @@ class SCommandObject {
     }
 
     fun matches(args : Array<out String>): Boolean {
-        if (args.size != this.args.size) return false
+        if (args.size < this.args.size) return false
+        if (args.size > this.args.size && !noLimit) return false
         for (i in args.indices){
+            if (this.args.size-1 <= i && noLimit)continue
             if (!this.args[i].matches(args[i]))return false
         }
         return true

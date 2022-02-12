@@ -13,7 +13,7 @@ class SLang {
     init {
         val file = File("plugins/LangFolder")
         if (!file.exists()){
-            file.createNewFile()
+            file.mkdir()
         }
     }
 

@@ -2,8 +2,14 @@ package tororo1066.tororopluginapi.sCommand
 
 import org.bukkit.Bukkit
 import org.bukkit.command.*
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.sCommand.report.ReportCommand
+import tororo1066.tororopluginapi.sCommand.report.ReportList
+import tororo1066.tororopluginapi.sCommand.report.ReportLog
+import tororo1066.tororopluginapi.sEvent.SEvent
 import java.util.function.Consumer
+import kotlin.collections.ArrayList
 
 open class SCommand(val command : String) : CommandExecutor, TabCompleter {
 
@@ -102,6 +108,23 @@ open class SCommand(val command : String) : CommandExecutor, TabCompleter {
 
     private fun sendPrefixMessage(p : CommandSender, message : String){
         p.sendMessage(this.prefix + message)
+    }
+
+    fun registerReportCommand(plugin: JavaPlugin, reportPerm: String, logPerm: String){
+        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("report")).addArg(SCommandArg().addAlias("件名")).noLimit(true).addNeedPermission(reportPerm).setExecutor(
+            ReportCommand(plugin)
+        ))
+        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportlist")).setExecutor(ReportList(plugin,logPerm)))
+        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportlog")).addArg(SCommandArg().addAlias("ファイル名")).setExecutor(ReportLog(plugin,logPerm)))
+        SEvent(plugin).register(PlayerJoinEvent::class.java){
+            if (plugin.description.authors.isEmpty())return@register
+            for (author in plugin.description.authors){
+                if (it.player.uniqueId == Bukkit.getOfflinePlayer(author).uniqueId){
+                    Bukkit.dispatchCommand(it.player,"$command reportlist")
+                }
+            }
+
+        }
     }
 
 }
