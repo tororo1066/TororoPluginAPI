@@ -1,7 +1,10 @@
 package tororo1066.tororopluginapi.sItem
 
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
+import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
@@ -111,6 +114,20 @@ open class SItem(itemStack: ItemStack) : ItemStack(itemStack) {
      */
     fun getCustomModelData(): Int {
         return itemMeta?.customModelData?:0
+    }
+
+    /**
+     * @param plugin プラグイン
+     * @param key 名前
+     * @param type PersistentDataType
+     * @param value 値
+     * @return 変更したアイテム
+     */
+    fun<T : Any> setCustomData(plugin: JavaPlugin, key: String, type : PersistentDataType<T,T>, value: T): SItem {
+        val meta = this.itemMeta?:return this
+        meta.persistentDataContainer[NamespacedKey(plugin,key),type] = value
+        this.itemMeta = meta
+        return this
     }
 
     /**
