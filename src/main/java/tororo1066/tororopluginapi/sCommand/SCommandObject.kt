@@ -21,8 +21,6 @@ class SCommandObject {
     private val onlyPlayerConsumerExecutors = ArrayList<Consumer<SCommandOnlyPlayerData>>()
     private var noLimit = false
 
-    private val info = ArrayList<String>()
-
     private val permission = ArrayList<String>()
 
 
@@ -33,11 +31,6 @@ class SCommandObject {
 
     fun noLimit(boolean: Boolean): SCommandObject {
         this.noLimit = boolean
-        return this
-    }
-
-    fun addInfo(info : String): SCommandObject {
-        this.info.add(info)
         return this
     }
 

@@ -1,6 +1,5 @@
 package tororo1066.tororopluginapi.sCommand.report
 
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin

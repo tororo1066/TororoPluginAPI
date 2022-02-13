@@ -111,13 +111,13 @@ open class SCommand(val command : String) : CommandExecutor, TabCompleter {
     }
 
     fun registerReportCommand(plugin: JavaPlugin, reportPerm: String, logPerm: String){
-        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("report")).addArg(SCommandArg().addAlias("件名")).noLimit(true).addNeedPermission(reportPerm).setExecutor(
+        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("report")).addArg(SCommandArg().addAlias("件名")).addArg(SCommandArg().addAlias("本文")).noLimit(true).addNeedPermission(reportPerm).setExecutor(
             ReportCommand(plugin)
         ))
         addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportlist")).setExecutor(ReportList(plugin,logPerm)))
         addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportlog")).addArg(SCommandArg().addAlias("ファイル名")).setExecutor(ReportLog(plugin,logPerm)))
+        if (plugin.description.authors.isEmpty())return
         SEvent(plugin).register(PlayerJoinEvent::class.java){
-            if (plugin.description.authors.isEmpty())return@register
             for (author in plugin.description.authors){
                 if (it.player.uniqueId == Bukkit.getOfflinePlayer(author).uniqueId){
                     Bukkit.dispatchCommand(it.player,"$command reportlist")

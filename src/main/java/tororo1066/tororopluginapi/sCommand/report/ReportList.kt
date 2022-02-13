@@ -30,14 +30,14 @@ class ReportList(val plugin: JavaPlugin, private val perm: String) : CommandExec
             sender.sendMessage("§4レポートが存在しません")
             return true
         }
-        sender.sendMessage("§b§lプラグイン名 §a§l送り主 §d§lタイトル")
+        sender.sendMessage("§b§lプラグイン名：§e§l${plugin.name}")
         for ((index, oneFile) in (file.listFiles()?:return true).withIndex()){
             if (oneFile.extension != "yml")continue
             val yaml = YamlConfiguration.loadConfiguration(oneFile)
             val read = yaml.getBoolean("Read",true)
             if (read)continue
             if (index >= 9)break
-            sender.spigot().sendMessage(*ComponentBuilder("§b§l${plugin.name}§f§l：§a§l${yaml.getString("Player","null")}§f§l：§d§l${yaml.getString("Title")}").event(
+            sender.spigot().sendMessage(*ComponentBuilder("§f§l送り主：§a§l${yaml.getString("Player","null")}§f§l §f§lタイトル：§d§l${yaml.getString("Title")}").event(
                 ClickEvent(ClickEvent.Action.RUN_COMMAND,"/${label} reportlog ${oneFile.nameWithoutExtension}")
             ).event(HoverEvent(HoverEvent.Action.SHOW_TEXT,Text("§6ここをクリックでログを見る"))).create())
         }

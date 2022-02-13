@@ -8,14 +8,7 @@ class SCommandArg {
     val alias = ArrayList<String>()
     val allowString = ArrayList<String>()
 
-    val info = ArrayList<String>()
-
     val allowType = ArrayList<SCommandArgType>()
-
-    fun addInfo(info : String): SCommandArg {
-        this.info.add(info)
-        return this
-    }
 
     fun addAllowString(string: String): SCommandArg {
         this.allowString.add(string)
