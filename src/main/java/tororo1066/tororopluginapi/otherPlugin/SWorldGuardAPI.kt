@@ -1,0 +1,28 @@
+package tororo1066.tororopluginapi.otherPlugin
+
+import com.sk89q.worldedit.bukkit.BukkitAdapter
+import com.sk89q.worldedit.math.BlockVector3
+import com.sk89q.worldguard.WorldGuard
+import com.sk89q.worldguard.protection.regions.ProtectedRegion
+import org.bukkit.World
+import org.bukkit.entity.Player
+
+class SWorldGuardAPI {
+
+    private val container = WorldGuard.getInstance().platform.regionContainer
+
+    fun getRegions(player: Player, world: World): ArrayList<ProtectedRegion>{
+        val loc = player.location
+        val regions = container.get(BukkitAdapter.adapt(world))?.getApplicableRegions(BlockVector3.at(loc.x,loc.y,loc.z))?.regions?:return arrayListOf()
+        return ArrayList(regions)
+    }
+
+    fun inRegion(player: Player, world: World, id: String): Boolean {
+        val regions = getRegions(player, world)
+        if (regions.isEmpty()) return false
+        for (region in regions){
+            if (region.id == id) return true
+        }
+        return false
+    }
+}

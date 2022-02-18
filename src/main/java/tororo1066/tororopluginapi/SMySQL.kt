@@ -53,6 +53,11 @@ class SMySQL(val plugin : JavaPlugin) {
     private val thread: ExecutorService = Executors.newCachedThreadPool()
 
     companion object{
+
+        fun insertQuery(table: String, vararg column: Pair<String,Any>): String {
+            return insertQuery(table, HashMap(column.toMap()))
+        }
+
         fun insertQuery(table: String ,column: HashMap<String,Any>): String {
             val string = StringBuilder("insert into $table (")
             for (data in column){
@@ -88,6 +93,42 @@ class SMySQL(val plugin : JavaPlugin) {
             string.append(")")
 
             return string.toString()
+        }
+
+        fun updateQuery(table: String ,column: HashMap<String,Any>, where: String): String {
+            val string = StringBuilder("update $table set ")
+
+            for (data in column){
+                string.append(data.key + " = ")
+                when(data.value.javaClass){
+                    Integer::class.java,java.lang.Double::class.java,java.lang.Long::class.java,BigDecimal::class.java->{
+                        string.append(data.value.toString() + ",")
+                    }
+                    java.lang.String::class.java->{
+                        if ((data.value as String) == "now()"){
+                            string.append(data.value.toString() + ",")
+                        }else{
+                            string.append("'${data.value}'" + ",")
+                        }
+                    }
+                    Date::class.java->{
+                        val date = data.value as Date
+                        string.append("'${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)}'")
+                    }
+                    else->{
+                        string.append("'${data.value}'" + ",")
+                    }
+                }
+
+            }
+
+            string.deleteAt(string.length-1)
+            string.append(" where ")
+
+            string.append(where)
+
+            return string.toString()
+
         }
     }
 

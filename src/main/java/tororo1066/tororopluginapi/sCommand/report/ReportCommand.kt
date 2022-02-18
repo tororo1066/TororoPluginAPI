@@ -1,5 +1,10 @@
 package tororo1066.tororopluginapi.sCommand.report
 
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.hover.content.Text
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
@@ -42,6 +47,15 @@ class ReportCommand(val plugin: JavaPlugin) : OnlyPlayerExecutor {
         yaml.set("Read",false)
         yaml.save(createFile)
         sender.sendMessage("§a報告が完了しました！")
+
+        if (plugin.description.authors.isEmpty())return true
+        plugin.description.authors.forEach {
+            val player = Bukkit.getPlayer(it)
+            player?.spigot()?.sendMessage(
+                *ComponentBuilder("§b§l${plugin.name}§aで§d${sender.name}§aからreportが来ています！(§e件名：${args[1]}§a)")
+                    .event(ClickEvent(ClickEvent.Action.RUN_COMMAND,"/${label} reportlog ${createFile.nameWithoutExtension}"))
+                    .event(HoverEvent(HoverEvent.Action.SHOW_TEXT,Text("§6ここをクリックでログを見る"))).create())
+        }
         return true
     }
 }

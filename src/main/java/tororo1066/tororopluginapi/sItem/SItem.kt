@@ -131,6 +131,16 @@ open class SItem(itemStack: ItemStack) : ItemStack(itemStack) {
     }
 
     /**
+     * @param plugin プラグイン
+     * @param key 名前
+     * @param type PersistentDataType
+     * @return value
+     */
+    fun<T : Any> getCustomData(plugin: JavaPlugin, key: String, type: PersistentDataType<T,T>): T? {
+        return itemMeta?.persistentDataContainer?.get(NamespacedKey(plugin, key), type)
+    }
+
+    /**
      * @return SInventoryItem
      */
     fun toSInventoryItem(): SInventoryItem {

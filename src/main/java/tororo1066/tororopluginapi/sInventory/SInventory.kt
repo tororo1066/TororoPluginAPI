@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.sInventory
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -9,6 +10,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.entity.SPlayer
+import tororo1066.tororopluginapi.event.SInventoryClickEvent
 import tororo1066.tororopluginapi.sEvent.SEvent
 import tororo1066.tororopluginapi.sEvent.SEventUnit
 import tororo1066.tororopluginapi.frombukkit.SBukkit
@@ -275,6 +277,14 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
             events.add(SEvent(plugin).register(InventoryClickEvent::class.java) {
                 if (!openingPlayer.contains(it.whoClicked.uniqueId))return@register
+
+                val event = SInventoryClickEvent(this,it.rawSlot, SPlayer(it.whoClicked as CraftPlayer),items[it.rawSlot])
+                Bukkit.getPluginManager().callEvent(event)
+                if (event.isCancelled){
+                    it.isCancelled = true
+                    return@register
+                }
+
                 for (click in onClick){
                     click.accept(it)
                 }
@@ -282,9 +292,8 @@ abstract class SInventory(val plugin: JavaPlugin) {
                     thread.execute { click.accept(it) }
                 }
 
-                if (items.containsKey(it.rawSlot)){
-                    items[it.rawSlot]!!.active(it)
-                }
+                items[it.rawSlot]?.active(it)
+
             })
 
             openingPlayer.add(p.uniqueId)

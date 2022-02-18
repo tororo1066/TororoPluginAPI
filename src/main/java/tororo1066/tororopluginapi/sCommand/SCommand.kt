@@ -59,6 +59,10 @@ open class SCommand(val command : String) : CommandExecutor, TabCompleter {
 
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+        if (perm?.let { sender.hasPermission(it) } == false){
+            sendPrefixMessage(sender,"§4権限がありません")
+            return true
+        }
         val commandData = SCommandData(sender, command, label, args)
         for (commandObject in commands){
             if (!commandObject.matches(args)) continue

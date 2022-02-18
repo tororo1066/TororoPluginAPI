@@ -15,7 +15,7 @@ class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
 
     private val clickEvent = ArrayList<Consumer<InventoryClickEvent>>()
     private val asyncClickEvent = ArrayList<Consumer<InventoryClickEvent>>()
-    var canClick = true
+    private var canClick = true
     private val thread: ExecutorService = Executors.newCachedThreadPool()
 
     constructor(material: Material) : this(ItemStack(material))
@@ -48,7 +48,6 @@ class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
      * クリック可能かを設定する
      * @param boolean trueならキャンセルする、falseならしない
      */
-    @JvmName("setCanClick1")
     fun setCanClick(boolean: Boolean): SInventoryItem {
         canClick = boolean
         return this
