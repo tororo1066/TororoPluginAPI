@@ -31,7 +31,7 @@ class ReportLog(val plugin: JavaPlugin, private val perm: String) : CommandExecu
         sender.sendMessage("§d件名：${yaml.getString("Title")}")
         sender.sendMessage("§b送り主：${yaml.getString("Player")}")
         sender.sendMessage("§a日付：${yaml.getString("Date")}")
-        sender.sendMessage(yaml.getString("Text"))
+        yaml.getString("Text")?.let { sender.sendMessage(it) }
         yaml.set("Read",true)
         yaml.save(file)
         return true

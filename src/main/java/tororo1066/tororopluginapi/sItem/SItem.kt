@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream
  * ItemStackを継承したクラス。
  * @constructor Material
  */
-open class SItem(itemStack: ItemStack) : ItemStack(itemStack) {
+open class SItem(itemStack: ItemStack) :  org.bukkit.inventory.ItemStack(itemStack) {
 
     constructor(material: Material) : this(ItemStack(material)){
 

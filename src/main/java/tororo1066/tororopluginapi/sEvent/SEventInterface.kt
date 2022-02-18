@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 abstract class SEventInterface<T : Event>(val plugin : JavaPlugin, val event : Class<T>) : Listener, EventExecutor {
 
-    var priority = EventPriority.NORMAL
+    private var priority = EventPriority.NORMAL
 
     init {
         register()
