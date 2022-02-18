@@ -22,12 +22,16 @@ repositories {
         name = 'spigot-repo'
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
+    maven {
+        name = 'sk89q-repo'
+        url = 'https://maven.enginehub.org/repo/'
+    }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
     compileOnly 'org.spigotmc:spigot:1.17.1-R0.1-SNAPSHOT'
 
     compile fileTree(dir: 'libs', include: '*.jar')
