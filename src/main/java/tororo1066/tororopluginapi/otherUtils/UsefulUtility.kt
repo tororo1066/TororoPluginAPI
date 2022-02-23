@@ -10,7 +10,7 @@ class UsefulUtility(val plugin: JavaPlugin) {
             return String.format("%,.0f",double)
         }
 
-        fun<R> sTry(unit: ()->R,onError: (Exception)->R) : R {
+        fun<V> sTry(unit: ()->V,onError: (Exception)->V) : V {
             return try {
                 unit.invoke()
             }catch (e : Exception){
