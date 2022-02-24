@@ -12,12 +12,6 @@ import tororo1066.tororopluginapi.sInventory.SInventory
 
 class SPlayer(craftPlayer: CraftPlayer) : CraftPlayer((Bukkit.getServer() as CraftServer),craftPlayer.handle), Listener {
 
-    init {
-
-    }
-
-
-
     fun openInventory(inventory : SInventory){
         inventory.open(this)
     }
