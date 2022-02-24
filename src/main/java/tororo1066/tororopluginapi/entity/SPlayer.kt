@@ -10,7 +10,7 @@ import org.bukkit.event.Listener
 import tororo1066.tororopluginapi.sInventory.SInventory
 
 
-class SPlayer(craftPlayer: CraftPlayer) : CraftPlayer((Bukkit.getServer() as CraftServer),craftPlayer.handle), Listener {
+class SPlayer(craftPlayer: CraftPlayer) : CraftPlayer((Bukkit.getServer() as CraftServer),craftPlayer.handle) {
 
     fun openInventory(inventory : SInventory){
         inventory.open(this)
