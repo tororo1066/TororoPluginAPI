@@ -102,7 +102,7 @@ class SCommandObject {
             }
 
             for (executor in this.onlyPlayerConsumerExecutors){
-                executor.accept(SCommandOnlyPlayerData(SBukkit.getSPlayer(data.sender),data.command,data.label,data.args))
+                executor.accept(SCommandOnlyPlayerData(data.sender,data.command,data.label,data.args))
             }
         }
         for (executor in this.executors){

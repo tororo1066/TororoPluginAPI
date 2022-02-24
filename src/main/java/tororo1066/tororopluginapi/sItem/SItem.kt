@@ -76,7 +76,7 @@ open class SItem(itemStack: ItemStack) :  org.bukkit.inventory.ItemStack(itemSta
     /**
      * @return loreのリスト なければ空
      */
-    fun getLore(): List<String> {
+    fun getStringLore(): List<String> {
         return this.itemMeta?.lore?: listOf()
     }
 
@@ -86,7 +86,7 @@ open class SItem(itemStack: ItemStack) :  org.bukkit.inventory.ItemStack(itemSta
      * @return 変更したアイテム
      */
     fun addLore(lore : List<String>): SItem {
-        return setLore(getLore().toMutableList().apply { addAll(lore) })
+        return setLore(getStringLore().toMutableList().apply { addAll(lore) })
     }
 
     /**

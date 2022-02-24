@@ -2,25 +2,19 @@ package tororo1066.tororopluginapi.sInventory
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-import tororo1066.tororopluginapi.entity.SPlayer
-import tororo1066.tororopluginapi.event.SInventoryClickEvent
 import tororo1066.tororopluginapi.sEvent.SEvent
 import tororo1066.tororopluginapi.sEvent.SEventUnit
-import tororo1066.tororopluginapi.frombukkit.SBukkit
 import tororo1066.tororopluginapi.sItem.SItem
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.Consumer
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 /**
  * 拡張機能を持たせたInventory
@@ -35,8 +29,8 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     private val onClose = ArrayList<Consumer<InventoryCloseEvent>>()
     private val asyncOnClose = ArrayList<Consumer<InventoryCloseEvent>>()
-    private val onOpen = ArrayList<Consumer<SPlayer>>()
-    private val asyncOnOpen = ArrayList<Consumer<SPlayer>>()
+    private val onOpen = ArrayList<Consumer<Player>>()
+    private val asyncOnOpen = ArrayList<Consumer<Player>>()
     private val onClick = ArrayList<Consumer<InventoryClickEvent>>()
     private val asyncOnClick = ArrayList<Consumer<InventoryClickEvent>>()
     private val items = HashMap<Int,SInventoryItem>()
@@ -208,7 +202,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
      * インベントリを開いたときに行う処理
      * @param event 処理
      */
-    fun setOnOpen(event : Consumer<SPlayer>){
+    fun setOnOpen(event : Consumer<Player>){
         onOpen.add(event)
     }
 
@@ -216,7 +210,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
      * インベントリを開いたときに非同期で行う処理
      * @param event 処理
      */
-    fun setAsyncOnOpen(event : Consumer<SPlayer>){
+    fun setAsyncOnOpen(event : Consumer<Player>){
         asyncOnOpen.add(event)
     }
 
@@ -236,20 +230,13 @@ abstract class SInventory(val plugin: JavaPlugin) {
         asyncOnClick.add(event)
     }
 
-    /**
-     * インベントリを開かせる
-     * @param p Player
-     */
-    fun open(p : Player){
-        open(SBukkit.getSPlayer(p))
-    }
 
 
     /**
      * インベントリを開かせる
      * @param p SPlayer
      */
-    fun open(p : SPlayer){
+    fun open(p : Player){
         plugin.server.scheduler.runTask(plugin, Runnable {
             if (!renderMenu()) return@Runnable
             afterRenderMenu()
@@ -278,12 +265,6 @@ abstract class SInventory(val plugin: JavaPlugin) {
             events.add(SEvent(plugin).register(InventoryClickEvent::class.java) {
                 if (!openingPlayer.contains(it.whoClicked.uniqueId))return@register
 
-                val event = SInventoryClickEvent(this,it.rawSlot, SPlayer(it.whoClicked as CraftPlayer),items[it.rawSlot])
-                Bukkit.getPluginManager().callEvent(event)
-                if (event.isCancelled){
-                    it.isCancelled = true
-                    return@register
-                }
 
                 for (click in onClick){
                     click.accept(it)
