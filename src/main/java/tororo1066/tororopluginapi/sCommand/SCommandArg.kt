@@ -16,8 +16,31 @@ class SCommandArg {
         return this
     }
 
+    fun addAllowString(vararg string: String): SCommandArg {
+        this.allowString.addAll(string)
+        addAlias(string)
+        return this
+    }
+    @JvmName("addAllowString1")
+    fun addAllowString(string: Array<out String>): SCommandArg {
+        this.allowString.addAll(string)
+        addAlias(string)
+        return this
+    }
+
     fun addAlias(alias : String): SCommandArg {
         this.alias.add(alias)
+        return this
+    }
+
+    fun addAlias(vararg alias : String): SCommandArg {
+        this.alias.addAll(alias)
+        return this
+    }
+
+    @JvmName("addAlias1")
+    fun addAlias(alias : Array<out String>): SCommandArg {
+        this.alias.addAll(alias)
         return this
     }
 
