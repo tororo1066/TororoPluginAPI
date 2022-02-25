@@ -1,4 +1,4 @@
-package defaultMenus
+package tororo1066.tororopluginapi.defaultMenus
 
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.sInventory.SInventory

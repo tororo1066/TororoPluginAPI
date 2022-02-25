@@ -1,6 +1,6 @@
 package tororo1066.tororopluginapi.frombukkit
 
-import defaultMenus.NormalInventory
+import tororo1066.tororopluginapi.defaultMenus.NormalInventory
 import org.bukkit.plugin.java.JavaPlugin
 
 class SBukkit {
