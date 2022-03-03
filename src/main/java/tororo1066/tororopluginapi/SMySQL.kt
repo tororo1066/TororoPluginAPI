@@ -37,6 +37,14 @@ class SMySQLResultSet(val result : HashMap<String,Any>){
         return result[name]!!.javaClass
     }
 
+    fun getLong(name: String): Long {
+        return result[name] as Long
+    }
+
+    fun getObject(name: String): Any {
+        return result[name]!!
+    }
+
 }
 
 class SMySQL(val plugin : JavaPlugin) {
