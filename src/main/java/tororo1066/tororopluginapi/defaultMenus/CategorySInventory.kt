@@ -67,8 +67,12 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
     fun renderInventory(category: String, page: Int) {
         clear()
         renderBar()
-        if (!items.containsKey(category))return
-        val categoryItems = items[category]!!
+        setCategoryName(category)
+        if (!items.containsKey(category)){
+            if (items.size == 0)return
+            setCategoryName(items.entries.first().key)
+        }
+        val categoryItems = items[nowCategory]!!
 
         val startingIndex = page * 45
         var ending = categoryItems.size - startingIndex
@@ -85,5 +89,9 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
 
     fun setCategoryName(category: String){
         nowCategory = category
+        val index = items.entries.indexOfFirst { it.key == category }
+        if (index != -1){
+            categoryIndex = index
+        }
     }
 }
