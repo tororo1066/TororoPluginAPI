@@ -6,7 +6,7 @@ import tororo1066.tororopluginapi.sInventory.SInventory
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import tororo1066.tororopluginapi.sItem.SItem
 
-class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(plugin,title,6) {
+open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(plugin,title,6) {
 
     constructor(plugin: JavaPlugin,category: String,title: String) : this(plugin,title){
         setCategoryName(category)
