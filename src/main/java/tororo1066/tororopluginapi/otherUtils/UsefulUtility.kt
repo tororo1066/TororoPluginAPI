@@ -27,7 +27,7 @@ class UsefulUtility(val plugin: JavaPlugin) {
         return UsefulUtility.doubleToFormatString(double)
     }
 
-    fun<R> sTry(unit: ()->R,onError: (Exception)->R) : R {
+    fun<V> sTry(unit: ()->V,onError: (Exception)->V) : V {
         return UsefulUtility.sTry(unit,onError)
     }
 

@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream
  * ItemStackを継承したクラス。
  * @constructor Material
  */
-open class SItem(itemStack: ItemStack) :  org.bukkit.inventory.ItemStack(itemStack) {
+open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
 
     constructor(material: Material) : this(ItemStack(material)){
 
@@ -42,6 +42,11 @@ open class SItem(itemStack: ItemStack) :  org.bukkit.inventory.ItemStack(itemSta
                 null
             }
         }
+    }
+
+    fun setItemAmount(amount: Int): SItem {
+        this.amount = amount
+        return this
     }
 
     /**
