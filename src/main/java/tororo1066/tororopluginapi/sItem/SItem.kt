@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.sItem
 
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
@@ -143,6 +144,19 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      */
     fun<T : Any> getCustomData(plugin: JavaPlugin, key: String, type: PersistentDataType<T,T>): T? {
         return itemMeta?.persistentDataContainer?.get(NamespacedKey(plugin, key), type)
+    }
+
+
+    /**
+     * @param enchantment エンチャント
+     * @param level レベル
+     * @return 変更したアイテム
+     */
+    fun setEnchantment(enchantment: Enchantment, level: Int): SItem {
+        val meta = this.itemMeta?:return this
+        meta.addEnchant(enchantment,level,true)
+        this.itemMeta = meta
+        return this
     }
 
     /**
