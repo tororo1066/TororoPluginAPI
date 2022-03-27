@@ -1,8 +1,10 @@
 package tororo1066.tororopluginapi.sCommand.report
 
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.configuration.file.YamlConfiguration
@@ -50,8 +52,10 @@ class ReportCommand(val plugin: JavaPlugin) : OnlyPlayerExecutor {
         if (plugin.description.authors.isEmpty())return true
         plugin.description.authors.forEach {
             val player = Bukkit.getPlayer(it)
-            player?.sendMessage(Component.text("§b§l${plugin.name}§aで§d${sender.name}§aからreportが来ています！(§e件名：${args[1]}§a)").clickEvent(ClickEvent.runCommand("/${label} reportlog ${createFile.nameWithoutExtension}"))
-                    .hoverEvent(HoverEvent.showText(Component.text("§6ここをクリックでログを見る"))))
+            player?.spigot()?.sendMessage(*ComponentBuilder("§b§l${plugin.name}§aで§d${sender.name}§aからreportが来ています！(§e件名：${args[1]}§a)").event(
+                ClickEvent(ClickEvent.Action.RUN_COMMAND,"/${label} reportlog ${createFile.nameWithoutExtension}")).event(
+                HoverEvent(HoverEvent.Action.SHOW_TEXT,Text("§6ここをクリックでログを見る"))
+            ).create())
         }
         return true
     }
