@@ -4,16 +4,16 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
-class SConfig(val plugin: JavaPlugin) {
+class SConfig(val plugin: JavaPlugin, val alwaysPath: String) {
 
     fun getConfig(path: String) : YamlConfiguration? {
-        val file = File(plugin.dataFolder.path + "/${path}.yml")
+        val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
         if (!file.exists())return null
         return YamlConfiguration.loadConfiguration(file)
     }
 
     fun saveConfig(configuration: YamlConfiguration, path: String): Boolean {
-        val file = File(plugin.dataFolder.path + "/${path}.yml")
+        val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
         if (file.exists()){
             configuration.save(file)
             return true
@@ -32,7 +32,7 @@ class SConfig(val plugin: JavaPlugin) {
     }
 
     fun exists(path: String): Boolean {
-        val file = File(plugin.dataFolder.path + "/${path}.yml")
+        val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
         return file.exists()
     }
 }
