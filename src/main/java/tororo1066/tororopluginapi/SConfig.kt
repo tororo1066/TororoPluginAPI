@@ -30,4 +30,9 @@ class SConfig(val plugin: JavaPlugin) {
 
         return true
     }
+
+    fun exists(path: String): Boolean {
+        val file = File(plugin.dataFolder.path + "/${path}.yml")
+        return file.exists()
+    }
 }
