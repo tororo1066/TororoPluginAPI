@@ -6,9 +6,13 @@ import java.io.File
 
 class SConfig(val plugin: JavaPlugin) {
 
-    private lateinit var alwaysPath: String
+    private var alwaysPath = ""
 
     constructor(plugin: JavaPlugin, alwaysPath: String): this(plugin){
+        this.alwaysPath = alwaysPath
+    }
+
+    fun setAlwaysPath(alwaysPath: String){
         this.alwaysPath = alwaysPath
     }
 
