@@ -4,8 +4,8 @@ import org.bukkit.plugin.java.JavaPlugin
 
 abstract class SJavaPlugin() : JavaPlugin() {
 
-    private lateinit var sConfig: SConfig
-    private lateinit var mysql: SMySQL
+    lateinit var sConfig: SConfig
+    lateinit var mysql: SMySQL
 
     private var useMySQL = false
 
