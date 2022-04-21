@@ -4,9 +4,15 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
-class SConfig(val plugin: JavaPlugin, val alwaysPath: String) {
+class SConfig(val plugin: JavaPlugin) {
 
-    fun getConfig(path: String) : YamlConfiguration? {
+    private lateinit var alwaysPath: String
+
+    constructor(plugin: JavaPlugin, alwaysPath: String): this(plugin){
+        this.alwaysPath = alwaysPath
+    }
+
+    fun getConfig(path: String): YamlConfiguration? {
         val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
         if (!file.exists())return null
         return YamlConfiguration.loadConfiguration(file)
