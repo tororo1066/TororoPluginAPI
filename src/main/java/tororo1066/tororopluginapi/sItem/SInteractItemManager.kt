@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi.sItem
 
+import net.md_5.bungee.api.ChatMessageType
 import org.bukkit.Material
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
@@ -8,6 +9,8 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import tororo1066.tororopluginapi.SString
 import tororo1066.tororopluginapi.sEvent.SEvent
+import kotlin.math.ceil
+import kotlin.math.floor
 
 class SInteractItemManager(val plugin: JavaPlugin) {
 
@@ -33,7 +36,7 @@ class SInteractItemManager(val plugin: JavaPlugin) {
             val interactItem = items[item]!!
             e.isCancelled = true
             if (interactItem.interactCoolDown != 0){
-                e.player.sendRawMessage(SString("&c&l使用まで&f:&e&l${interactItem.interactCoolDown.toDouble() / 20.0}&b&l秒").toString())
+                e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,SString("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBaseComponent())
                 return@register
             }
             interactItem.interactEvents.forEach {
@@ -47,6 +50,7 @@ class SInteractItemManager(val plugin: JavaPlugin) {
                     if (interactItem.interactCoolDown <= 0){
                         interactItem.interactCoolDown = 0
                         cancel()
+                        return
                     }
                     interactItem.interactCoolDown--
                 }

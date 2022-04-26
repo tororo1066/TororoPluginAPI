@@ -1,5 +1,7 @@
 package tororo1066.tororopluginapi
 
+import net.md_5.bungee.api.chat.BaseComponent
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.ChatColor
 
 class SString {
@@ -7,12 +9,16 @@ class SString {
     private val disableOptions = ArrayList<DisableOption>()
 
     constructor(text: String){
-        this.text = text
+        this.text = text.replace("&","§")
     }
 
     constructor(text: String, vararg disableOptions: DisableOption){
-        this.text = text
         this.disableOptions.addAll(disableOptions)
+        if (disableOptions.contains(DisableOption.COLOR_CODE)){
+            this.text = text
+            return
+        }
+        this.text = text.replace("&","§")
     }
 
     fun append(any: Any): SString {
@@ -30,6 +36,10 @@ class SString {
 
     override fun toString(): String {
         return text
+    }
+
+    fun toBaseComponent(): BaseComponent {
+        return TextComponent(text)
     }
 
     enum class DisableOption {
