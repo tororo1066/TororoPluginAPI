@@ -10,6 +10,8 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
 
     val interactEvents = ArrayList<Consumer<PlayerInteractEvent>>()
     val dropEvents = ArrayList<Consumer<PlayerDropItemEvent>>()
+    var interactCoolDown = 0
+    var initialCoolDown = 0
 
     constructor(manager: SInteractItemManager,material: Material): this(manager, ItemStack(material))
 
