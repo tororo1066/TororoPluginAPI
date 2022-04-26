@@ -1,11 +1,7 @@
 package tororo1066.tororopluginapi.otherUtils
 
 import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-import tororo1066.tororopluginapi.sItem.SInteractItem
-import tororo1066.tororopluginapi.sItem.SItem
 
 class UsefulUtility(val plugin: JavaPlugin) {
 
@@ -35,17 +31,7 @@ class UsefulUtility(val plugin: JavaPlugin) {
         return UsefulUtility.sTry(unit,onError)
     }
 
-    fun createSInteractItem(sItem: SItem): SInteractItem {
-        return SInteractItem(plugin,sItem)
-    }
 
-    fun createSInteractItem(itemStack: ItemStack): SInteractItem {
-        return SInteractItem(plugin,itemStack)
-    }
-
-    fun createSInteractItem(material: Material): SInteractItem {
-        return SInteractItem(plugin,material)
-    }
 
 
 }

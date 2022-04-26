@@ -45,6 +45,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
         }
     }
 
+
     fun setItemAmount(amount: Int): SItem {
         this.amount = amount
         return this

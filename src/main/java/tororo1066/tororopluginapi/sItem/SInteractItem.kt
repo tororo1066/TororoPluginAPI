@@ -1,33 +1,34 @@
 package tororo1066.tororopluginapi.sItem
 
 import org.bukkit.Material
+import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.plugin.java.JavaPlugin
-import tororo1066.tororopluginapi.sEvent.SEvent
 import java.util.function.Consumer
 
-class SInteractItem(plugin: JavaPlugin, private val sItem: SItem) : SItem(sItem) {
+class SInteractItem(private val manager: SInteractItemManager, private val itemStack: ItemStack) : ItemStack(itemStack) {
 
-    private val events = ArrayList<Consumer<PlayerInteractEvent>>()
+    val interactEvents = ArrayList<Consumer<PlayerInteractEvent>>()
+    val dropEvents = ArrayList<Consumer<PlayerDropItemEvent>>()
 
-    constructor(plugin: JavaPlugin,material: Material): this(plugin,SItem(material))
+    constructor(manager: SInteractItemManager,material: Material): this(manager, ItemStack(material))
 
-    constructor(plugin: JavaPlugin,itemStack: ItemStack): this(plugin, SItem(itemStack))
+    constructor(manager: SInteractItemManager,sItem: SItem): this(manager, ItemStack(sItem))
 
     init {
-        SEvent(plugin).register(PlayerInteractEvent::class.java) { e ->
-            if (!e.hasItem())return@register
-            val item = e.item!!
-            if (item != sItem)return@register
-            events.forEach {
-                it.accept(e)
-            }
-        }
+        manager.items[itemStack] = this
     }
 
-    fun setInteractEvent(e: Consumer<PlayerInteractEvent>){
-        events.add(e)
+    fun setInteractEvent(e: Consumer<PlayerInteractEvent>): SInteractItem {
+        interactEvents.add(e)
+        manager.items[itemStack] = this
+        return this
+    }
+
+    fun setDropEvent(e: Consumer<PlayerDropItemEvent>): SInteractItem {
+        dropEvents.add(e)
+        manager.items[itemStack] = this
+        return this
     }
 
 
