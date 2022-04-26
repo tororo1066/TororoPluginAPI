@@ -33,6 +33,16 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
         return this
     }
 
+    fun setInteractCoolDown(coolDown: Int): SInteractItem {
+        interactCoolDown = coolDown
+        return this
+    }
+
+    fun setInitialCoolDown(coolDown: Int): SInteractItem {
+        initialCoolDown = coolDown
+        return this
+    }
+
 
 
 
