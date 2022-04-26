@@ -28,6 +28,7 @@ class SEvent(private val plugin : JavaPlugin) {
 
     /**
      * イベント登録
+     * <br>
      * プロパティも使えるよ
      */
     fun <T : Event>register(clazz: Class<T> , priority : EventPriority , consumer: List<Consumer<T>>,finishedFunction: Consumer<SEventUnit<in T>>) : SEventUnit<T> {

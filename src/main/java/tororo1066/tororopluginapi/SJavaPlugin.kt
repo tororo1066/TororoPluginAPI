@@ -11,8 +11,6 @@ abstract class SJavaPlugin() : JavaPlugin() {
         lateinit var vault: SVault
     }
 
-    private var useMySQL = false
-    private var useVault = false
 
     private val useOptions = ArrayList<UseOption>()
 
