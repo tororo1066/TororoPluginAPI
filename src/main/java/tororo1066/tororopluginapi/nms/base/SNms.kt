@@ -12,6 +12,8 @@ interface SNms {
 
     fun pickUpItemPacket(pickUpPlayer: Player, item: Item)
 
+    fun glowPlayer(owner: Player, target: Player, duration: Int)
+
     companion object{
         fun newInstance() : SNms? {
             var sNms : SNms? = null
