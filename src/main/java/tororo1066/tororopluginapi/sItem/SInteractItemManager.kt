@@ -31,7 +31,8 @@ class SInteractItemManager(val plugin: JavaPlugin) {
     init {
         SEvent(plugin).register(PlayerInteractEvent::class.java) { e ->
             if (!e.hasItem())return@register
-            val item = e.item!!
+            val item = e.item!!.clone()
+            item.amount = 1
             if (!items.containsKey(item))return@register
             val interactItem = items[item]!!
             e.isCancelled = true
@@ -58,7 +59,8 @@ class SInteractItemManager(val plugin: JavaPlugin) {
         }
 
         SEvent(plugin).register(PlayerDropItemEvent::class.java) { e ->
-            val item = e.itemDrop.itemStack
+            val item = e.itemDrop.itemStack.clone()
+            item.amount = 1
             if (!items.containsKey(item))return@register
             val interactItem = items[item]!!
             interactItem.dropEvents.forEach {
