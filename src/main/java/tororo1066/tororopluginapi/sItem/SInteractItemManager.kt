@@ -28,6 +28,10 @@ class SInteractItemManager(val plugin: JavaPlugin) {
         return SInteractItem(this,material)
     }
 
+    fun createSInteractItem(itemStack: ItemStack, noDump: Boolean): SInteractItem {
+        return SInteractItem(this,itemStack,noDump)
+    }
+
     init {
         SEvent(plugin).register(PlayerInteractEvent::class.java) { e ->
             if (!e.hasItem())return@register
