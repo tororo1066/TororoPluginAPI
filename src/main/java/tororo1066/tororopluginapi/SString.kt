@@ -21,6 +21,10 @@ class SString {
         this.text = text.replace("&","§")
     }
 
+    constructor(vararg disableOptions: DisableOption){
+        this.disableOptions.addAll(disableOptions)
+    }
+
     fun append(any: Any): SString {
         if (disableOptions.contains(DisableOption.COLOR_CODE)){
             text += any.toString()

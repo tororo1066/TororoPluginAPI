@@ -1,10 +1,13 @@
 package tororo1066.tororopluginapi.sItem
 
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import java.util.function.Consumer
+import kotlin.random.Random
 
 class SInteractItem(private val manager: SInteractItemManager, private val itemStack: ItemStack) : ItemStack(itemStack) {
 
@@ -16,6 +19,13 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
     constructor(manager: SInteractItemManager,material: Material): this(manager, ItemStack(material))
 
     constructor(manager: SInteractItemManager,sItem: SItem): this(manager, ItemStack(sItem))
+
+    constructor(manager: SInteractItemManager,itemStack: ItemStack,noDump: Boolean): this(manager,itemStack){
+        if (noDump){
+            itemStack.itemMeta!!.persistentDataContainer.set(NamespacedKey(manager.plugin,"${Random.nextDouble(0.0,1000000000.0)}"),
+                PersistentDataType.INTEGER,1)
+        }
+    }
 
     init {
         itemStack.amount = 1
@@ -42,6 +52,10 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
     fun setInitialCoolDown(coolDown: Int): SInteractItem {
         initialCoolDown = coolDown
         return this
+    }
+
+    fun delete(){
+        manager.items.remove(itemStack)
     }
 
 

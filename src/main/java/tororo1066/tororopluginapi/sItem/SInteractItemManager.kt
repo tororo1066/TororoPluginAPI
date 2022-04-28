@@ -35,7 +35,6 @@ class SInteractItemManager(val plugin: JavaPlugin) {
             item.amount = 1
             if (!items.containsKey(item))return@register
             val interactItem = items[item]!!
-            e.isCancelled = true
             if (interactItem.interactCoolDown != 0){
                 e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,SString("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBaseComponent())
                 return@register

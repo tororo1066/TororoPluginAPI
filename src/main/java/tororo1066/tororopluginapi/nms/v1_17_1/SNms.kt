@@ -4,6 +4,8 @@ import net.minecraft.network.chat.ChatMessage
 import net.minecraft.network.protocol.game.PacketPlayOutCollect
 import net.minecraft.network.protocol.game.PacketPlayOutEntityEffect
 import net.minecraft.network.protocol.game.PacketPlayOutOpenWindow
+import net.minecraft.network.protocol.game.PacketPlayOutScoreboardObjective
+import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.effect.MobEffectList
 import net.minecraft.world.inventory.Containers
@@ -37,11 +39,4 @@ class SNms : tororo1066.tororopluginapi.nms.base.SNms {
             (it as CraftPlayer).handle.b.sendPacket(packet)
         }
     }
-
-    override fun glowPlayer(owner: Player, target: Player, duration: Int) {
-        val packet = PacketPlayOutEntityEffect(target.entityId, MobEffect(MobEffectList.fromId(24),duration))
-        (owner as CraftPlayer).handle.b.sendPacket(packet)
-    }
-
-
 }
