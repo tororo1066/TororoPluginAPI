@@ -18,6 +18,10 @@ class SWorldGuardAPI {
     }
 
     fun inRegion(player: Player, vararg id: String): Boolean {
+        return inRegion(player, id.toMutableList())
+    }
+
+    fun inRegion(player: Player, id: MutableList<String>): Boolean {
         val regions = getRegions(player)
         if (regions.isEmpty()) return false
         for (region in regions){
