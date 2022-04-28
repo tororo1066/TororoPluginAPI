@@ -17,11 +17,11 @@ class SWorldGuardAPI {
         return ArrayList(regions)
     }
 
-    fun inRegion(player: Player, id: String): Boolean {
+    fun inRegion(player: Player, vararg id: String): Boolean {
         val regions = getRegions(player)
         if (regions.isEmpty()) return false
         for (region in regions){
-            if (region.id == id) return true
+            if (id.contains(region.id)) return true
         }
         return false
     }
