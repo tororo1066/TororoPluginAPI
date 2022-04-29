@@ -12,6 +12,8 @@ import java.util.function.Consumer
  */
 class SEvent(private val plugin : JavaPlugin) {
 
+    val sEventUnits = ArrayList<SEventUnit<*>>()
+
     /**
      * イベント登録
      */
@@ -32,7 +34,9 @@ class SEvent(private val plugin : JavaPlugin) {
      * プロパティも使えるよ
      */
     fun <T : Event>register(clazz: Class<T> , priority : EventPriority , consumer: List<Consumer<T>>,finishedFunction: Consumer<SEventUnit<in T>>) : SEventUnit<T> {
-        return SEventUnit(clazz,plugin, consumer,finishedFunction,priority)
+        val event = SEventUnit(clazz,plugin, consumer,finishedFunction,priority)
+        sEventUnits.add(event)
+        return event
     }
 
     /**
@@ -51,6 +55,13 @@ class SEvent(private val plugin : JavaPlugin) {
         val method = clazz.getMethod("getHandlerList")
         val handlerList = method.invoke(null, null) as HandlerList
         handlerList.unregister(listener)
+    }
+
+    fun unregisterAll(){
+        sEventUnits.forEach {
+            it.unregister()
+            sEventUnits.remove(it)
+        }
     }
 
 }
