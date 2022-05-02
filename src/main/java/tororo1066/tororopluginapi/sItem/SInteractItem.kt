@@ -22,8 +22,10 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
 
     constructor(manager: SInteractItemManager,itemStack: ItemStack,noDump: Boolean): this(manager,itemStack){
         if (noDump){
-            itemStack.itemMeta!!.persistentDataContainer.set(NamespacedKey(manager.plugin,"${Random.nextDouble(0.0,1000000000.0)}"),
+            val meta = itemStack.itemMeta!!
+            meta.persistentDataContainer.set(NamespacedKey(manager.plugin,"${Random.nextDouble(0.0,1000000.0)}"),
                 PersistentDataType.INTEGER,1)
+            itemStack.itemMeta = meta
         }
 
         itemStack.amount = 1
