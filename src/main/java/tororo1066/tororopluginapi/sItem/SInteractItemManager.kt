@@ -48,6 +48,10 @@ class SInteractItemManager(val plugin: JavaPlugin) {
             if (!e.hasItem())return@register
             val item = e.item!!.clone()
             item.amount = 1
+            Bukkit.broadcastMessage(item.itemMeta!!.persistentDataContainer.get(NamespacedKey(plugin,"TororoPluginAPI"), PersistentDataType.DOUBLE).toString())
+            items.forEach {
+                Bukkit.broadcastMessage(it.key.itemMeta!!.persistentDataContainer.get(NamespacedKey(plugin,"TororoPluginAPI"), PersistentDataType.DOUBLE).toString())
+            }
             if (!items.containsKey(item)){
                 Bukkit.broadcastMessage("error")
             }
