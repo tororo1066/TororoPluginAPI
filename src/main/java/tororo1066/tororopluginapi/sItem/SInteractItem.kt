@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi.sItem
 
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.event.player.PlayerDropItemEvent
@@ -28,6 +29,7 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
             itemStack.itemMeta = meta
         }
 
+        Bukkit.getPlayer("tororo_1066")!!.inventory.setItemInMainHand(itemStack)
         itemStack.amount = 1
         manager.items[itemStack] = this
     }
