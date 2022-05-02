@@ -33,14 +33,7 @@ class SInteractItemManager(val plugin: JavaPlugin) {
     }
 
     fun createSInteractItem(itemStack: ItemStack, noDump: Boolean): SInteractItem {
-        val meta = itemStack.itemMeta!!
-        meta.persistentDataContainer.set(
-            NamespacedKey(plugin,"TororoPluginAPI"),
-            PersistentDataType.DOUBLE,Random.nextDouble())
-        itemStack.itemMeta = meta
-
-        return SInteractItem(this,itemStack)
-
+        return SInteractItem(this,SItem(itemStack).setCustomData(plugin,"tororopluginapi", PersistentDataType.DOUBLE,Random.nextDouble()))
     }
 
     init {
