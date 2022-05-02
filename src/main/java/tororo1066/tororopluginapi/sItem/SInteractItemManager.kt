@@ -1,6 +1,7 @@
 package tororo1066.tororopluginapi.sItem
 
 import net.md_5.bungee.api.ChatMessageType
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.event.player.PlayerDropItemEvent
@@ -47,7 +48,9 @@ class SInteractItemManager(val plugin: JavaPlugin) {
             if (!e.hasItem())return@register
             val item = e.item!!.clone()
             item.amount = 1
-            if (!items.containsKey(item))return@register
+            if (!items.containsKey(item)){
+                Bukkit.broadcastMessage("error")
+            }
             val interactItem = items[item]!!
             if (interactItem.interactCoolDown != 0){
                 e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,SString("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBaseComponent())
