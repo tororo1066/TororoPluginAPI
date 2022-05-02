@@ -25,6 +25,9 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
             itemStack.itemMeta!!.persistentDataContainer.set(NamespacedKey(manager.plugin,"${Random.nextDouble(0.0,1000000000.0)}"),
                 PersistentDataType.INTEGER,1)
         }
+
+        itemStack.amount = 1
+        manager.items[itemStack] = this
     }
 
     init {
