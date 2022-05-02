@@ -24,6 +24,7 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
     init {
         itemStack.amount = 1
         manager.items[itemStack] = this
+        Bukkit.broadcastMessage((manager.items.containsKey(itemStack).toString()))
     }
 
     fun setInteractEvent(e: Consumer<PlayerInteractEvent>): SInteractItem {
