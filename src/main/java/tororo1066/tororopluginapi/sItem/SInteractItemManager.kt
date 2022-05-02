@@ -2,15 +2,18 @@ package tororo1066.tororopluginapi.sItem
 
 import net.md_5.bungee.api.ChatMessageType
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import tororo1066.tororopluginapi.SString
 import tororo1066.tororopluginapi.sEvent.SEvent
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.random.Random
 
 class SInteractItemManager(val plugin: JavaPlugin) {
 
@@ -29,7 +32,14 @@ class SInteractItemManager(val plugin: JavaPlugin) {
     }
 
     fun createSInteractItem(itemStack: ItemStack, noDump: Boolean): SInteractItem {
-        return SInteractItem(this,itemStack,noDump)
+        val meta = itemStack.itemMeta!!
+        meta.persistentDataContainer.set(
+            NamespacedKey(plugin,"${Random.nextDouble(0.0,1000000.0)}"),
+            PersistentDataType.INTEGER,1)
+        itemStack.itemMeta = meta
+
+        return SInteractItem(this,itemStack)
+
     }
 
     init {

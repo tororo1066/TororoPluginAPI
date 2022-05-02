@@ -21,19 +21,6 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
 
     constructor(manager: SInteractItemManager,sItem: SItem): this(manager, ItemStack(sItem))
 
-    constructor(manager: SInteractItemManager,itemStack: ItemStack,noDump: Boolean): this(manager,itemStack){
-        if (noDump){
-            val meta = itemStack.itemMeta!!
-            meta.persistentDataContainer.set(NamespacedKey(manager.plugin,"${Random.nextDouble(0.0,1000000.0)}"),
-                PersistentDataType.INTEGER,1)
-            itemStack.itemMeta = meta
-        }
-
-        Bukkit.getPlayer("tororo_1066")!!.inventory.setItemInMainHand(itemStack)
-        itemStack.amount = 1
-        manager.items[itemStack] = this
-    }
-
     init {
         itemStack.amount = 1
         manager.items[itemStack] = this
