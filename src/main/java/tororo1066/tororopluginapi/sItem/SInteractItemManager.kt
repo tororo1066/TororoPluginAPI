@@ -41,13 +41,7 @@ class SInteractItemManager(val plugin: JavaPlugin) {
             if (!e.hasItem())return@register
             val item = e.item!!.clone()
             item.amount = 1
-            Bukkit.broadcastMessage(item.itemMeta!!.persistentDataContainer.get(NamespacedKey(plugin,"TororoPluginAPI"), PersistentDataType.DOUBLE).toString())
-            items.forEach {
-                Bukkit.broadcastMessage(it.key.itemMeta!!.persistentDataContainer.get(NamespacedKey(plugin,"TororoPluginAPI"), PersistentDataType.DOUBLE).toString())
-            }
-            if (!items.containsKey(item)){
-                Bukkit.broadcastMessage("error")
-            }
+            if (!items.containsKey(item))return@register
             val interactItem = items[item]!!
             if (interactItem.interactCoolDown != 0){
                 e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,SString("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBaseComponent())
