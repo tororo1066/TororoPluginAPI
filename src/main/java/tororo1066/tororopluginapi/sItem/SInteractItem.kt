@@ -7,13 +7,14 @@ import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
+import java.util.function.BiConsumer
 import java.util.function.Consumer
 import kotlin.random.Random
 
 class SInteractItem(private val manager: SInteractItemManager, private val itemStack: ItemStack) : ItemStack(itemStack) {
 
-    val interactEvents = ArrayList<Consumer<PlayerInteractEvent>>()
-    val dropEvents = ArrayList<Consumer<PlayerDropItemEvent>>()
+    val interactEvents = ArrayList<BiConsumer<PlayerInteractEvent,SInteractItem>>()
+    val dropEvents = ArrayList<BiConsumer<PlayerDropItemEvent,SInteractItem>>()
     var interactCoolDown = 0
     var initialCoolDown = 0
 
@@ -26,13 +27,13 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
         manager.items[itemStack] = this
     }
 
-    fun setInteractEvent(e: Consumer<PlayerInteractEvent>): SInteractItem {
+    fun setInteractEvent(e: BiConsumer<PlayerInteractEvent,SInteractItem>): SInteractItem {
         interactEvents.add(e)
         manager.items[itemStack] = this
         return this
     }
 
-    fun setDropEvent(e: Consumer<PlayerDropItemEvent>): SInteractItem {
+    fun setDropEvent(e: BiConsumer<PlayerDropItemEvent,SInteractItem>): SInteractItem {
         dropEvents.add(e)
         manager.items[itemStack] = this
         return this

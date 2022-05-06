@@ -48,7 +48,7 @@ class SInteractItemManager(val plugin: JavaPlugin) {
                 return@register
             }
             interactItem.interactEvents.forEach {
-                it.accept(e)
+                it.accept(e,interactItem)
             }
 
             interactItem.interactCoolDown = interactItem.initialCoolDown
@@ -71,7 +71,7 @@ class SInteractItemManager(val plugin: JavaPlugin) {
             if (!items.containsKey(item))return@register
             val interactItem = items[item]!!
             interactItem.dropEvents.forEach {
-                it.accept(e)
+                it.accept(e,interactItem)
             }
         }
     }
