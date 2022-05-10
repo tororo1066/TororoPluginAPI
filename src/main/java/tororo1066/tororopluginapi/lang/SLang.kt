@@ -29,7 +29,7 @@ class SLang(val plugin: JavaPlugin) {
         defaultLanguage = plugin.config.getString("defaultLanguage","en_us")!!
         val file = File(plugin.dataFolder.path + "/LangFolder/")
         if (!file.exists()) file.mkdirs()
-        val nameFiles = sConfig.plugin.javaClass.getResourceAsStream("/LangFolder/")?.bufferedReader()?.readLines()?:return
+        val nameFiles = sConfig.plugin.getResource("/LangFolder/")?.bufferedReader()?.readLines()?:return
         nameFiles.forEach {
             if (sConfig.getConfig(it) != null){
                 return@forEach
@@ -38,7 +38,7 @@ class SLang(val plugin: JavaPlugin) {
             val configFile = File(plugin.dataFolder.path + "/LangFolder/${it}.yml")
             configFile.createNewFile()
             val writer = FileWriter(configFile)
-            writer.write(sConfig.plugin.javaClass.getResourceAsStream("/LangFolder/${it}")!!.bufferedReader().readText())
+            writer.write(sConfig.plugin.getResource("/LangFolder/${it}")!!.bufferedReader().readText())
             writer.close()
         }
 
