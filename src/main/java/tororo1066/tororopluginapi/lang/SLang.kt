@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SConfig
+import tororo1066.tororopluginapi.lang.SLang.Companion.sendTranslateMsg
 import java.io.File
 import java.io.FileWriter
 
@@ -107,6 +108,16 @@ class SLang(val plugin: JavaPlugin) {
                 return
             }
             this.sendMessage(lang.getString(msg,msg))
+        }
+
+        fun Player.translate(msg: String): String {
+            val lang = langFile[this.locale]
+            if (lang == null){
+                val defaultLang = langFile[defaultLanguage]
+                    ?: return "§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File."
+                return defaultLang.getString(msg,msg)!!
+            }
+            return lang.getString(msg,msg)!!
         }
     }
 
