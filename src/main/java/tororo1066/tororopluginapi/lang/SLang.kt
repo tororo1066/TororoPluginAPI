@@ -29,18 +29,21 @@ class SLang(val plugin: JavaPlugin) {
         defaultLanguage = plugin.config.getString("defaultLanguage","en_us")!!
         val file = File(plugin.dataFolder.path + "/LangFolder/")
         if (!file.exists()) file.mkdirs()
-        val nameFiles = sConfig.plugin.getResource("LangFolder/")!!.bufferedReader()?.readLines()?:return
-        nameFiles.forEach {
-            Bukkit.broadcastMessage(it)
-            if (sConfig.getConfig(it) != null){
-                return@forEach
-            }
 
-            val configFile = File(plugin.dataFolder.path + "/LangFolder/${it}.yml")
-            configFile.createNewFile()
-            val writer = FileWriter(configFile)
-            writer.write(sConfig.plugin.getResource("LangFolder/${it}")!!.bufferedReader().readText())
-            writer.close()
+        sConfig.plugin.getResource("/LangFolder/")!!.bufferedReader().useLines { sequence ->
+            sequence.forEach {
+                Bukkit.broadcastMessage(it)
+                if (sConfig.getConfig(it) != null){
+                    return@forEach
+                }
+
+                val configFile = File(plugin.dataFolder.path + "/LangFolder/${it}.yml")
+                configFile.createNewFile()
+                val writer = FileWriter(configFile)
+                writer.use { use ->
+                    use.write(sConfig.plugin.getResource("/LangFolder/${it}.yml")!!.bufferedReader().readText())
+                }
+            }
         }
 
         for (config in file.listFiles()?:return){
@@ -98,7 +101,7 @@ class SLang(val plugin: JavaPlugin) {
             if (this !is Player){
                 val defaultLang = langFile[defaultLanguage]
                 if (defaultLang == null){
-                    this.sendMessage("§cLanguage Error. This Plugin Not Registered ${defaultLanguage}(default) File.")
+                    this.sendMessage("§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File.")
                     return
                 }
                 this.sendMessage(defaultLang.getString(msg,msg))
@@ -108,7 +111,7 @@ class SLang(val plugin: JavaPlugin) {
             if (lang == null){
                 val defaultLang = langFile[defaultLanguage]
                 if (defaultLang == null){
-                    this.sendMessage("§cLanguage Error. This Plugin Not Registered ${defaultLanguage}(default) File.")
+                    this.sendMessage("§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File.")
                     return
                 }
                 this.sendMessage(defaultLang.getString(msg,msg))
