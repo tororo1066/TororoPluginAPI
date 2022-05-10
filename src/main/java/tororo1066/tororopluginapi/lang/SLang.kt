@@ -8,13 +8,9 @@ import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import org.reflections.Reflections
-import org.reflections.scanners.Scanners
-import org.reflections.util.ConfigurationBuilder
 import tororo1066.tororopluginapi.SConfig
 import java.io.File
 import java.io.FileWriter
-import java.util.regex.Pattern
 
 /**
  * 言語を簡単にいじれるようにしたクラス
@@ -29,29 +25,15 @@ class SLang(val plugin: JavaPlugin) {
     }
     fun init(){
         langFile.clear()
-        val sConfig = SConfig(plugin,"LangFolder")
         defaultLanguage = plugin.config.getString("defaultLanguage","en_us")!!
         val file = File(plugin.dataFolder.path + "/LangFolder/")
         if (!file.exists()) file.mkdirs()
-        val configBuilder = ConfigurationBuilder()
-        val resources = Reflections("LangFolder",Scanners.Resources).getResources(Pattern.compile("\\*.yml"))
-
-        Bukkit.broadcastMessage(resources.toString())
-        sConfig.plugin.javaClass.getResourceAsStream("/LangFolder/")!!.bufferedReader().useLines { sequence ->
-            sequence.forEach {
-                Bukkit.broadcastMessage(it)
-                if (sConfig.getConfig(it) != null){
-                    return@forEach
-                }
-
-                val configFile = File(plugin.dataFolder.path + "/LangFolder/${it}.yml")
-                configFile.createNewFile()
-                val writer = FileWriter(configFile)
-                writer.use { use ->
-                    use.write(sConfig.plugin.javaClass.getResourceAsStream("/LangFolder/${it}.yml")!!.bufferedReader().readText())
-                }
-            }
+        val langList = plugin.getResource("/LangFolder/lang.txt")
+        langList?.bufferedReader()?.readLines()?.forEach {
+            plugin.saveResource("LangFolder/${it}.yml",false)
         }
+
+
 
         for (config in file.listFiles()?:return){
             if (config.extension != "yml")continue
