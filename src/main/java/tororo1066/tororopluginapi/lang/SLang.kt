@@ -2,21 +2,21 @@ package tororo1066.tororopluginapi.lang
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import tororo1066.tororopluginapi.SConfig
-import tororo1066.tororopluginapi.lang.SLang.Companion.sendTranslateMsg
 import java.io.File
-import java.io.FileWriter
 
 /**
  * 言語を簡単にいじれるようにしたクラス
  */
 class SLang(val plugin: JavaPlugin) {
+
+    constructor(plugin: JavaPlugin, prefixString: String): this(plugin) {
+        prefix = prefixString
+    }
 
 
 
@@ -66,6 +66,7 @@ class SLang(val plugin: JavaPlugin) {
 
         private val langFile = HashMap<String,YamlConfiguration>()
         private var defaultLanguage = "en_us"
+        private var prefix = ""
         /**
          * materialを言語名にする
          * @param material Material
@@ -87,14 +88,14 @@ class SLang(val plugin: JavaPlugin) {
 
         }
 
-        fun CommandSender.sendTranslateMsg(msg: String){
+        fun CommandSender.sendTranslateMsg(msg: String, vararg value: Any){
             if (this !is Player){
                 val defaultLang = langFile[defaultLanguage]
                 if (defaultLang == null){
                     this.sendMessage("§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File.")
                     return
                 }
-                this.sendMessage(defaultLang.getString(msg,msg))
+                this.sendMessage(prefix + modifyValue(defaultLang.getString(msg,msg)!!,value))
                 return
             }
             val lang = langFile[this.locale]
@@ -104,20 +105,29 @@ class SLang(val plugin: JavaPlugin) {
                     this.sendMessage("§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File.")
                     return
                 }
-                this.sendMessage(defaultLang.getString(msg,msg))
+                this.sendMessage(prefix + modifyValue(defaultLang.getString(msg,msg)!!,value))
                 return
             }
-            this.sendMessage(lang.getString(msg,msg))
+            this.sendMessage(prefix + modifyValue(lang.getString(msg,msg)!!,value))
         }
 
-        fun Player.translate(msg: String): String {
+        fun Player.translate(msg: String, vararg value: Any): String {
             val lang = langFile[this.locale]
             if (lang == null){
                 val defaultLang = langFile[defaultLanguage]
                     ?: return "§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File."
-                return defaultLang.getString(msg,msg)!!
+
+                return modifyValue(defaultLang.getString(msg,msg)!!,value)
             }
-            return lang.getString(msg,msg)!!
+            return modifyValue(lang.getString(msg,msg)!!,value)
+        }
+
+        private fun modifyValue(msg: String, vararg value: Any): String {
+            var modifyString = msg
+            value.forEachIndexed { index, any ->
+                modifyString = modifyString.replace("{${index}}",any.toString())
+            }
+            return modifyString
         }
     }
 
