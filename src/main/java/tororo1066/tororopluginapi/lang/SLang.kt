@@ -28,11 +28,11 @@ class SLang(val plugin: JavaPlugin) {
         defaultLanguage = plugin.config.getString("defaultLanguage","en_us")!!
         val file = File(plugin.dataFolder.path + "/LangFolder/")
         if (!file.exists()) file.mkdirs()
-        val langList = plugin.getResource("/LangFolder/lang.txt")
+        val langList = plugin.getResource("LangFolder/lang.txt")
         Bukkit.broadcastMessage(langList.toString())
         langList?.bufferedReader()?.readLines()?.forEach {
             Bukkit.broadcastMessage(it)
-            plugin.saveResource("/LangFolder/${it}.yml",false)
+            plugin.saveResource("LangFolder/${it}.yml",false)
         }
 
 
