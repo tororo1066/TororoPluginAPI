@@ -29,8 +29,8 @@ class SLang(val plugin: JavaPlugin) {
         defaultLanguage = plugin.config.getString("defaultLanguage","en_us")!!
         val file = File(plugin.dataFolder.path + "/LangFolder/")
         if (!file.exists()) file.mkdirs()
-
-        sConfig.plugin.getResource("/LangFolder")!!.bufferedReader().useLines { sequence ->
+        Bukkit.broadcastMessage(sConfig.plugin.getResource("/LangFolder/")!!.bufferedReader().readText())
+        sConfig.plugin.getResource("/LangFolder/")!!.bufferedReader().useLines { sequence ->
             sequence.forEach {
                 Bukkit.broadcastMessage(it)
                 if (sConfig.getConfig(it) != null){
