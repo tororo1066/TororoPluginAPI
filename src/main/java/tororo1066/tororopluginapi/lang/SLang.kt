@@ -31,6 +31,7 @@ class SLang(val plugin: JavaPlugin) {
         if (!file.exists()) file.mkdirs()
         val nameFiles = sConfig.plugin.getResource("LangFolder/")!!.bufferedReader()?.readLines()?:return
         nameFiles.forEach {
+            Bukkit.broadcastMessage(it)
             if (sConfig.getConfig(it) != null){
                 return@forEach
             }
