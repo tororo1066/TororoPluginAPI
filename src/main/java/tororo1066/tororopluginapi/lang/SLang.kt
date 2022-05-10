@@ -3,52 +3,77 @@ package tororo1066.tororopluginapi.lang
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.bukkit.Material
+import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.entity.Player
+import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.SConfig
 import java.io.File
+import java.io.FileWriter
 
 /**
  * 言語を簡単にいじれるようにしたクラス
  */
-class SLang {
+class SLang(val plugin: JavaPlugin) {
+
+    private val sConfig = SConfig(plugin,"LangFolder")
+    private val langFile = HashMap<String,YamlConfiguration>()
 
     init {
-        val file = File("plugins/LangFolder")
-        if (!file.exists()){
-            file.mkdir()
+        init()
+
+    }
+    fun init(){
+        langFile.clear()
+        val file = File(plugin.dataFolder.path + "/LangFolder/")
+        if (!file.exists()) file.mkdirs()
+        val nameFiles = sConfig.plugin.javaClass.getResourceAsStream("/LangFolder/")?.bufferedReader()?.readLines()?:return
+        nameFiles.forEach {
+            if (sConfig.getConfig(it) != null){
+                return@forEach
+            }
+
+            val configFile = File(plugin.dataFolder.path + "/LangFolder/${it}.yml")
+            configFile.createNewFile()
+            val writer = FileWriter(configFile)
+            writer.write(sConfig.plugin.javaClass.getResourceAsStream("/LangFolder/${it}")!!.bufferedReader().readText())
+            writer.close()
+        }
+
+        for (config in file.listFiles()?:return){
+            if (config.extension != "yml")continue
+            val yml = YamlConfiguration.loadConfiguration(config)
+            langFile[config.nameWithoutExtension] = yml
         }
     }
 
 
     /**
      * 言語ファイルを取得する。
-     * @param file File名(拡張子不要)
-     * @return JsonObject。失敗するとデフォルトを持ってくる。それもなかったらエラーを吐く
+     * @param lang Lang名
+     * @return YamlConfiguration
      */
-    fun getLangFile(file : String): JsonObject {
-        return try {
-            Gson().fromJson(File("plugins/LangFolder/${file}.json").bufferedReader().readText(),JsonObject::class.java)
-        } catch (e : Exception){
-            Gson().fromJson(loadDefaultFile(file),JsonObject::class.java)
+    fun getLangFile(lang : String): YamlConfiguration? {
+        return langFile[lang]
+    }
+
+    fun Player.sendTranslateMsg(msg: String){
+        val lang = langFile[this.locale]
+        if (lang == null){
+            val defaultLang = langFile["en_us"]
+            if (defaultLang == null){
+                this.sendMessage("§cLanguage Error. This Plugin Not Registered en_us(default) File.")
+                return
+            }
+            this.sendMessage(defaultLang.getString(msg,msg))
+            return
         }
+        this.sendMessage(lang.getString(msg,msg))
     }
 
-    /**
-     * 日本語の言語ファイルを取得する
-     */
-    fun getJapanese(): JsonObject {
-        return getLangFile("ja_jp")
-    }
-
-    /**
-     * 英語の言語ファイルを取得する
-     */
-    fun getEnglish(): JsonObject {
-        return getLangFile("en_us")
-    }
-
-    fun loadDefaultFile(file: String): String {
+    fun loadDefaultFile(file: String): JsonObject? {
         val resource = javaClass.getResourceAsStream("/lang/${file}.json")
             ?: throw NullPointerException("${file}.jsonがデフォルトに存在しません")
-        return resource.bufferedReader().readText()
+        return Gson().fromJson(resource.bufferedReader().readText(),JsonObject::class.java)
     }
 
     companion object{
