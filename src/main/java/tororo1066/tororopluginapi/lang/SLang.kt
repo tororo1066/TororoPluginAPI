@@ -2,7 +2,9 @@ package tororo1066.tororopluginapi.lang
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
@@ -15,8 +17,7 @@ import java.io.FileWriter
  */
 class SLang(val plugin: JavaPlugin) {
 
-    private val sConfig = SConfig(plugin,"LangFolder")
-    private val langFile = HashMap<String,YamlConfiguration>()
+
 
     init {
         init()
@@ -24,6 +25,8 @@ class SLang(val plugin: JavaPlugin) {
     }
     fun init(){
         langFile.clear()
+        val sConfig = SConfig(plugin,"LangFolder")
+        defaultLanguage = plugin.config.getString("defaultLanguage","en_us")!!
         val file = File(plugin.dataFolder.path + "/LangFolder/")
         if (!file.exists()) file.mkdirs()
         val nameFiles = sConfig.plugin.javaClass.getResourceAsStream("/LangFolder/")?.bufferedReader()?.readLines()?:return
@@ -56,19 +59,7 @@ class SLang(val plugin: JavaPlugin) {
         return langFile[lang]
     }
 
-    fun Player.sendTranslateMsg(msg: String){
-        val lang = langFile[this.locale]
-        if (lang == null){
-            val defaultLang = langFile["en_us"]
-            if (defaultLang == null){
-                this.sendMessage("§cLanguage Error. This Plugin Not Registered en_us(default) File.")
-                return
-            }
-            this.sendMessage(defaultLang.getString(msg,msg))
-            return
-        }
-        this.sendMessage(lang.getString(msg,msg))
-    }
+
 
     fun loadDefaultFile(file: String): JsonObject? {
         val resource = javaClass.getResourceAsStream("/lang/${file}.json")
@@ -77,6 +68,10 @@ class SLang(val plugin: JavaPlugin) {
     }
 
     companion object{
+
+
+        private val langFile = HashMap<String,YamlConfiguration>()
+        private var defaultLanguage = "en_us"
         /**
          * materialを言語名にする
          * @param material Material
@@ -96,6 +91,29 @@ class SLang(val plugin: JavaPlugin) {
 
             return getString.asString
 
+        }
+
+        fun CommandSender.sendTranslateMsg(msg: String){
+            if (this !is Player){
+                val defaultLang = langFile[defaultLanguage]
+                if (defaultLang == null){
+                    this.sendMessage("§cLanguage Error. This Plugin Not Registered ${defaultLanguage}(default) File.")
+                    return
+                }
+                this.sendMessage(defaultLang.getString(msg,msg))
+                return
+            }
+            val lang = langFile[this.locale]
+            if (lang == null){
+                val defaultLang = langFile[defaultLanguage]
+                if (defaultLang == null){
+                    this.sendMessage("§cLanguage Error. This Plugin Not Registered ${defaultLanguage}(default) File.")
+                    return
+                }
+                this.sendMessage(defaultLang.getString(msg,msg))
+                return
+            }
+            this.sendMessage(lang.getString(msg,msg))
         }
     }
 
