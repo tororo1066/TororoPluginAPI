@@ -65,7 +65,7 @@ class SLang(val plugin: JavaPlugin) {
 
 
         private val langFile = HashMap<String,YamlConfiguration>()
-        private var defaultLanguage = "en_us"
+        var defaultLanguage = "en_us"
         private var prefix = ""
         /**
          * materialを言語名にする
@@ -120,6 +120,13 @@ class SLang(val plugin: JavaPlugin) {
                 return modifyValue(defaultLang.getString(msg,msg)!!,value)
             }
             return modifyValue(lang.getString(msg,msg)!!,value)
+        }
+
+        fun defaultTranslate(msg: String, vararg value: Any): String {
+            val defaultLang = langFile[defaultLanguage]
+                ?: return "§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File."
+
+            return modifyValue(defaultLang.getString(msg,msg)!!,value)
         }
 
         private fun modifyValue(msg: String, vararg value: Any): String {
