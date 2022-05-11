@@ -88,7 +88,7 @@ class SLang(val plugin: JavaPlugin) {
 
         }
 
-        fun CommandSender.sendTranslateMsg(msg: String, vararg value: Any){
+        fun CommandSender.sendTranslateMsg(msg: String, vararg value: String){
             if (this !is Player){
                 val defaultLang = langFile[defaultLanguage]
                 if (defaultLang == null){
@@ -111,7 +111,7 @@ class SLang(val plugin: JavaPlugin) {
             this.sendMessage(prefix + modifyValue(lang.getString(msg,msg)!!,value))
         }
 
-        fun Player.translate(msg: String, vararg value: Any): String {
+        fun Player.translate(msg: String, vararg value: String): String {
             val lang = langFile[this.locale]
             if (lang == null){
                 val defaultLang = langFile[defaultLanguage]
@@ -122,17 +122,17 @@ class SLang(val plugin: JavaPlugin) {
             return modifyValue(lang.getString(msg,msg)!!,value)
         }
 
-        fun defaultTranslate(msg: String, vararg value: Any): String {
+        fun defaultTranslate(msg: String, vararg value: String): String {
             val defaultLang = langFile[defaultLanguage]
                 ?: return "§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File."
 
             return modifyValue(defaultLang.getString(msg,msg)!!,value)
         }
 
-        private fun modifyValue(msg: String, vararg value: Any): String {
+        private fun modifyValue(msg: String, value: Array<out String>): String {
             var modifyString = msg
-            value.forEachIndexed { index, any ->
-                modifyString = modifyString.replace("{${index}}",any.toString())
+            value.forEachIndexed { index, string ->
+                modifyString = modifyString.replace("{${index}}",string)
             }
             return modifyString
         }
