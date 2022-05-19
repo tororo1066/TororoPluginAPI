@@ -6,6 +6,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.sCommand.report.ReportCommand
 import tororo1066.tororopluginapi.sCommand.report.ReportList
+import tororo1066.tororopluginapi.sCommand.report.ReportListAll
 import tororo1066.tororopluginapi.sCommand.report.ReportLog
 import tororo1066.tororopluginapi.sEvent.SEvent
 import java.util.function.Consumer
@@ -19,7 +20,7 @@ open class SCommand(val command : String) : CommandExecutor, TabCompleter {
 
     private val commands = ArrayList<SCommandObject>()
 
-    var commandNoFoundEvent : Consumer<SCommandData>? = null
+    private var commandNoFoundEvent : Consumer<SCommandData>? = null
 
     constructor(command : String, prefix : String) : this(command){
         this.prefix = prefix
@@ -44,7 +45,6 @@ open class SCommand(val command : String) : CommandExecutor, TabCompleter {
         this.commands.add(command)
     }
 
-    @JvmName("setCommandNoFoundEvent1")
     fun setCommandNoFoundEvent(event : Consumer<SCommandData>){
         this.commandNoFoundEvent = event
     }
@@ -118,8 +118,9 @@ open class SCommand(val command : String) : CommandExecutor, TabCompleter {
         addCommand(SCommandObject().addArg(SCommandArg().addAllowString("report")).addArg(SCommandArg().addAlias("件名")).addArg(SCommandArg().addAlias("本文")).noLimit(true).addNeedPermission(reportPerm).setExecutor(
             ReportCommand(plugin)
         ))
-        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportlist")).setExecutor(ReportList(plugin,logPerm)))
-        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportlog")).addArg(SCommandArg().addAlias("ファイル名")).setExecutor(ReportLog(plugin,logPerm)))
+        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportop")).addArg(SCommandArg().addAllowString("list")).setExecutor(ReportList(plugin,logPerm)))
+        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportop")).addArg(SCommandArg().addAllowString("log")).addArg(SCommandArg().addAlias("ファイル名")).setExecutor(ReportLog(plugin,logPerm)))
+        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportop")).addArg(SCommandArg().addAllowString("pageList")).addArg(SCommandArg().addAllowType(SCommandArgType.INT).addAlias("ページ")).setExecutor(ReportListAll(plugin,logPerm)))
         if (plugin.description.authors.isEmpty())return
         SEvent(plugin).register(PlayerJoinEvent::class.java){
             for (author in plugin.description.authors){
