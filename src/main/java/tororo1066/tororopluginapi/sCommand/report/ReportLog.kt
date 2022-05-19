@@ -31,7 +31,7 @@ class ReportLog(val plugin: JavaPlugin, private val perm: String) : CommandExecu
 
         val yaml = YamlConfiguration.loadConfiguration(file)
 
-        sender.spigot().sendMessage(*ComponentBuilder("§6§lここをクリックでファイルを開く").event(ClickEvent(ClickEvent.Action.OPEN_FILE,"${plugin.dataFolder.path}/report/${args[1]}.yml")).create())
+        sender.spigot().sendMessage(*ComponentBuilder("§6§lここをクリックで全文コピー").event(ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD,file.readText())).create())
         sender.sendMessage("§d件名：${yaml.getString("Title")}")
         sender.sendMessage("§b送り主：${yaml.getString("Player")}")
         sender.sendMessage("§a日付：${yaml.getString("Date")}")
