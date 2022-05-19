@@ -1,5 +1,7 @@
 package tororo1066.tororopluginapi.sCommand.report
 
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.ComponentBuilder
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -28,11 +30,19 @@ class ReportLog(val plugin: JavaPlugin, private val perm: String) : CommandExecu
         }
 
         val yaml = YamlConfiguration.loadConfiguration(file)
+
+        sender.spigot().sendMessage(*ComponentBuilder("§6§lここをクリックでファイルを開く").event(ClickEvent(ClickEvent.Action.OPEN_FILE,"${plugin.dataFolder.path}/report/${args[1]}.yml")).create())
         sender.sendMessage("§d件名：${yaml.getString("Title")}")
         sender.sendMessage("§b送り主：${yaml.getString("Player")}")
         sender.sendMessage("§a日付：${yaml.getString("Date")}")
         yaml.getString("Text")?.let { sender.sendMessage(it) }
-        yaml.set("Read",true)
+        if (plugin.description.authors.isNotEmpty()){
+            if (plugin.description.authors.contains(sender.name)){
+                yaml.set("Read",true)
+            }
+        } else {
+            yaml.set("Read",true)
+        }
         yaml.save(file)
         return true
     }

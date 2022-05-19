@@ -12,7 +12,7 @@ import java.io.File
 /**
  * 言語を簡単にいじれるようにしたクラス
  */
-class SLang(val plugin: JavaPlugin) {
+class SLang(private val plugin: JavaPlugin) {
 
     constructor(plugin: JavaPlugin, prefixString: String): this(plugin) {
         prefix = prefixString
@@ -31,6 +31,7 @@ class SLang(val plugin: JavaPlugin) {
         if (!file.exists()) file.mkdirs()
         val langList = plugin.getResource("LangFolder/lang.txt")
         langList?.bufferedReader()?.readLines()?.forEach {
+            if (File(file.path + "$it.yml").exists())return@forEach
             plugin.saveResource("LangFolder/${it}.yml",false)
         }
 
@@ -55,10 +56,10 @@ class SLang(val plugin: JavaPlugin) {
 
 
 
-    fun loadDefaultFile(file: String): JsonObject? {
+    fun loadDefaultFile(file: String): JsonObject {
         val resource = javaClass.getResourceAsStream("/lang/${file}.json")
-            ?: throw NullPointerException("${file}.jsonがデフォルトに存在しません")
-        return Gson().fromJson(resource.bufferedReader().readText(),JsonObject::class.java)
+            ?: throw NullPointerException("${file}.jsonがデフォルトに存在しません(TororoPluginAPI)")
+        return Gson().fromJson(resource.bufferedReader().readText(),JsonObject::class.java)?:throw ClassCastException("JsonObjectとして読み込めませんでした(TororoPluginAPI,${file}.json)")
     }
 
     companion object{

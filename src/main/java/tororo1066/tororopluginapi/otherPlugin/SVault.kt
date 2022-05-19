@@ -9,6 +9,11 @@ class SVault {
 
     private lateinit var economy: Economy
 
+    /**
+     * default true
+     */
+    var yenMoney = true
+
     init {
         setup()
     }
@@ -46,7 +51,8 @@ class SVault {
     fun showBalance(uuid: UUID) {
         val p = Bukkit.getPlayer(uuid)?:return
         val money = getBalance(uuid)
-        p.sendMessage("§e電子マネー：${money}円")
+        p.sendMessage(showBalanceMessage(p.locale,money))
+
     }
 
     /**
@@ -60,7 +66,7 @@ class SVault {
         val resp = economy.withdrawPlayer(p,amount)
         if (resp.transactionSuccess()){
             if (p.isOnline){
-                p.player!!.sendMessage("§e電子マネー${amount}円支払いました")
+                p.player!!.sendMessage(withdrawMessage(p.player!!.locale,amount))
             }
             return true
         }
@@ -78,10 +84,36 @@ class SVault {
         val resp = economy.depositPlayer(p,amount)
         if (resp.transactionSuccess()){
             if (p.isOnline){
-                p.player!!.sendMessage("§e電子マネー${amount}円受取りました")
+                p.player!!.sendMessage(depositMessage(p.player!!.locale,amount))
             }
             return true
         }
         return false
     }
+
+    private fun depositMessage(locale: String, amount: Double): String {
+        return when(locale){
+            "ja_jp"->
+                if (yenMoney) "§e${amount}円受取りました" else "§e電子マネー${amount}円受取りました"
+            else-> "§eDeposited $amount$"
+        }
+    }
+
+    private fun withdrawMessage(locale: String, amount: Double): String {
+        return when(locale){
+            "ja_jp"->
+                if (yenMoney) "§e${amount}円支払いました" else "§e電子マネー${amount}円支払いました"
+            else-> "§eWithdrawal $amount$"
+        }
+    }
+
+    private fun showBalanceMessage(locale: String, amount: Double): String {
+        return when(locale){
+            "ja_jp"->
+                if (yenMoney) "§e所持金：${amount}円" else "§e電子マネー${amount}円"
+            else-> "§eBalance $amount$"
+        }
+    }
+
+
 }

@@ -1,19 +1,16 @@
 package tororo1066.tororopluginapi.sItem
 
 import net.md_5.bungee.api.ChatMessageType
-import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.NamespacedKey
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
-import tororo1066.tororopluginapi.SString
+import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.sEvent.SEvent
 import kotlin.math.ceil
-import kotlin.math.floor
 import kotlin.random.Random
 
 class SInteractItemManager(val plugin: JavaPlugin) {
@@ -45,9 +42,9 @@ class SInteractItemManager(val plugin: JavaPlugin) {
             val interactItem = items[item]!!
             if (interactItem.interactCoolDown != 0){
                 if (e.player.locale != "ja_jp"){
-                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,SString("&c&lCool Time&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&ls").toBaseComponent())
+                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,SStr("&c&lCool Time&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&ls").toBaseComponent())
                 } else {
-                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,SString("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBaseComponent())
+                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBaseComponent())
                 }
 
                 return@register

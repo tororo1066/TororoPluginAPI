@@ -18,10 +18,6 @@ repositories {
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
     maven {
-        name = 'spigot-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-    maven {
         name = 'sk89q-repo'
         url = 'https://maven.enginehub.org/repo/'
     }
