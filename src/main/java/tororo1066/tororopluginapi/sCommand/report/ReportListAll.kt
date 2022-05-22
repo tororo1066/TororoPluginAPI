@@ -32,7 +32,7 @@ class ReportListAll(val plugin: JavaPlugin, private val perm: String) : CommandE
         }
         sender.sendMessage("§b§lプラグイン名：§e§l${plugin.name}")
 
-        val limit = args[1].toInt() * 10
+        val limit = args[2].toInt() * 10
 
         for ((index, oneFile) in (file.listFiles()?:return true).withIndex()){
             if (oneFile.extension != "yml")continue

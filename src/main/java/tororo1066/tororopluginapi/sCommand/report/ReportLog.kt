@@ -23,7 +23,7 @@ class ReportLog(val plugin: JavaPlugin, private val perm: String) : CommandExecu
             }
         }
 
-        val file = File(plugin.dataFolder.path + "/report/${args[1]}.yml")
+        val file = File(plugin.dataFolder.path + "/report/${args[2]}.yml")
         if (!file.exists()){
             sender.sendMessage("§4ファイルが存在しません")
             return true
