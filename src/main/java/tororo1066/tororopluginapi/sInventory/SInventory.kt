@@ -39,6 +39,8 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     private val openingPlayer = ArrayList<UUID>()
 
+    private var parent : Consumer<InventoryCloseEvent>? = null
+
     constructor(plugin : JavaPlugin, name : String, row : Int) : this(plugin) {
         this.name = name
         if (row !in 1..6){
@@ -50,6 +52,15 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     init {
         this.inv = Bukkit.createInventory(null,row,name)
+    }
+
+    fun setParent(inventory: SInventory){
+        parent = Consumer { inventory.open(it.player as Player) }
+    }
+
+    fun moveInventory(inventory: SInventory, p: Player){
+        inventory.setParent(this)
+        inventory.open(p)
     }
 
     /**
@@ -255,6 +266,8 @@ abstract class SInventory(val plugin: JavaPlugin) {
                 for (close in asyncOnClose){
                     thread.execute { close.accept(it) }
                 }
+
+                parent?.accept(it)
 
                 events.forEach { it2 ->
                     it2.unregister()
