@@ -41,6 +41,8 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     private var parent : Consumer<InventoryCloseEvent>? = null
 
+    private var throughEvent = ArrayList<UUID>()
+
     constructor(plugin : JavaPlugin, name : String, row : Int) : this(plugin) {
         this.name = name
         if (row !in 1..6){
@@ -61,6 +63,10 @@ abstract class SInventory(val plugin: JavaPlugin) {
     fun moveInventory(inventory: SInventory, p: Player){
         inventory.setParent(this)
         inventory.open(p)
+    }
+    fun throughClose(p: Player){
+        throughEvent.add(p.uniqueId)
+        p.closeInventory()
     }
 
     /**
@@ -260,6 +266,9 @@ abstract class SInventory(val plugin: JavaPlugin) {
             events.add(SEvent(plugin).register(InventoryCloseEvent::class.java) {
                 if (!openingPlayer.contains(it.player.uniqueId))return@register
                 openingPlayer.remove(it.player.uniqueId)
+                if (throughEvent.remove(it.player.uniqueId)){
+                    return@register
+                }
                 for (close in onClose){
                     close.accept(it)
                 }
