@@ -48,15 +48,15 @@ class SEvent(private val plugin : JavaPlugin) {
         return register(clazz, priority, listOf(consumer)) {}
     }
 
-    fun <T : Event>register(clazz: Class<T>, consumer: BiConsumer<T,BiSEventUnit<T>>) : BiSEventUnit<T> {
-        return register(clazz, EventPriority.NORMAL, listOf(consumer))
+    fun <T : Event>biRegister(clazz: Class<T>, consumer: BiConsumer<T,BiSEventUnit<T>>) : BiSEventUnit<T> {
+        return biRegister(clazz, EventPriority.NORMAL, listOf(consumer))
     }
 
-    fun <T : Event>register(clazz: Class<T>, priority: EventPriority, consumer: BiConsumer<T,BiSEventUnit<T>>) : BiSEventUnit<T> {
-        return register(clazz, priority, listOf(consumer))
+    fun <T : Event>biRegister(clazz: Class<T>, priority: EventPriority, consumer: BiConsumer<T,BiSEventUnit<T>>) : BiSEventUnit<T> {
+        return biRegister(clazz, priority, listOf(consumer))
     }
 
-    fun <T : Event>register(clazz: Class<T>, priority: EventPriority, consumer: List<BiConsumer<T,BiSEventUnit<T>>>) : BiSEventUnit<T> {
+    fun <T : Event>biRegister(clazz: Class<T>, priority: EventPriority, consumer: List<BiConsumer<T,BiSEventUnit<T>>>) : BiSEventUnit<T> {
         val event = BiSEventUnit(clazz,plugin,consumer,priority)
         biSEventUnits.add(event)
         return event
