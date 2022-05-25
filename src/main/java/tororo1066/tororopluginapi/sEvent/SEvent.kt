@@ -5,6 +5,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.function.BiConsumer
 import java.util.function.Consumer
 
 /**
@@ -13,6 +14,7 @@ import java.util.function.Consumer
 class SEvent(private val plugin : JavaPlugin) {
 
     val sEventUnits = ArrayList<SEventUnit<*>>()
+    val biSEventUnits = ArrayList<BiSEventUnit<*>>()
 
     /**
      * イベント登録
@@ -46,6 +48,20 @@ class SEvent(private val plugin : JavaPlugin) {
         return register(clazz, priority, listOf(consumer)) {}
     }
 
+    fun <T : Event>register(clazz: Class<T>, consumer: BiConsumer<T,BiSEventUnit<T>>) : BiSEventUnit<T> {
+        return register(clazz, EventPriority.NORMAL, listOf(consumer))
+    }
+
+    fun <T : Event>register(clazz: Class<T>, priority: EventPriority, consumer: BiConsumer<T,BiSEventUnit<T>>) : BiSEventUnit<T> {
+        return register(clazz, priority, listOf(consumer))
+    }
+
+    fun <T : Event>register(clazz: Class<T>, priority: EventPriority, consumer: List<BiConsumer<T,BiSEventUnit<T>>>) : BiSEventUnit<T> {
+        val event = BiSEventUnit(clazz,plugin,consumer,priority)
+        biSEventUnits.add(event)
+        return event
+    }
+
     /**
      * イベント解除
      * あんまりつかわない...
@@ -60,6 +76,11 @@ class SEvent(private val plugin : JavaPlugin) {
         sEventUnits.forEach {
             it.unregister()
             sEventUnits.remove(it)
+        }
+
+        biSEventUnits.forEach {
+            it.unregister()
+            biSEventUnits.remove(it)
         }
     }
 
