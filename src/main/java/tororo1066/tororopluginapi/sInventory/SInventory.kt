@@ -5,27 +5,35 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.sEvent.SEvent
-import tororo1066.tororopluginapi.sEvent.SEventUnit
 import tororo1066.tororopluginapi.sItem.SItem
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.Consumer
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 /**
  * 拡張機能を持たせたInventory
  */
 abstract class SInventory(val plugin: JavaPlugin) {
 
+    companion object{
+        val inputNow = ArrayList<UUID>()
+    }
+
     private var name = "Inventory"
     private var row = 9
     private var inv : Inventory
 
     private val thread: ExecutorService = Executors.newCachedThreadPool()
+
+    private val sEvent = SEvent(plugin)
 
     private val onClose = ArrayList<Consumer<InventoryCloseEvent>>()
     private val asyncOnClose = ArrayList<Consumer<InventoryCloseEvent>>()
@@ -34,8 +42,6 @@ abstract class SInventory(val plugin: JavaPlugin) {
     private val onClick = ArrayList<Consumer<InventoryClickEvent>>()
     private val asyncOnClick = ArrayList<Consumer<InventoryClickEvent>>()
     private val items = HashMap<Int,SInventoryItem>()
-
-    private val events = ArrayList<SEventUnit<*>>()
 
     private val openingPlayer = ArrayList<UUID>()
 
@@ -54,6 +60,39 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     init {
         this.inv = Bukkit.createInventory(null,row,name)
+
+        sEvent.register(InventoryCloseEvent::class.java) {
+            if (!openingPlayer.contains(it.player.uniqueId))return@register
+            openingPlayer.remove(it.player.uniqueId)
+            if (throughEvent.remove(it.player.uniqueId)){
+                return@register
+            }
+            for (close in onClose){
+                close.accept(it)
+            }
+            for (close in asyncOnClose){
+                thread.execute { close.accept(it) }
+            }
+
+            parent?.accept(it)
+
+            sEvent.unregisterAll()
+        }
+
+        sEvent.register(InventoryClickEvent::class.java) {
+            if (!openingPlayer.contains(it.whoClicked.uniqueId))return@register
+
+
+            for (click in onClick){
+                click.accept(it)
+            }
+            for (click in asyncOnClick){
+                thread.execute { click.accept(it) }
+            }
+
+            items[it.rawSlot]?.active(it)
+
+        }
     }
 
     fun setParent(inventory: SInventory){
@@ -61,9 +100,27 @@ abstract class SInventory(val plugin: JavaPlugin) {
     }
 
     fun moveInventory(inventory: SInventory, p: Player){
+        throughClose(p)
+        inventory.open(p)
+    }
+
+    fun moveChildInventory(inventory: SInventory, p: Player){
+        throughClose(p)
         inventory.setParent(this)
         inventory.open(p)
     }
+
+
+    fun throughOpen(p: Player){
+        plugin.server.scheduler.runTask(plugin, Runnable {
+            if (!renderMenu()) return@Runnable
+            afterRenderMenu()
+
+            openingPlayer.add(p.uniqueId)
+            p.openInventory(inv)
+        })
+    }
+
     fun throughClose(p: Player){
         throughEvent.add(p.uniqueId)
         p.closeInventory()
@@ -251,10 +308,14 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     /**
      * インベントリを開かせる
-     * @param p SPlayer
+     * @param p Player
      */
     fun open(p : Player){
         plugin.server.scheduler.runTask(plugin, Runnable {
+            if (inputNow.contains(p.uniqueId)){
+                p.sendMessage("§4何かしらの情報を入力中です")
+                return@Runnable
+            }
             if (!renderMenu()) return@Runnable
             afterRenderMenu()
             for (open in onOpen){
@@ -263,41 +324,6 @@ abstract class SInventory(val plugin: JavaPlugin) {
             for (open in asyncOnOpen){
                 thread.execute { open.accept(p) }
             }
-            events.add(SEvent(plugin).register(InventoryCloseEvent::class.java) {
-                if (!openingPlayer.contains(it.player.uniqueId))return@register
-                openingPlayer.remove(it.player.uniqueId)
-                if (throughEvent.remove(it.player.uniqueId)){
-                    return@register
-                }
-                for (close in onClose){
-                    close.accept(it)
-                }
-                for (close in asyncOnClose){
-                    thread.execute { close.accept(it) }
-                }
-
-                parent?.accept(it)
-
-                events.forEach { it2 ->
-                    it2.unregister()
-                }
-
-            })
-
-            events.add(SEvent(plugin).register(InventoryClickEvent::class.java) {
-                if (!openingPlayer.contains(it.whoClicked.uniqueId))return@register
-
-
-                for (click in onClick){
-                    click.accept(it)
-                }
-                for (click in asyncOnClick){
-                    thread.execute { click.accept(it) }
-                }
-
-                items[it.rawSlot]?.active(it)
-
-            })
 
             openingPlayer.add(p.uniqueId)
             p.openInventory(inv)
@@ -319,9 +345,57 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     }
 
+    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: Consumer<T>, errorMsg: (String) -> String): SInventoryItem {
+        return SInventoryItem(item).setCanClick(false).setClickEvent {
+            val p = it.whoClicked as Player
+            p.sendMessage(message)
+            throughClose(p)
+            inputNow.add(p.uniqueId)
+            SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
+                if (cEvent.player != p)return@biRegister
+                cEvent.isCancelled = true
+                unit.unregister()
+                inputNow.remove(p.uniqueId)
+                val modifyValue = modifyClassValue(type,cEvent.message)
+                if (modifyValue == null){
+                    p.sendMessage(errorMsg.invoke(cEvent.message))
+                    throughOpen(p)
+                    return@biRegister
+                }
 
+                action.accept(modifyValue)
+            }
+        }
+    }
 
+    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: Consumer<T>): SInventoryItem {
+        return createInputItem(item, type, message, action) { "§d${it}§4は§d${type.name}§4ではありません" }
+    }
 
+    fun <T>createInputItem(item: SItem, type: Class<T>, action: Consumer<T>): SInventoryItem {
+        return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", action)
+    }
+
+    private fun <T>modifyClassValue(clazz: Class<T>, value: String) : T?{
+        when(clazz){
+            String::class.java,java.lang.String::class.java -> {
+                return clazz.cast(value)
+            }
+            Int::class.java,java.lang.Integer::class.java -> {
+                val int = value.toIntOrNull()?:return null
+                return clazz.cast(int)
+            }
+            Double::class.java,java.lang.Double::class.java -> {
+                val double = value.toDoubleOrNull()?:return null
+                return clazz.cast(double)
+            }
+            Long::class.java,java.lang.Long::class.java -> {
+                val long = value.toLongOrNull()?:return null
+                return clazz.cast(long)
+            }
+        }
+        return null
+    }
 
 
 }

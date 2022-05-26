@@ -11,7 +11,7 @@ import java.util.function.Consumer
 /**
  * SInventoryに使えるitem。eventとか入れられる
  */
-class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
+open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
 
     private val clickEvent = ArrayList<Consumer<InventoryClickEvent>>()
     private val asyncClickEvent = ArrayList<Consumer<InventoryClickEvent>>()
