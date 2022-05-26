@@ -356,10 +356,10 @@ abstract class SInventory(val plugin: JavaPlugin) {
                 cEvent.isCancelled = true
                 unit.unregister()
                 inputNow.remove(p.uniqueId)
+                throughOpen(p)
                 val modifyValue = modifyClassValue(type,cEvent.message)
                 if (modifyValue == null){
                     p.sendMessage(errorMsg.invoke(cEvent.message))
-                    throughOpen(p)
                     return@biRegister
                 }
 
