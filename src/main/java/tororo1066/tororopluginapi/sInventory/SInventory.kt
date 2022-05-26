@@ -1,7 +1,9 @@
 package tororo1066.tororopluginapi.sInventory
 
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -358,9 +360,10 @@ abstract class SInventory(val plugin: JavaPlugin) {
                 unit.unregister()
                 inputNow.remove(p.uniqueId)
                 throughOpen(p)
-                val modifyValue = modifyClassValue(type,cEvent.message)
+                val msg = cEvent.message.replaceFirst("/","")
+                val modifyValue = modifyClassValue(type,msg)
                 if (modifyValue == null){
-                    p.sendMessage(errorMsg.invoke(cEvent.message))
+                    p.sendMessage(errorMsg.invoke(msg))
                     return@biRegister
                 }
 
@@ -377,6 +380,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
         return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", action)
     }
 
+    @SuppressWarnings("unchecked")
     private fun <T>modifyClassValue(clazz: Class<T>, value: String) : T?{
         when(clazz){
             String::class.java,java.lang.String::class.java -> {
@@ -393,6 +397,35 @@ abstract class SInventory(val plugin: JavaPlugin) {
             Long::class.java,java.lang.Long::class.java -> {
                 val long = value.toLongOrNull()?:return null
                 return clazz.cast(long)
+            }
+            Player::class.java -> {
+                val player = Bukkit.getPlayer(value)?:return null
+                return clazz.cast(player) as T
+            }
+            Location::class.java -> {
+                val split = value.split(" ")
+
+                return when(split.size){
+                    3->{
+                        clazz.cast(Location(null,split[0].toDoubleOrNull()?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null)) as T
+                    }
+
+                    4->{
+                        clazz.cast(Location(Bukkit.getWorld(split[0])?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null,split[3].toDoubleOrNull()?:return null)) as T
+                    }
+
+                    5->{
+                        clazz.cast(Location(null,split[0].toDoubleOrNull()?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null,split[3].toFloatOrNull()?:return null,split[4].toFloatOrNull()?:return null)) as T
+                    }
+
+                    6->{
+                        clazz.cast(Location(Bukkit.getWorld(split[0])?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null,split[3].toDoubleOrNull()?:return null,split[4].toFloatOrNull()?:return null,split[5].toFloatOrNull()?:return null)) as T
+                    }
+
+                    else->{
+                        null
+                    }
+                }
             }
         }
         return null
