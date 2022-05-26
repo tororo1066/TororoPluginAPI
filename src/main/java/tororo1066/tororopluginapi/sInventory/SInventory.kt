@@ -14,6 +14,7 @@ import tororo1066.tororopluginapi.sItem.SItem
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.function.BiConsumer
 import java.util.function.Consumer
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -345,7 +346,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     }
 
-    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: Consumer<T>, errorMsg: (String) -> String): SInventoryItem {
+    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: BiConsumer<T,Player>, errorMsg: (String) -> String): SInventoryItem {
         return SInventoryItem(item).setCanClick(false).setClickEvent {
             val p = it.whoClicked as Player
             p.sendMessage(message)
@@ -363,16 +364,16 @@ abstract class SInventory(val plugin: JavaPlugin) {
                     return@biRegister
                 }
 
-                action.accept(modifyValue)
+                action.accept(modifyValue,p)
             }
         }
     }
 
-    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: Consumer<T>): SInventoryItem {
+    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: BiConsumer<T,Player>): SInventoryItem {
         return createInputItem(item, type, message, action) { "§d${it}§4は§d${type.name}§4ではありません" }
     }
 
-    fun <T>createInputItem(item: SItem, type: Class<T>, action: Consumer<T>): SInventoryItem {
+    fun <T>createInputItem(item: SItem, type: Class<T>, action: BiConsumer<T,Player>): SInventoryItem {
         return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", action)
     }
 
