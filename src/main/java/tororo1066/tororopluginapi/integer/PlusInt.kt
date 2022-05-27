@@ -22,10 +22,6 @@ class PlusInt() {
         return true
     }
 
-    fun toInt(): Int {
-        return this.int
-    }
-
     override fun toString(): String {
         return this.int.toString()
     }

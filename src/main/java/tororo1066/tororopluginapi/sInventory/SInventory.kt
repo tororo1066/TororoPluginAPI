@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.SInput
 import tororo1066.tororopluginapi.integer.PlusInt
 import tororo1066.tororopluginapi.integer.PlusInt.Companion.toPlusInt
 import tororo1066.tororopluginapi.sEvent.SEvent
@@ -364,8 +365,12 @@ abstract class SInventory(val plugin: JavaPlugin) {
                 unit.unregister()
                 inputNow.remove(p.uniqueId)
                 throughOpen(p)
+                if (cEvent.message == "/cancel"){
+                    p.sendMessage("§a入力をキャンセルしました")
+                    return@biRegister
+                }
                 val msg = cEvent.message.replaceFirst("/","")
-                val modifyValue = modifyClassValue(type,msg)
+                val modifyValue = SInput.modifyClassValue(type,msg)
                 if (modifyValue == null){
                     p.sendMessage(errorMsg.invoke(msg))
                     return@biRegister
@@ -398,60 +403,6 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     fun <T>createInputItem(item: SItem, type: Class<T>, action: BiConsumer<T,Player>): SInventoryItem {
         return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", listOf(), action)
-    }
-
-    private fun <T>modifyClassValue(clazz: Class<T>, value: String) : T?{
-        when(clazz){
-            String::class.java,java.lang.String::class.java -> {
-                return clazz.cast(value)
-            }
-            Int::class.java,java.lang.Integer::class.java -> {
-                val int = value.toIntOrNull()?:return null
-                return clazz.cast(int)
-            }
-            Double::class.java,java.lang.Double::class.java -> {
-                val double = value.toDoubleOrNull()?:return null
-                return clazz.cast(double)
-            }
-            Long::class.java,java.lang.Long::class.java -> {
-                val long = value.toLongOrNull()?:return null
-                return clazz.cast(long)
-            }
-            Player::class.java -> {
-                val player = Bukkit.getPlayer(value)?:return null
-                return clazz.cast(player) as T
-            }
-            Location::class.java -> {
-                val split = value.split(" ")
-
-                return when(split.size){
-                    3->{
-                        clazz.cast(Location(null,split[0].toDoubleOrNull()?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null)) as T
-                    }
-
-                    4->{
-                        clazz.cast(Location(Bukkit.getWorld(split[0])?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null,split[3].toDoubleOrNull()?:return null)) as T
-                    }
-
-                    5->{
-                        clazz.cast(Location(null,split[0].toDoubleOrNull()?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null,split[3].toFloatOrNull()?:return null,split[4].toFloatOrNull()?:return null)) as T
-                    }
-
-                    6->{
-                        clazz.cast(Location(Bukkit.getWorld(split[0])?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null,split[3].toDoubleOrNull()?:return null,split[4].toFloatOrNull()?:return null,split[5].toFloatOrNull()?:return null)) as T
-                    }
-
-                    else->{
-                        null
-                    }
-                }
-            }
-            PlusInt::class.java -> {
-                val int = value.toPlusInt()?:return null
-                return clazz.cast(int) as T
-            }
-        }
-        return null
     }
 
 
