@@ -382,12 +382,20 @@ abstract class SInventory(val plugin: JavaPlugin) {
         return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.name}§4ではありません"}, listOf(clickType))
     }
 
+    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: BiConsumer<T,Player>): SInventoryItem {
+        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.name}§4ではありません"}, listOf())
+    }
+
     fun <T>createInputItem(item: SItem, type: Class<T>, clickType: List<ClickType>, action: BiConsumer<T,Player>): SInventoryItem {
         return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", clickType, action)
     }
 
-    fun <T>createInputItem(item: SItem, type: Class<T>, clickType: ClickType , action: BiConsumer<T,Player>): SInventoryItem {
+    fun <T>createInputItem(item: SItem, type: Class<T>, clickType: ClickType, action: BiConsumer<T,Player>): SInventoryItem {
         return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", listOf(clickType), action)
+    }
+
+    fun <T>createInputItem(item: SItem, type: Class<T>, action: BiConsumer<T,Player>): SInventoryItem {
+        return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", listOf(), action)
     }
 
     private fun <T>modifyClassValue(clazz: Class<T>, value: String) : T?{
