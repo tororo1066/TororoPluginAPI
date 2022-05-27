@@ -12,6 +12,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.integer.PlusInt
+import tororo1066.tororopluginapi.integer.PlusInt.Companion.toPlusInt
 import tororo1066.tororopluginapi.sEvent.SEvent
 import tororo1066.tororopluginapi.sItem.SItem
 import java.util.*
@@ -443,6 +445,10 @@ abstract class SInventory(val plugin: JavaPlugin) {
                         null
                     }
                 }
+            }
+            PlusInt::class.java -> {
+                val int = value.toPlusInt()?:return null
+                return clazz.cast(int) as T
             }
         }
         return null
