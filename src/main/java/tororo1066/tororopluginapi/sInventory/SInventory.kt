@@ -5,6 +5,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
@@ -348,8 +349,9 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     }
 
-    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: BiConsumer<T,Player>, errorMsg: (String) -> String): SInventoryItem {
+    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: BiConsumer<T,Player>, errorMsg: (String) -> String, clickType: List<ClickType>): SInventoryItem {
         return SInventoryItem(item).setCanClick(false).setClickEvent {
+            if (clickType.isNotEmpty() && !clickType.contains(it.click))return@setClickEvent
             val p = it.whoClicked as Player
             p.sendMessage(message)
             throughClose(p)
@@ -372,15 +374,22 @@ abstract class SInventory(val plugin: JavaPlugin) {
         }
     }
 
-    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action) { "§d${it}§4は§d${type.name}§4ではありません" }
+    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, clickType: List<ClickType>, action: BiConsumer<T,Player>): SInventoryItem {
+        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.name}§4ではありません"},clickType)
     }
 
-    fun <T>createInputItem(item: SItem, type: Class<T>, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", action)
+    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, clickType: ClickType, action: BiConsumer<T,Player>): SInventoryItem {
+        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.name}§4ではありません"}, listOf(clickType))
     }
 
-    @SuppressWarnings("unchecked")
+    fun <T>createInputItem(item: SItem, type: Class<T>, clickType: List<ClickType>, action: BiConsumer<T,Player>): SInventoryItem {
+        return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", clickType, action)
+    }
+
+    fun <T>createInputItem(item: SItem, type: Class<T>, clickType: ClickType , action: BiConsumer<T,Player>): SInventoryItem {
+        return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", listOf(clickType), action)
+    }
+
     private fun <T>modifyClassValue(clazz: Class<T>, value: String) : T?{
         when(clazz){
             String::class.java,java.lang.String::class.java -> {
