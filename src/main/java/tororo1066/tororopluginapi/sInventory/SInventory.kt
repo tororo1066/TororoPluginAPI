@@ -293,37 +293,40 @@ abstract class SInventory(val plugin: JavaPlugin) {
             if (!renderMenu()) return@Runnable
             afterRenderMenu()
 
-            sEvent.register(InventoryCloseEvent::class.java) {
-                if (!openingPlayer.contains(it.player.uniqueId))return@register
-                openingPlayer.remove(it.player.uniqueId)
-                sEvent.unregisterAll()
-                if (throughEvent.remove(it.player.uniqueId)){
-                    return@register
-                }
-                for (close in onClose){
-                    close.accept(it)
-                }
-                for (close in asyncOnClose){
-                    thread.execute { close.accept(it) }
+            if (sEvent.sEventUnits.isEmpty()){
+                sEvent.register(InventoryCloseEvent::class.java) {
+                    if (!openingPlayer.contains(it.player.uniqueId))return@register
+                    openingPlayer.remove(it.player.uniqueId)
+                    if (throughEvent.remove(it.player.uniqueId)){
+                        return@register
+                    }
+                    sEvent.unregisterAll()
+                    for (close in onClose){
+                        close.accept(it)
+                    }
+                    for (close in asyncOnClose){
+                        thread.execute { close.accept(it) }
+                    }
+
+                    parent?.accept(it)
                 }
 
-                parent?.accept(it)
+                sEvent.register(InventoryClickEvent::class.java) {
+                    if (!openingPlayer.contains(it.whoClicked.uniqueId))return@register
+
+                    for (click in onClick){
+                        click.accept(it)
+                    }
+                    for (click in asyncOnClick){
+                        thread.execute { click.accept(it) }
+                    }
+
+                    items[it.rawSlot]?.active(it)
+
+                }
+
             }
 
-            sEvent.register(InventoryClickEvent::class.java) {
-                if (!openingPlayer.contains(it.whoClicked.uniqueId))return@register
-
-
-                for (click in onClick){
-                    click.accept(it)
-                }
-                for (click in asyncOnClick){
-                    thread.execute { click.accept(it) }
-                }
-
-                items[it.rawSlot]?.active(it)
-
-            }
 
             for (open in onOpen){
                 open.accept(p)
