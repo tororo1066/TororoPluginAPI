@@ -409,27 +409,27 @@ abstract class SInventory(val plugin: JavaPlugin) {
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, clickType: List<ClickType>, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", clickType, action)
+        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", clickType, action)
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, clickType: List<ClickType>, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", clickType, invOpenCancel, action)
+        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", clickType, invOpenCancel, action)
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, clickType: ClickType, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", listOf(clickType), action)
+        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", listOf(clickType), action)
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, clickType: ClickType, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", listOf(clickType), invOpenCancel, action)
+        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", listOf(clickType), invOpenCancel, action)
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", listOf(), action)
+        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", listOf(), action)
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(${type.name})>", listOf(), invOpenCancel, action)
+        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", listOf(), invOpenCancel, action)
     }
 
 
