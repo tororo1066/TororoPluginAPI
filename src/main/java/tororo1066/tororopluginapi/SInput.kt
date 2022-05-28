@@ -8,11 +8,11 @@ import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.integer.PlusInt
 import tororo1066.tororopluginapi.integer.PlusInt.Companion.toPlusInt
 import tororo1066.tororopluginapi.sEvent.SEvent
-import java.util.function.BiConsumer
+import java.util.function.Consumer
 
 class SInput(val plugin: JavaPlugin) {
 
-    fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: BiConsumer<T, Player>, errorMsg: (String) -> String) {
+    fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: Consumer<T>, errorMsg: (String) -> String) {
         p.sendMessage(message)
         SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
             if (cEvent.player != p) return@biRegister
@@ -29,15 +29,15 @@ class SInput(val plugin: JavaPlugin) {
                 return@biRegister
             }
 
-            action.accept(modifyValue, p)
+            action.accept(modifyValue)
         }
     }
 
-    fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: BiConsumer<T,Player>) {
+    fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: Consumer<T>) {
         sendInputCUI(p, type, message, action) { "§d${it}§4は§d${type.name}§4ではありません" }
     }
 
-    fun <T>sendInputCUI(p: Player, type: Class<T>, action: BiConsumer<T,Player>) {
+    fun <T>sendInputCUI(p: Player, type: Class<T>, action: Consumer<T>) {
         sendInputCUI(p, type, "§a/<入れるデータ(${type.name})>", action)
     }
 
