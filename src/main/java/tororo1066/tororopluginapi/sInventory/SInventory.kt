@@ -385,27 +385,27 @@ abstract class SInventory(val plugin: JavaPlugin) {
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, message: String, clickType: List<ClickType>, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.name}§4ではありません"},clickType, false)
+        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"},clickType, false)
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, message: String, clickType: List<ClickType>, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.name}§4ではありません"},clickType, invOpenCancel)
+        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"},clickType, invOpenCancel)
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, message: String, clickType: ClickType, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.name}§4ではありません"}, listOf(clickType), false)
+        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"}, listOf(clickType), false)
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, message: String, clickType: ClickType, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.name}§4ではありません"}, listOf(clickType), invOpenCancel)
+        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"}, listOf(clickType), invOpenCancel)
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.name}§4ではありません"}, listOf(), false)
+        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"}, listOf(), false)
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, message: String, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.name}§4ではありません"}, listOf(), invOpenCancel)
+        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"}, listOf(), invOpenCancel)
     }
 
     fun <T>createInputItem(item: SItem, type: Class<T>, clickType: List<ClickType>, action: BiConsumer<T,Player>): SInventoryItem {
