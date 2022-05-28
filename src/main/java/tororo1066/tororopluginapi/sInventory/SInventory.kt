@@ -321,8 +321,6 @@ abstract class SInventory(val plugin: JavaPlugin) {
                         thread.execute { click.accept(it) }
                     }
 
-                    Bukkit.broadcastMessage(items[it.rawSlot]?.getDisplayName().toString())
-
                     items[it.rawSlot]?.active(it)
 
                 }
