@@ -300,7 +300,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
                     if (throughEvent.remove(it.player.uniqueId)){
                         return@register
                     }
-                    sEvent.unregisterAll()
+                    if (openingPlayer.isEmpty()) sEvent.unregisterAll()
                     for (close in onClose){
                         close.accept(it)
                     }
@@ -320,6 +320,8 @@ abstract class SInventory(val plugin: JavaPlugin) {
                     for (click in asyncOnClick){
                         thread.execute { click.accept(it) }
                     }
+
+                    Bukkit.broadcastMessage(items[it.rawSlot]?.getDisplayName().toString())
 
                     items[it.rawSlot]?.active(it)
 
