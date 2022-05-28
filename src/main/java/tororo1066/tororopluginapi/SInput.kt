@@ -2,11 +2,13 @@ package tororo1066.tororopluginapi
 
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.integer.PlusInt
 import tororo1066.tororopluginapi.integer.PlusInt.Companion.toPlusInt
+import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.sEvent.SEvent
 import java.util.function.Consumer
 
@@ -92,6 +94,10 @@ class SInput(val plugin: JavaPlugin) {
                 PlusInt::class.java -> {
                     val int = value.toPlusInt()?:return null
                     return clazz.cast(int) as T
+                }
+                BlockFace::class.java -> {
+                    val face = UsefulUtility.sTry({BlockFace.valueOf(value.toUpperCase())},{null})?:return null
+                    return clazz.cast(face) as T
                 }
             }
             return null
