@@ -365,17 +365,21 @@ abstract class SInventory(val plugin: JavaPlugin) {
             SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
                 if (cEvent.player != p)return@biRegister
                 cEvent.isCancelled = true
-                unit.unregister()
-                inputNow.remove(p.uniqueId)
-                if (!invOpenCancel) throughOpen(p)
+
                 if (cEvent.message == "/cancel"){
                     p.sendMessage("§a入力をキャンセルしました")
+                    unit.unregister()
+                    inputNow.remove(p.uniqueId)
+                    if (!invOpenCancel) throughOpen(p)
                     return@biRegister
                 }
                 val msg = cEvent.message.replaceFirst("/","")
                 val modifyValue = SInput.modifyClassValue(type,msg)
                 if (modifyValue == null){
                     p.sendMessage(errorMsg.invoke(msg))
+                    unit.unregister()
+                    inputNow.remove(p.uniqueId)
+                    if (!invOpenCancel) throughOpen(p)
                     return@biRegister
                 }
 
