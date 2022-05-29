@@ -300,7 +300,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
                     if (throughEvent.remove(it.player.uniqueId)){
                         return@register
                     }
-                    if (openingPlayer.isEmpty()) sEvent.unregisterAll()
+                    sEvent.unregisterAll()
                     for (close in onClose){
                         close.accept(it)
                     }
