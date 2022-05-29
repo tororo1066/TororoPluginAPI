@@ -73,14 +73,13 @@ class SEvent(private val plugin : JavaPlugin) {
     }
 
     fun unregisterAll(){
-        sEventUnits.forEach {
-            it.unregister()
-            sEventUnits.remove(it)
+        for (sEventUnit in sEventUnits) {
+            sEventUnit.unregister()
+            sEventUnits.remove(sEventUnit)
         }
-
-        biSEventUnits.forEach {
-            it.unregister()
-            biSEventUnits.remove(it)
+        for (biSEventUnit in biSEventUnits) {
+            biSEventUnit.unregister()
+            biSEventUnits.remove(biSEventUnit)
         }
     }
 
