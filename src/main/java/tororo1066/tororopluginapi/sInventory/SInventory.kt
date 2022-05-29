@@ -297,10 +297,10 @@ abstract class SInventory(val plugin: JavaPlugin) {
                 sEvent.register(InventoryCloseEvent::class.java) {
                     if (!openingPlayer.contains(it.player.uniqueId))return@register
                     openingPlayer.remove(it.player.uniqueId)
+                    sEvent.unregisterAll()
                     if (throughEvent.remove(it.player.uniqueId)){
                         return@register
                     }
-                    sEvent.unregisterAll()
                     for (close in onClose){
                         close.accept(it)
                     }
@@ -370,7 +370,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
                     p.sendMessage("§a入力をキャンセルしました")
                     unit.unregister()
                     inputNow.remove(p.uniqueId)
-                    if (!invOpenCancel) throughOpen(p)
+                    if (!invOpenCancel) open(p)
                     return@biRegister
                 }
                 val msg = cEvent.message.replaceFirst("/","")
@@ -384,7 +384,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
                 unit.unregister()
                 inputNow.remove(p.uniqueId)
-                if (!invOpenCancel) throughOpen(p)
+                if (!invOpenCancel) open(p)
             }
         }
     }
