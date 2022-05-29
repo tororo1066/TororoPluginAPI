@@ -1,9 +1,7 @@
 package tororo1066.tororopluginapi.sInventory
 
 import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -13,8 +11,6 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SInput
-import tororo1066.tororopluginapi.integer.PlusInt
-import tororo1066.tororopluginapi.integer.PlusInt.Companion.toPlusInt
 import tororo1066.tororopluginapi.sEvent.SEvent
 import tororo1066.tororopluginapi.sItem.SItem
 import java.util.*
@@ -22,8 +18,6 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.BiConsumer
 import java.util.function.Consumer
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 /**
  * 拡張機能を持たせたInventory
@@ -82,17 +76,6 @@ abstract class SInventory(val plugin: JavaPlugin) {
         throughClose(p)
         inventory.setParent(this)
         inventory.open(p)
-    }
-
-
-    fun throughOpen(p: Player){
-        plugin.server.scheduler.runTask(plugin, Runnable {
-            if (!renderMenu()) return@Runnable
-            afterRenderMenu()
-
-            openingPlayer.add(p.uniqueId)
-            p.openInventory(inv)
-        })
     }
 
     fun throughClose(p: Player){
@@ -293,37 +276,34 @@ abstract class SInventory(val plugin: JavaPlugin) {
             if (!renderMenu()) return@Runnable
             afterRenderMenu()
 
-            if (sEvent.sEventUnits.isEmpty()){
-                sEvent.register(InventoryCloseEvent::class.java) {
-                    if (!openingPlayer.contains(it.player.uniqueId))return@register
-                    openingPlayer.remove(it.player.uniqueId)
-                    sEvent.unregisterAll()
-                    if (throughEvent.remove(it.player.uniqueId)){
-                        return@register
-                    }
-                    for (close in onClose){
-                        close.accept(it)
-                    }
-                    for (close in asyncOnClose){
-                        thread.execute { close.accept(it) }
-                    }
-
-                    parent?.accept(it)
+            sEvent.register(InventoryCloseEvent::class.java) {
+                if (!openingPlayer.contains(it.player.uniqueId))return@register
+                openingPlayer.remove(it.player.uniqueId)
+                sEvent.unregisterAll()
+                if (throughEvent.remove(it.player.uniqueId)){
+                    return@register
+                }
+                for (close in onClose){
+                    close.accept(it)
+                }
+                for (close in asyncOnClose){
+                    thread.execute { close.accept(it) }
                 }
 
-                sEvent.register(InventoryClickEvent::class.java) {
-                    if (!openingPlayer.contains(it.whoClicked.uniqueId))return@register
+                parent?.accept(it)
+            }
 
-                    for (click in onClick){
-                        click.accept(it)
-                    }
-                    for (click in asyncOnClick){
-                        thread.execute { click.accept(it) }
-                    }
+            sEvent.register(InventoryClickEvent::class.java) {
+                if (!openingPlayer.contains(it.whoClicked.uniqueId))return@register
 
-                    items[it.rawSlot]?.active(it)
-
+                for (click in onClick){
+                    click.accept(it)
                 }
+                for (click in asyncOnClick){
+                    thread.execute { click.accept(it) }
+                }
+
+                items[it.rawSlot]?.active(it)
 
             }
 
