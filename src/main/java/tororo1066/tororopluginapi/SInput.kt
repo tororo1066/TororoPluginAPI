@@ -19,9 +19,10 @@ class SInput(val plugin: JavaPlugin) {
         SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
             if (cEvent.player != p) return@biRegister
             cEvent.isCancelled = true
-            unit.unregister()
+
             if (cEvent.message == "/cancel"){
                 p.sendMessage("§a入力をキャンセルしました")
+                unit.unregister()
                 return@biRegister
             }
             val msg = cEvent.message.replaceFirst("/", "")
@@ -32,15 +33,16 @@ class SInput(val plugin: JavaPlugin) {
             }
 
             action.accept(modifyValue)
+            unit.unregister()
         }
     }
 
     fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: Consumer<T>) {
-        sendInputCUI(p, type, message, action) { "§d${it}§4は§d${type.name}§4ではありません" }
+        sendInputCUI(p, type, message, action) { "§d${it}§4は§d${type.simpleName}§4ではありません" }
     }
 
     fun <T>sendInputCUI(p: Player, type: Class<T>, action: Consumer<T>) {
-        sendInputCUI(p, type, "§a/<入れるデータ(${type.name})>", action)
+        sendInputCUI(p, type, "§a/<入れるデータ(${type.simpleName})>", action)
     }
 
 

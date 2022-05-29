@@ -377,13 +377,14 @@ abstract class SInventory(val plugin: JavaPlugin) {
                 val modifyValue = SInput.modifyClassValue(type,msg)
                 if (modifyValue == null){
                     p.sendMessage(errorMsg.invoke(msg))
-                    unit.unregister()
-                    inputNow.remove(p.uniqueId)
-                    if (!invOpenCancel) throughOpen(p)
                     return@biRegister
                 }
 
                 action.accept(modifyValue,p)
+
+                unit.unregister()
+                inputNow.remove(p.uniqueId)
+                if (!invOpenCancel) throughOpen(p)
             }
         }
     }
