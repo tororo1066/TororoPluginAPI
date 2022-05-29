@@ -4,6 +4,8 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.ChatColor
 
@@ -50,7 +52,7 @@ class SStr {
     }
 
     fun toBaseComponent(): BaseComponent {
-        return net.md_5.bungee.api.chat.TextComponent(componentBuilder.content())
+        return net.md_5.bungee.api.chat.TextComponent(PlainTextComponentSerializer.plainText().serialize(componentBuilder.build()))
     }
 
     fun hoverText(text: String): SStr {

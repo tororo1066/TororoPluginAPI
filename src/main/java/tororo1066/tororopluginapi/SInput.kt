@@ -48,6 +48,7 @@ class SInput(val plugin: JavaPlugin) {
         fun <T>modifyClassValue(clazz: Class<T>, value: String) : T?{
             when(clazz){
                 String::class.java,java.lang.String::class.java -> {
+                    if (value.isBlank())return null
                     return clazz.cast(value)
                 }
                 Int::class.java,java.lang.Integer::class.java -> {
