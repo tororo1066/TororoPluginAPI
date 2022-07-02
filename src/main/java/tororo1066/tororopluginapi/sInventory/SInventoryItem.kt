@@ -1,8 +1,12 @@
 package tororo1066.tororopluginapi.sInventory
 
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
+import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.sItem.SItem
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -61,6 +65,54 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
         for (event in asyncClickEvent){
             thread.execute { event.accept(e) }
         }
+    }
+
+    override fun setItemAmount(amount: Int): SInventoryItem {
+        this.amount = amount
+        return this
+    }
+
+    override fun setDisplayName(name: String): SInventoryItem {
+        val meta = itemMeta?:return this
+        meta.setDisplayName(name)
+        itemMeta = meta
+        return this
+    }
+
+    override fun setLore(lore: List<String>): SInventoryItem {
+        val meta = itemMeta?:return this
+        meta.lore = lore
+        itemMeta = meta
+        return this
+    }
+
+    override fun addLore(lore: List<String>): SInventoryItem {
+        return setLore(getStringLore().toMutableList().apply { addAll(lore) })
+    }
+
+    override fun addLore(lore: String): SInventoryItem {
+        return addLore(mutableListOf(lore))
+    }
+
+    override fun setCustomModelData(csm: Int): SInventoryItem {
+        val meta = itemMeta?:return this
+        meta.setCustomModelData(csm)
+        itemMeta = meta
+        return this
+    }
+
+    override fun <T : Any> setCustomData(plugin: JavaPlugin, key: String, type: PersistentDataType<T, T>, value: T): SInventoryItem {
+        val meta = this.itemMeta?:return this
+        meta.persistentDataContainer[NamespacedKey(plugin,key),type] = value
+        this.itemMeta = meta
+        return this
+    }
+
+    override fun setEnchantment(enchantment: Enchantment, level: Int): SInventoryItem {
+        val meta = this.itemMeta?:return this
+        meta.addEnchant(enchantment,level,true)
+        this.itemMeta = meta
+        return this
     }
 
 }

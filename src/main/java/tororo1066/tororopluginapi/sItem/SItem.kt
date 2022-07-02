@@ -43,10 +43,93 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
                 null
             }
         }
+
+        fun ItemStack.toSItem(): SItem {
+            return SItem(this)
+        }
+
+        fun List<ItemStack>.toBase64Items(): String {
+            try {
+                val outputStream = ByteArrayOutputStream()
+                val dataOutput = BukkitObjectOutputStream(outputStream)
+                dataOutput.writeInt(this.size)
+                for (i in this){
+                    dataOutput.writeObject(i)
+                }
+                dataOutput.close()
+                return Base64Coder.encodeLines(outputStream.toByteArray())
+
+            } catch (e: Exception) {
+                throw IllegalStateException("Failed ItemStack to Base64.",e)
+            }
+        }
+
+        @JvmName("toBase64ItemsSItem")
+        fun List<SItem>.toBase64Items(): String {
+            try {
+                val outputStream = ByteArrayOutputStream()
+                val dataOutput = BukkitObjectOutputStream(outputStream)
+                dataOutput.writeInt(this.size)
+                for (i in this){
+                    dataOutput.writeObject(i as ItemStack)
+                }
+                dataOutput.close()
+                return Base64Coder.encodeLines(outputStream.toByteArray())
+
+            } catch (e: Exception) {
+                throw IllegalStateException("Failed ItemStack to Base64.",e)
+            }
+        }
+
+        fun String.toItems(): MutableList<ItemStack> {
+            try {
+
+                val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(this))
+                val dataInput = BukkitObjectInputStream(inputStream)
+                val items = arrayOfNulls<ItemStack>(dataInput.readInt())
+
+                for (i in items.indices){
+                    items[i] = dataInput.readObject() as ItemStack
+                }
+
+                val mutableList = mutableListOf<ItemStack>()
+                items.forEach {
+                    if (it != null) mutableList.add(it)
+                }
+
+                dataInput.close()
+                return mutableList
+            } catch (e: Exception) {
+                throw IllegalStateException("Failed Base64 to ItemStack List.",e)
+            }
+        }
+
+        fun String.toSItems(): MutableList<SItem> {
+            try {
+
+                val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(this))
+                val dataInput = BukkitObjectInputStream(inputStream)
+                val items = arrayOfNulls<ItemStack>(dataInput.readInt())
+
+                for (i in items.indices){
+                    items[i] = dataInput.readObject() as ItemStack
+                }
+
+                val mutableList = mutableListOf<SItem>()
+                items.forEach {
+                    if (it != null) mutableList.add(SItem(it))
+                }
+
+                dataInput.close()
+                return mutableList
+            } catch (e: Exception) {
+                throw IllegalStateException("Failed Base64 to ItemStack List.",e)
+            }
+        }
     }
 
 
-    fun setItemAmount(amount: Int): SItem {
+    open fun setItemAmount(amount: Int): SItem {
         this.amount = amount
         return this
     }
@@ -55,7 +138,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @param name 名前
      * @return 変更したアイテム
      */
-    fun setDisplayName(name : String): SItem {
+    open fun setDisplayName(name : String): SItem {
         val meta = itemMeta?:return this
         meta.setDisplayName(name)
         itemMeta = meta
@@ -73,7 +156,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @param lore 文字列のリスト
      * @return 変更したアイテム
      */
-    fun setLore(lore : List<String>): SItem {
+    open fun setLore(lore : List<String>): SItem {
         val meta = itemMeta?:return this
         meta.lore = lore
         itemMeta = meta
@@ -92,7 +175,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @param lore 追加するlore(リスト)
      * @return 変更したアイテム
      */
-    fun addLore(lore : List<String>): SItem {
+    open fun addLore(lore : List<String>): SItem {
         return setLore(getStringLore().toMutableList().apply { addAll(lore) })
     }
 
@@ -100,7 +183,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @param lore 追加するlore(単一)
      * @return 変更したアイテム
      */
-    fun addLore(lore : String): SItem {
+    open fun addLore(lore : String): SItem {
         return addLore(mutableListOf(lore))
     }
 
@@ -109,7 +192,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @param csm カスタムモデルデータ
      * @return 変更したアイテム
      */
-    fun setCustomModelData(csm : Int): SItem {
+    open fun setCustomModelData(csm : Int): SItem {
         val meta = itemMeta?:return this
         meta.setCustomModelData(csm)
         itemMeta = meta
@@ -130,7 +213,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @param value 値
      * @return 変更したアイテム
      */
-    fun<T : Any> setCustomData(plugin: JavaPlugin, key: String, type : PersistentDataType<T,T>, value: T): SItem {
+    open fun<T : Any> setCustomData(plugin: JavaPlugin, key: String, type : PersistentDataType<T,T>, value: T): SItem {
         val meta = this.itemMeta?:return this
         meta.persistentDataContainer[NamespacedKey(plugin,key),type] = value
         this.itemMeta = meta
@@ -153,11 +236,17 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @param level レベル
      * @return 変更したアイテム
      */
-    fun setEnchantment(enchantment: Enchantment, level: Int): SItem {
+    open fun setEnchantment(enchantment: Enchantment, level: Int): SItem {
         val meta = this.itemMeta?:return this
         meta.addEnchant(enchantment,level,true)
         this.itemMeta = meta
         return this
+    }
+
+    fun getEnchantment(enchantment: Enchantment): Int? {
+        val level = this.itemMeta?.getEnchantLevel(enchantment)
+        if (level == 0)return null
+        return level
     }
 
     /**
@@ -180,7 +269,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
             Base64Coder.encodeLines(outputStream.toByteArray())
 
         } catch (e: Exception) {
-            "Error"
+            throw IllegalStateException("Failed itemStack to Base64",e)
         }
 
     }

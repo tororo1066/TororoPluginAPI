@@ -2,6 +2,8 @@ package tororo1066.tororopluginapi.otherUtils
 
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitTask
+import java.util.function.Consumer
 
 class UsefulUtility(val plugin: JavaPlugin) {
 
@@ -19,8 +21,8 @@ class UsefulUtility(val plugin: JavaPlugin) {
         }
     }
 
-    fun runTask(unit: ()->Unit){
-        Bukkit.getScheduler().runTask(plugin,unit)
+    fun runTask(consumer: Consumer<BukkitTask>){
+        Bukkit.getScheduler().runTask(plugin,consumer)
     }
 
     fun doubleToFormatString(double: Double): String {
@@ -30,8 +32,5 @@ class UsefulUtility(val plugin: JavaPlugin) {
     fun<V> sTry(unit: ()->V,onError: (Exception)->V) : V {
         return UsefulUtility.sTry(unit,onError)
     }
-
-
-
 
 }

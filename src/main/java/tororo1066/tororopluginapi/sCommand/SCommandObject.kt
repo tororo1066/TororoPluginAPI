@@ -78,7 +78,9 @@ class SCommandObject {
         if (args.size > this.args.size && !noLimit) return false
         for (i in args.indices){
             if (this.args.size-1 <= i && noLimit)continue
-            if (!this.args[i].matches(args[i]))return false
+            if (!this.args[i].matches(args.filterIndexed { index, s ->
+                    index < i
+                },args[i]))return false
         }
         return true
     }
@@ -86,7 +88,9 @@ class SCommandObject {
     fun validOption(args: Array<out String>): Boolean {
         if (args.size > this.args.size) return false
         for (i in 0 until args.size - 1) {
-            if (!this.args[i].matches(args[i])) {
+            if (!this.args[i].matches(args.filterIndexed { index, s ->
+                    index < i
+                },args[i])) {
                 return false
             }
         }

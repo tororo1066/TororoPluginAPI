@@ -1,12 +1,10 @@
 package tororo1066.tororopluginapi.sCommand
 
-import org.bukkit.Bukkit
-import org.bukkit.command.CommandMap
-
 class SCommandArg {
 
     val alias = ArrayList<String>()
     val allowString = ArrayList<String>()
+    val argsAllowString = ArrayList<java.util.function.Function<List<String>,List<String>>>()
 
     val allowType = ArrayList<SCommandArgType>()
 
@@ -14,6 +12,10 @@ class SCommandArg {
         this.allowString.add(string)
         addAlias(string)
         return this
+    }
+
+    fun addArgsAllowString(func: (List<String>) -> List<String>) {
+        this.argsAllowString.add(func)
     }
 
     fun addAllowString(vararg string: String): SCommandArg {
@@ -60,9 +62,14 @@ class SCommandArg {
         return true
     }
 
-    fun matches(arg : String): Boolean {
+    fun matches(list: List<String>, arg : String): Boolean {
         if (!allMatch(arg))return false
         if (allowString.isEmpty())return true
+        for (string in arg){
+            argsAllowString.forEach {
+                if (it.apply(list).contains(arg))return true
+            }
+        }
         for (string in allowString){
             if (string.equals(arg,true))return true
         }

@@ -164,7 +164,7 @@ class SMySQL(val plugin : JavaPlugin) {
             stmt!!.execute(query)
             true
         } catch (e : SQLException){
-            Bukkit.getLogger().warning("ExecuteError：エラーコード(${e.errorCode})\nエラーメッセージ\n${e.message}")
+            Bukkit.getLogger().warning("ExecuteError：Error Code(${e.errorCode})\nError Message\n${e.message}")
             Bukkit.getLogger().warning(query)
             false
         } finally {
@@ -183,7 +183,7 @@ class SMySQL(val plugin : JavaPlugin) {
             stmt = conn!!.createStatement()
             stmt!!.executeQuery(query)
         } catch (e : SQLException) {
-            Bukkit.getLogger().warning("QueryError：エラーコード(${e.errorCode})\nエラーメッセージ\n${e.message}")
+            Bukkit.getLogger().warning("QueryError：Error Code(${e.errorCode})\nError Message\n${e.message}")
             Bukkit.getLogger().warning(query)
             null
         }
