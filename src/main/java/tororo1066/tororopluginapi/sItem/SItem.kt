@@ -52,27 +52,16 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
             try {
                 val outputStream = ByteArrayOutputStream()
                 val dataOutput = BukkitObjectOutputStream(outputStream)
+
+                // Write the size of the inventory
                 dataOutput.writeInt(this.size)
-                for (i in this.indices){
+
+                // Save every element in the list
+                for (i in this.indices) {
                     dataOutput.writeObject(this[i])
                 }
-                dataOutput.close()
-                return Base64Coder.encodeLines(outputStream.toByteArray())
 
-            } catch (e: Exception) {
-                throw IllegalStateException("Failed ItemStack to Base64.",e)
-            }
-        }
-
-        @JvmName("toBase64ItemsSItem")
-        fun List<SItem>.toBase64Items(): String {
-            try {
-                val outputStream = ByteArrayOutputStream()
-                val dataOutput = BukkitObjectOutputStream(outputStream)
-                dataOutput.writeInt(this.size)
-                for (i in this){
-                    dataOutput.writeObject(i as ItemStack)
-                }
+                // Serialize that array
                 dataOutput.close()
                 return Base64Coder.encodeLines(outputStream.toByteArray())
 
@@ -88,16 +77,18 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
                 val dataInput = BukkitObjectInputStream(inputStream)
                 val items = arrayOfNulls<ItemStack>(dataInput.readInt())
 
-                for (i in items.indices){
+                // Read the serialized inventory
+                for (i in items.indices) {
                     items[i] = dataInput.readObject() as ItemStack
                 }
+
+                dataInput.close()
 
                 val mutableList = mutableListOf<ItemStack>()
                 items.forEach {
                     if (it != null) mutableList.add(it)
                 }
 
-                dataInput.close()
                 return mutableList
             } catch (e: Exception) {
                 throw IllegalStateException("Failed Base64 to ItemStack List.",e)
@@ -111,16 +102,18 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
                 val dataInput = BukkitObjectInputStream(inputStream)
                 val items = arrayOfNulls<ItemStack>(dataInput.readInt())
 
-                for (i in items.indices){
+                // Read the serialized inventory
+                for (i in items.indices) {
                     items[i] = dataInput.readObject() as ItemStack
                 }
+
+                dataInput.close()
 
                 val mutableList = mutableListOf<SItem>()
                 items.forEach {
                     if (it != null) mutableList.add(SItem(it))
                 }
 
-                dataInput.close()
                 return mutableList
             } catch (e: Exception) {
                 throw IllegalStateException("Failed Base64 to ItemStack List.",e)
