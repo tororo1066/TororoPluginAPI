@@ -53,8 +53,8 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
                 val outputStream = ByteArrayOutputStream()
                 val dataOutput = BukkitObjectOutputStream(outputStream)
                 dataOutput.writeInt(this.size)
-                for (i in this){
-                    dataOutput.writeObject(i)
+                for (i in this.indices){
+                    dataOutput.writeObject(this[i])
                 }
                 dataOutput.close()
                 return Base64Coder.encodeLines(outputStream.toByteArray())
