@@ -49,6 +49,10 @@ open class SCommand(val command : String) : CommandExecutor, TabCompleter {
         this.commandNoFoundEvent = event
     }
 
+    fun clearCommands(){
+        commands.clear()
+    }
+
 
     init {
         val register = register() ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")
