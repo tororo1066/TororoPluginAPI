@@ -43,7 +43,7 @@ class SStr {
     }
 
     override fun toString(): String {
-        return componentBuilder.content()
+        return PlainTextComponentSerializer.plainText().serialize(componentBuilder.build())
     }
 
     fun toTextComponent(): TextComponent {

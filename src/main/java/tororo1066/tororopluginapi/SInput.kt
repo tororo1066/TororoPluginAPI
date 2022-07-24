@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi
 
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.World
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
@@ -101,6 +102,10 @@ class SInput(val plugin: JavaPlugin) {
                 BlockFace::class.java -> {
                     val face = UsefulUtility.sTry({BlockFace.valueOf(value.toUpperCase())},{null})?:return null
                     return clazz.cast(face) as T
+                }
+                World::class.java -> {
+                    val world = Bukkit.getWorld(value)?:return null
+                    return world as T
                 }
             }
             return null

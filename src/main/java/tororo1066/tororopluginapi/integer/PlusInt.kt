@@ -2,7 +2,7 @@ package tororo1066.tororopluginapi.integer
 
 import tororo1066.tororopluginapi.exception.PlusIntException
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
-import java.util.*
+import kotlin.Int
 
 class PlusInt() {
 

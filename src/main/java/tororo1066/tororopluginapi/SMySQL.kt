@@ -89,7 +89,7 @@ class SMySQL(val plugin : JavaPlugin) {
                     }
                     Date::class.java->{
                         val date = data.value as Date
-                        string.append("'${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)}'")
+                        string.append("'${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)}',")
                     }
                     else->{
                         string.append("'${data.value}'" + ",")
