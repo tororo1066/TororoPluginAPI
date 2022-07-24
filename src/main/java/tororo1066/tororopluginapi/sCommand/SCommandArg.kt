@@ -14,8 +14,9 @@ class SCommandArg {
         return this
     }
 
-    fun addArgsAllowString(func: (List<String>) -> List<String>) {
+    fun addArgsAllowString(func: (List<String>) -> List<String>): SCommandArg {
         this.argsAllowString.add(func)
+        return this
     }
 
     fun addAllowString(vararg string: String): SCommandArg {
