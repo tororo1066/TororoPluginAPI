@@ -279,7 +279,6 @@ abstract class SInventory(val plugin: JavaPlugin) {
             sEvent.register(InventoryCloseEvent::class.java) {
                 if (!openingPlayer.contains(it.player.uniqueId))return@register
                 openingPlayer.remove(it.player.uniqueId)
-                sEvent.unregisterAll()
                 if (throughEvent.remove(it.player.uniqueId)){
                     return@register
                 }
