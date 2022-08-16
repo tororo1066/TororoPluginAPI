@@ -275,10 +275,19 @@ abstract class SInventory(val plugin: JavaPlugin) {
             }
             if (!renderMenu()) return@Runnable
             afterRenderMenu()
+            p.openInventory(inv)
+
+            for (open in onOpen){
+                open.accept(p)
+            }
+            for (open in asyncOnOpen){
+                thread.execute { open.accept(p) }
+            }
 
             sEvent.register(InventoryCloseEvent::class.java) {
                 if (!openingPlayer.contains(it.player.uniqueId))return@register
                 openingPlayer.remove(it.player.uniqueId)
+                sEvent.unregisterAll()
                 if (throughEvent.remove(it.player.uniqueId)){
                     return@register
                 }
@@ -306,16 +315,8 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
             }
 
-
-            for (open in onOpen){
-                open.accept(p)
-            }
-            for (open in asyncOnOpen){
-                thread.execute { open.accept(p) }
-            }
-
             openingPlayer.add(p.uniqueId)
-            p.openInventory(inv)
+
         })
     }
 

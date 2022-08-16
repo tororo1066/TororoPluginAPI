@@ -8,6 +8,6 @@ repositories {
 ```
 ```gradle
 dependencies {
-    implementation 'com.github.tororo1066:TororoPluginAPI:master-SNAPSHOT'
+    implementation 'com.github.tororo1066:TororoPluginAPI:<最終コミットのid>'
 }
 ```
