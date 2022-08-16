@@ -1,1 +1,2 @@
-rootProject.name = 'TororoPluginAPI'
+include("TororoPluginAPI")
+include("TororoPlugin")
