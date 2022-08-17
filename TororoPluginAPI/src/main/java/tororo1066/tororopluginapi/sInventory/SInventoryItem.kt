@@ -109,9 +109,7 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
     }
 
     override fun setEnchantment(enchantment: Enchantment, level: Int): SInventoryItem {
-        val meta = this.itemMeta?:return this
-        meta.addEnchant(enchantment,level,true)
-        this.itemMeta = meta
+        this.addUnsafeEnchantment(enchantment,level)
         return this
     }
 

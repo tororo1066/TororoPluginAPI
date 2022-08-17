@@ -14,6 +14,10 @@ class UsefulUtility(val plugin: JavaPlugin) {
             return String.format("%,.0f",double)
         }
 
+        fun Double.toFormatString(): String{
+            return doubleToFormatString(this)
+        }
+
         fun<V> sTry(unit: ()->V,onError: (Exception)->V) : V {
             return try {
                 unit.invoke()
@@ -33,12 +37,6 @@ class UsefulUtility(val plugin: JavaPlugin) {
 
     fun<V> sTry(unit: ()->V,onError: (Exception)->V) : V {
         return UsefulUtility.sTry(unit,onError)
-    }
-
-    fun canDelayTask(now: Date,taskDate: Date){
-        val nowCal = Calendar.getInstance().apply { time = now }
-        val taskCal = Calendar.getInstance().apply { time = taskDate }
-
     }
 
 }

@@ -30,6 +30,7 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
 
     compile fileTree(dir: 'libs', include: '*.jar')
+    compile project(":NMSUtils")
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens

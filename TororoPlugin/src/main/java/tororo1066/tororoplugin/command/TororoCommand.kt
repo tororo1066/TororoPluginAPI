@@ -1,8 +1,13 @@
 package tororo1066.tororoplugin.command
 
+import net.minecraft.world.item.ItemStack.HideFlags
 import org.bukkit.NamespacedKey
+import org.bukkit.attribute.Attribute
+import org.bukkit.attribute.AttributeModifier
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
+import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import tororo1066.tororoplugin.TororoPlugin
@@ -13,6 +18,7 @@ import tororo1066.tororopluginapi.sCommand.SCommand
 import tororo1066.tororopluginapi.sCommand.SCommandArg
 import tororo1066.tororopluginapi.sCommand.SCommandArgType
 import tororo1066.tororopluginapi.utils.toPlayer
+import java.util.*
 
 class TororoCommand: SCommand("tororo","","tororo.op") {
 
@@ -28,7 +34,7 @@ class TororoCommand: SCommand("tororo","","tororo.op") {
         }
 
     @SCommandBody
-    val itemReLore = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("lore")).addArg(SCommandArg().addAlias("lore(\\nで改行)"))
+    val itemLore = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("lore")).addArg(SCommandArg().addAlias("lore(\\nで改行)"))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
                 it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
@@ -41,7 +47,7 @@ class TororoCommand: SCommand("tororo","","tororo.op") {
         }
 
     @SCommandBody
-    val itemReName = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("name")).addArg(SCommandArg().addAlias("name"))
+    val itemName = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("name")).addArg(SCommandArg().addAlias("name"))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
                 it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
@@ -78,6 +84,40 @@ class TororoCommand: SCommand("tororo","","tororo.op") {
             it.sender.inventory.itemInMainHand.addUnsafeEnchantment(Enchantment.getByKey(NamespacedKey.minecraft(it.args[2]))!!,it.args[3].toInt())
             it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
         }
+
+    @SCommandBody
+    val itemAttribute = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("attribute"))
+        .addArg(SCommandArg().addAllowString(Attribute.values().map { it.name.toLowerCase() }.toTypedArray()))
+        .addArg(SCommandArg().addAllowType(SCommandArgType.DOUBLE).addAlias("level"))
+        .addArg(SCommandArg().addAllowString(EquipmentSlot.values().map { it.name.toLowerCase() }.toTypedArray()))
+        .setPlayerExecutor {
+            if (it.sender.inventory.itemInMainHand.type.isAir){
+                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                return@setPlayerExecutor
+            }
+            val meta = it.sender.inventory.itemInMainHand.itemMeta!!
+            val uuid = UUID.randomUUID()
+            meta.addAttributeModifier(Attribute.valueOf(it.args[2].toUpperCase()), AttributeModifier(uuid,uuid.toString(),it.args[3].toDouble(),AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.valueOf(it.args[4].toUpperCase())))
+            it.sender.inventory.itemInMainHand.itemMeta = meta
+            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+        }
+
+    @SCommandBody
+    val itemFlags = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("flags"))
+        .addArg(SCommandArg().addAllowString(ItemFlag.values().map { it.name.toLowerCase() }.toTypedArray()))
+        .setPlayerExecutor {
+            if (it.sender.inventory.itemInMainHand.type.isAir){
+                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                return@setPlayerExecutor
+            }
+            val meta = it.sender.inventory.itemInMainHand.itemMeta!!
+            meta.addItemFlags(ItemFlag.valueOf(it.args[2].toUpperCase()))
+            it.sender.inventory.itemInMainHand.itemMeta = meta
+            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+        }
+
+
+
 
     @SEvent
     fun onCommandProcess(e: PlayerCommandPreprocessEvent){

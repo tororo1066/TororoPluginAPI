@@ -1,2 +1,5 @@
 include("TororoPluginAPI")
 include("TororoPlugin")
+include("NMSUtils:base")
+include("NMSUtils:v1_17_1")
+include("NMSUtils:v1_19_2")

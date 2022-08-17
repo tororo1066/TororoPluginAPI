@@ -159,7 +159,12 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     /**
      * @return loreのリスト なければ空
      */
+    @Deprecated("use getLore()",ReplaceWith("getLore()"))
     fun getStringLore(): List<String> {
+        return getLore()
+    }
+
+    fun getLore(): List<String> {
         return this.itemMeta?.lore?: listOf()
     }
 
@@ -169,7 +174,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun addLore(lore : List<String>): SItem {
-        return setLore(getStringLore().toMutableList().apply { addAll(lore) })
+        return setLore(getLore().toMutableList().apply { addAll(lore) })
     }
 
     /**
@@ -230,14 +235,12 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun setEnchantment(enchantment: Enchantment, level: Int): SItem {
-        val meta = this.itemMeta?:return this
-        meta.addEnchant(enchantment,level,true)
-        this.itemMeta = meta
+        this.addUnsafeEnchantment(enchantment,level)
         return this
     }
 
     fun getEnchantment(enchantment: Enchantment): Int? {
-        val level = this.itemMeta?.getEnchantLevel(enchantment)
+        val level = (this.itemMeta?:return null).getEnchantLevel(enchantment)
         if (level == 0)return null
         return level
     }

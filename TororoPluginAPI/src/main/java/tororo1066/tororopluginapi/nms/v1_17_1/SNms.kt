@@ -15,6 +15,7 @@ class SNms : ISNms {
 
     override fun updateInventoryTitle(p: Player, inv: Inventory, title: String) {
         val ep = (p as CraftPlayer).handle
+
         val con = when(inv.size){
             9-> Containers.a
             18-> Containers.b
