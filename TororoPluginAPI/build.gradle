@@ -61,7 +61,6 @@ compileTestKotlin {
     }
 }
 repositories {
-    mavenLocal()
     maven { url 'https://jitpack.io' }
 }
 dependencies {

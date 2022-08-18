@@ -33,8 +33,11 @@ allprojects {
     }
 }
 
-allprojects {
+subprojects {
     apply plugin: 'maven-publish'
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
     publishing {
         publications {
             maven(MavenPublication) {
