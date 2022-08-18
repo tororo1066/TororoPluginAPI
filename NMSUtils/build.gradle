@@ -19,7 +19,6 @@ allprojects {
 
     dependencies {
         compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-        compile fileTree(dir: 'libs', include: '*.jar')
     }
 
     compileKotlin {

@@ -1,3 +1,11 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            url = "https://papermc.io/repo/repository/maven-public/"
+        }
+    }
+}
 include("TororoPluginAPI")
 include("TororoPlugin")
 include("NMSUtils:base")

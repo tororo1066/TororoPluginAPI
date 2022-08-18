@@ -1,11 +1,9 @@
 package tororo1066.nmsutils
 
-import net.minecraft.network.chat.ChatMessageContent
-import net.minecraft.network.chat.IChatBaseComponent
-import net.minecraft.network.chat.IChatMutableComponent
-import net.minecraft.network.protocol.game.PacketPlayOutCollect
-import net.minecraft.network.protocol.game.PacketPlayOutOpenWindow
-import net.minecraft.world.inventory.Containers
+import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
+import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket
+import net.minecraft.world.inventory.MenuType
 import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
 import org.bukkit.entity.Item
@@ -18,23 +16,23 @@ class SNmsImpl: SNms {
         val ep = (p as CraftPlayer).handle
 
         val con = when(inv.size){
-            9-> Containers.a
-            18-> Containers.b
-            27-> Containers.c
-            36-> Containers.d
-            45-> Containers.e
-            54-> Containers.f
-            else-> Containers.f
+            9-> MenuType.GENERIC_9x1
+            18-> MenuType.GENERIC_9x2
+            27-> MenuType.GENERIC_9x3
+            36-> MenuType.GENERIC_9x4
+            45-> MenuType.GENERIC_9x5
+            54-> MenuType.GENERIC_9x6
+            else-> MenuType.GENERIC_9x6
         }
-        val packet = PacketPlayOutOpenWindow(ep.bU.j, con, ChatMessageContent(title).c())
-        ep.b.a(packet)
-        ep.a(ep.bU)
+        val packet = ClientboundOpenScreenPacket(ep.containerMenu.containerId, con, Component.empty().append(title))
+        ep.connection.send(packet)
+        ep.initMenu(ep.containerMenu)
     }
 
     override fun pickUpItemPacket(pickUpPlayer: Player, item: Item) {
-        val packet = PacketPlayOutCollect(item.entityId,pickUpPlayer.entityId,item.itemStack.amount)
+        val packet = ClientboundTakeItemEntityPacket(item.entityId,pickUpPlayer.entityId,item.itemStack.amount)
         Bukkit.getOnlinePlayers().forEach {
-            (it as CraftPlayer).handle.b.a(packet)
+            (it as CraftPlayer).handle.connection.send(packet)
         }
     }
 }
