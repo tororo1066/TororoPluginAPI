@@ -23,8 +23,7 @@ class SNms : ISNms {
             54-> Containers.f
             else-> Containers.f
         }
-        val packet = PacketPlayOutOpenWindow(ep.bU.j, con, ChatMessage(title))
-        ep.b.a(packet)
+        ep.b.a(PacketPlayOutOpenWindow(ep.bU.j, con, ChatMessage(title)))
         ep.a(ep.bU)
     }
 
