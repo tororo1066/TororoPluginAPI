@@ -33,17 +33,6 @@ allprojects {
             jvmTarget = "1.8"
         }
     }
-
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                groupId 'com.github.tororo1066'
-                artifactId 'TororoPluginAPI'
-                version project.version
-                from components.java
-            }
-        }
-    }
 }
 
 apply plugin: 'kotlin'
