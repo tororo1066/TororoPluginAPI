@@ -4,7 +4,6 @@ allprojects {
     group = 'tororo1066'
     version = '1.0-SNAPSHOT'
 
-
     repositories {
         mavenCentral()
         maven {
