@@ -76,10 +76,7 @@ tasks.withType(JavaCompile) {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId 'com.github.tororo1066'
-            artifactId 'TororoPluginAPI'
-            version project.version
-            from components.java
+
         }
     }
 }
