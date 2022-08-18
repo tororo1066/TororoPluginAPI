@@ -159,12 +159,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     /**
      * @return loreのリスト なければ空
      */
-    @Deprecated("use getLore()",ReplaceWith("getLore()"))
     fun getStringLore(): List<String> {
-        return getLore()
-    }
-
-    fun getLore(): List<String> {
         return this.itemMeta?.lore?: listOf()
     }
 
@@ -174,7 +169,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun addLore(lore : List<String>): SItem {
-        return setLore(getLore().toMutableList().apply { addAll(lore) })
+        return setLore(getStringLore().toMutableList().apply { addAll(lore) })
     }
 
     /**

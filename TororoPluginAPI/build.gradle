@@ -29,7 +29,6 @@ dependencies {
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
 
-    compile fileTree(dir: 'libs', include: '*.jar')
     compile project(":NMSUtils")
 }
 
@@ -71,15 +70,4 @@ dependencies {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId project.group
-            artifactId project.name
-            version project.version
-            from components.java
-        }
-    }
 }

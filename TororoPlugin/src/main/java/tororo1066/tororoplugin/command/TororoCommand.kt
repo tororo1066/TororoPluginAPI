@@ -1,6 +1,5 @@
 package tororo1066.tororoplugin.command
 
-import net.minecraft.world.item.ItemStack.HideFlags
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -8,8 +7,6 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
 import tororo1066.tororoplugin.TororoPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody

@@ -33,7 +33,7 @@ allprojects {
     }
 }
 
-subprojects {
+allprojects {
     apply plugin: 'maven-publish'
     publishing {
         publications {
