@@ -72,3 +72,14 @@ dependencies {
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'com.github.tororo1066'
+            artifactId 'TororoPluginAPI'
+            version project.version
+            from components.java
+        }
+    }
+}

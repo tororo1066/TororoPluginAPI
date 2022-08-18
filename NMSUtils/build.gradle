@@ -1,5 +1,6 @@
 allprojects {
     apply plugin: 'kotlin'
+    apply plugin: 'maven-publish'
 
     group = 'tororo1066'
     version = '1.0-SNAPSHOT'
@@ -30,6 +31,17 @@ allprojects {
     compileTestKotlin {
         kotlinOptions {
             jvmTarget = "1.8"
+        }
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId 'com.github.tororo1066'
+                artifactId 'TororoPluginAPI'
+                version project.version
+                from components.java
+            }
         }
     }
 }
