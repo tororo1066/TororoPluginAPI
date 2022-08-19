@@ -24,12 +24,11 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
 
-    compile project(":NMSUtils")
+    api project(":NMSUtils")
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -41,7 +40,7 @@ processResources {
     }
 }
 buildscript {
-    ext.kotlin_version = '1.4.0'
+    ext.kotlin_version = '1.6.10'
     repositories {
         mavenCentral()
     }

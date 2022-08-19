@@ -18,10 +18,10 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
 
-    compile project(":TororoPluginAPI")
+    api project(":TororoPluginAPI")
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -33,7 +33,7 @@ processResources {
     }
 }
 buildscript {
-    ext.kotlin_version = '1.4.0'
+    ext.kotlin_version = '1.6.10'
     repositories {
         mavenCentral()
     }

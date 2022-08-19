@@ -3,7 +3,7 @@ plugins {
 }
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
-    compile project(":NMSUtils:base")
+    compileOnly project(":NMSUtils:base")
     paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.19.2-R0.1-SNAPSHOT")
 }
 java {

@@ -17,7 +17,7 @@ allprojects {
     }
 
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+        api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     }
 
     compileKotlin {
@@ -53,7 +53,7 @@ subprojects {
 apply plugin: 'kotlin'
 
 buildscript {
-    ext.kotlin_version = '1.4.0'
+    ext.kotlin_version = '1.6.10'
     repositories {
         mavenCentral()
     }
