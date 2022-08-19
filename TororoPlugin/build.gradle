@@ -60,7 +60,7 @@ tasks.withType(JavaCompile) {
 jar {
     from {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        configurations.compile.collect {
+        configurations.runtimeClasspath.collect {
             it.isDirectory() ? it : zipTree(it)
         }
     }
