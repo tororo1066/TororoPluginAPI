@@ -18,12 +18,12 @@ tasks {
         }
     }
 }
-def arti = artifacts.add('archives',file("build/libs/v1_19_2-1.0-SNAPSHOT.jar"))
+
 
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact arti
+            artifact file("build/libs/v1_19_2-1.0-SNAPSHOT.jar")
             groupId project.group
             artifactId project.name
             version project.version
