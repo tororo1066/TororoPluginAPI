@@ -9,13 +9,25 @@ dependencies {
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
-
 tasks {
     assemble {
         dependsOn(reobfJar)
         setArchivesBaseName("v1_19_2")
         doLast {
             delete("build/libs/v1_19_2-1.0-SNAPSHOT-dev.jar")
+        }
+    }
+}
+def arti = artifacts.add('archives',file("build/libs/v1_19_2-1.0-SNAPSHOT.jar"))
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact arti
+            groupId project.group
+            artifactId project.name
+            version project.version
+            from components.java
         }
     }
 }
