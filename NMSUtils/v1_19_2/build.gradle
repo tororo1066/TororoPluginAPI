@@ -9,11 +9,22 @@ dependencies {
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
+tasks {
+    jar {
+        finalizedBy(reobfJar)
+    }
+    reobfJar {
+        doLast {
+            delete "build/libs/v1_19_2-1.0-SNAPSHOT-dev.jar"
+        }
+    }
+}
+
 
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact "$buildDir/libs/v1_19_2-1.0-SNAPSHOT.jar"
+            artifact "build/libs/v1_19_2-1.0-SNAPSHOT.jar"
             groupId project.group
             artifactId project.name
             version project.version
