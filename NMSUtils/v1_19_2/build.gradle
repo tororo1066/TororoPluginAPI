@@ -13,5 +13,9 @@ java {
 tasks {
     assemble {
         dependsOn(reobfJar)
+        setArchivesBaseName("v1_19_2")
+        doLast {
+            delete("build/libs/v1_19_2-1.0-SNAPSHOT-dev.jar")
+        }
     }
 }
