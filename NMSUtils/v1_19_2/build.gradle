@@ -13,7 +13,7 @@ java {
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact "build/libs/v1_19_2-1.0-SNAPSHOT.jar"
+            artifact "$buildDir/libs/v1_19_2-1.0-SNAPSHOT.jar"
             groupId project.group
             artifactId project.name
             version project.version
