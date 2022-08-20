@@ -28,7 +28,7 @@ dependencies {
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
 
-    api project(":NMSUtils")
+    api project(":NMSUtils:base")
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens

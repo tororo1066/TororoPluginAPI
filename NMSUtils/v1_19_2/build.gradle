@@ -21,12 +21,11 @@ tasks {
     }
 }
 
-def buildJar = artifacts.add("archives",file("$buildDir/libs/v1_19_2-1.0-SNAPSHOT.jar"))
 
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact(buildJar) {
+            artifact(file("$buildDir/libs/v1_19_2-1.0-SNAPSHOT.jar")) {
                 builtBy tasks.reobfJar
             }
             groupId project.group
