@@ -9,6 +9,10 @@ fun LocalDateTime.toDate(): Date {
     return Date.from(this.atZone(ZoneId.systemDefault()).toInstant())
 }
 
+fun LocalDateTime.toCalender(): Calendar? {
+    return Calendar.Builder().setInstant(this.toDate()).build()
+}
+
 fun Date.toCalender(): Calendar {
     return Calendar.Builder().setInstant(this).build()
 }

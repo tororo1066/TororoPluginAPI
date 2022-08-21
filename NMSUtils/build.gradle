@@ -1,5 +1,6 @@
 allprojects {
     apply plugin: 'kotlin'
+    apply plugin: 'maven-publish'
 
     group = 'tororo1066'
     version = '1.0-SNAPSHOT'
@@ -14,6 +15,7 @@ allprojects {
             name = 'sonatype'
             url = 'https://oss.sonatype.org/content/groups/public/'
         }
+        maven { url 'https://jitpack.io' }
     }
 
     dependencies {
@@ -33,13 +35,6 @@ allprojects {
     }
 }
 
-subprojects {
-    apply plugin: 'maven-publish'
-    repositories {
-        maven { url 'https://jitpack.io' }
-    }
-
-}
 
 apply plugin: 'kotlin'
 

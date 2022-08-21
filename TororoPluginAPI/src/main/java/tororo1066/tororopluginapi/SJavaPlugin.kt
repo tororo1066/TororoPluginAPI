@@ -1,6 +1,5 @@
 package tororo1066.tororopluginapi
 
-import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
@@ -15,7 +14,6 @@ import java.io.File
 import java.net.JarURLConnection
 import java.net.URISyntaxException
 import java.net.URL
-import java.util.function.Consumer
 import java.util.jar.JarFile
 
 abstract class SJavaPlugin() : JavaPlugin() {
@@ -95,7 +93,6 @@ abstract class SJavaPlugin() : JavaPlugin() {
                         if (e.javaClass != event)return
                         method.invoke(instance,event.cast(e))
                     }
-
                 }
                 server.pluginManager.registerEvent(method.parameters[0].type as Class<out Event>,listener,sEvent.property,listener,this)
             }

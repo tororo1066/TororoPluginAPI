@@ -71,7 +71,7 @@ class TororoCommand: SCommand("tororo","","tororo.op") {
 
     @SCommandBody
     val itemEnchant = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("enchant"))
-        .addArg(SCommandArg().addAllowString(Enchantment.values().map { it.key.key.toLowerCase() }.toTypedArray()))
+        .addArg(SCommandArg().addAllowString(Enchantment.values().map { it.key.key.lowercase() }.toTypedArray()))
         .addArg(SCommandArg().addAllowType(SCommandArgType.INT).addAlias("level"))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
@@ -84,9 +84,9 @@ class TororoCommand: SCommand("tororo","","tororo.op") {
 
     @SCommandBody
     val itemAttribute = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("attribute"))
-        .addArg(SCommandArg().addAllowString(Attribute.values().map { it.name.toLowerCase() }.toTypedArray()))
+        .addArg(SCommandArg().addAllowString(Attribute.values().map { it.name.lowercase() }.toTypedArray()))
         .addArg(SCommandArg().addAllowType(SCommandArgType.DOUBLE).addAlias("level"))
-        .addArg(SCommandArg().addAllowString(EquipmentSlot.values().map { it.name.toLowerCase() }.toTypedArray()))
+        .addArg(SCommandArg().addAllowString(EquipmentSlot.values().map { it.name.lowercase() }.toTypedArray()))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
                 it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
@@ -94,21 +94,21 @@ class TororoCommand: SCommand("tororo","","tororo.op") {
             }
             val meta = it.sender.inventory.itemInMainHand.itemMeta!!
             val uuid = UUID.randomUUID()
-            meta.addAttributeModifier(Attribute.valueOf(it.args[2].toUpperCase()), AttributeModifier(uuid,uuid.toString(),it.args[3].toDouble(),AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.valueOf(it.args[4].toUpperCase())))
+            meta.addAttributeModifier(Attribute.valueOf(it.args[2].uppercase()), AttributeModifier(uuid,uuid.toString(),it.args[3].toDouble(),AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.valueOf(it.args[4].uppercase())))
             it.sender.inventory.itemInMainHand.itemMeta = meta
             it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
         }
 
     @SCommandBody
     val itemFlags = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("flags"))
-        .addArg(SCommandArg().addAllowString(ItemFlag.values().map { it.name.toLowerCase() }.toTypedArray()))
+        .addArg(SCommandArg().addAllowString(ItemFlag.values().map { it.name.lowercase() }.toTypedArray()))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
                 it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
                 return@setPlayerExecutor
             }
             val meta = it.sender.inventory.itemInMainHand.itemMeta!!
-            meta.addItemFlags(ItemFlag.valueOf(it.args[2].toUpperCase()))
+            meta.addItemFlags(ItemFlag.valueOf(it.args[2].uppercase()))
             it.sender.inventory.itemInMainHand.itemMeta = meta
             it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
         }

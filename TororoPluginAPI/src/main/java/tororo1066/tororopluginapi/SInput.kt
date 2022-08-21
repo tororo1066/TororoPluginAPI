@@ -43,7 +43,7 @@ class SInput(private val plugin: JavaPlugin) {
     }
 
     fun <T>sendInputCUI(p: Player, type: Class<T>, action: Consumer<T>) {
-        sendInputCUI(p, type, "§a/<入れるデータ(${type.simpleName})>", action)
+        sendInputCUI(p, type, "§a/<入れるデータ(${type.simpleName})>\n§a/cancelでキャンセル", action)
     }
 
 
@@ -101,7 +101,7 @@ class SInput(private val plugin: JavaPlugin) {
                     return clazz.cast(int) as T
                 }
                 BlockFace::class.java -> {
-                    val face = UsefulUtility.sTry({BlockFace.valueOf(value.toUpperCase())},{null})?:return null
+                    val face = UsefulUtility.sTry({BlockFace.valueOf(value.uppercase())},{null})?:return null
                     return clazz.cast(face) as T
                 }
                 World::class.java -> {
