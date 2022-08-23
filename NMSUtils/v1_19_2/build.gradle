@@ -16,7 +16,7 @@ tasks {
     }
     reobfJar {
         doLast {
-
+            delete "$buildDir/libs/v1_19_2-1.0-SNAPSHOT-dev.jar"
         }
     }
 }
