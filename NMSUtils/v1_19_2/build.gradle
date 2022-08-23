@@ -30,7 +30,7 @@ publishing {
             }
             groupId project.group
             artifactId project.name
-            version project.version
+            version "1.0-SNAPSHOT"
             from components.java
         }
     }
