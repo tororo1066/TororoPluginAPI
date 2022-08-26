@@ -1,4 +1,4 @@
-package tororo1066.nmsutils
+package tororo1066.nmsutils.v1_17_1
 
 import net.minecraft.network.chat.ChatMessage
 import net.minecraft.network.protocol.game.PacketPlayOutCollect
@@ -9,6 +9,7 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
+import tororo1066.nmsutils.SNms
 
 class SNmsImpl: SNms {
 

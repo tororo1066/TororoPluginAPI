@@ -23,8 +23,4 @@ interface SNms {
             }
         }
     }
-
-    fun getNMSClass(){
-
-    }
 }

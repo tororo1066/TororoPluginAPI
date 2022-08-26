@@ -1,4 +1,4 @@
-package tororo1066.nmsutils
+package tororo1066.nmsutils.v1_19_2
 
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
@@ -9,6 +9,7 @@ import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
+import tororo1066.nmsutils.SNms
 
 class SNmsImpl: SNms {
 
@@ -35,4 +36,5 @@ class SNmsImpl: SNms {
             (it as CraftPlayer).handle.connection.send(packet)
         }
     }
+
 }
