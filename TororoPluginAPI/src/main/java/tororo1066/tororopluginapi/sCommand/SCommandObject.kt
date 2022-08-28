@@ -47,7 +47,7 @@ class SCommandObject {
         this.executors.add(executor)
         return this
     }
-
+    @Deprecated("Use setNormalExecutor",ReplaceWith("setNormalExecutor(executor)"))
     fun setExecutor(executor: Consumer<SCommandData>): SCommandObject {
         this.consumerExecutors.add(executor)
         return this
@@ -58,6 +58,11 @@ class SCommandObject {
     fun setExecutor(executor: Consumer<SCommandOnlyPlayerData>): SCommandObject {
         setMode(Mode.PLAYER)
         this.onlyPlayerConsumerExecutors.add(executor)
+        return this
+    }
+
+    fun setNormalExecutor(executor: Consumer<SCommandData>): SCommandObject {
+        this.consumerExecutors.add(executor)
         return this
     }
 

@@ -2,5 +2,7 @@ name: TororoPluginAPI
 version: 1.0
 main: tororo1066.tororoplugin.TororoPlugin
 api-version: 1.17
+softdepend:
+  - Essentials
 commands:
   tororo:

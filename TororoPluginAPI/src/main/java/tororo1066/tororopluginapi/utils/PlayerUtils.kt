@@ -11,3 +11,21 @@ fun UUID.toPlayer(): Player? {
 fun String.toPlayer(): Player? {
     return Bukkit.getPlayer(this)
 }
+
+fun UUID.toPlayer(onFail: (UUID) -> Unit): Player? {
+    val p = this.toPlayer()
+    if (p == null){
+        onFail.invoke(this)
+        return null
+    }
+    return p
+}
+
+fun String.toPlayer(onFail: (String) -> Unit): Player? {
+    val p = this.toPlayer()
+    if (p == null){
+        onFail.invoke(this)
+        return null
+    }
+    return p
+}

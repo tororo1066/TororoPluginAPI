@@ -17,7 +17,7 @@ tasks {
     }
     reobfJar {
         doLast {
-            artifacts.add("reobf",file("$buildDir/libs/v1_19_2-1.0-SNAPSHOT.jar"))
+            delete "$buildDir/libs/v1_19_2-1.0-SNAPSHOT-dev.jar"
         }
         finalizedBy('generateMetadataFileForMavenPublication')
     }
@@ -28,7 +28,6 @@ publishing {
         maven(MavenPublication) {
             artifact("$buildDir/libs/v1_19_2-1.0-SNAPSHOT.jar"){
                 builtBy reobfJar
-                extension 'reobf'
             }
             groupId project.group
             artifactId project.name
