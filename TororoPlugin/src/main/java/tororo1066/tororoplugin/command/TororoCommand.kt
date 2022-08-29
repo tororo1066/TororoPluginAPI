@@ -25,7 +25,7 @@ import tororo1066.tororopluginapi.utils.toPlayer
 import java.util.*
 import kotlin.math.floor
 
-class TororoCommand: SCommand("tororo","","tororo.op") {
+class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
 
     @SCommandBody
     val sendToCommandLog = command().addArg(SCommandArg().addAllowString("commandLog")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))
@@ -137,6 +137,8 @@ class TororoCommand: SCommand("tororo","","tororo.op") {
             it.sender.sendCopyableMsg("§7Health: ${p.health}/${p.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue}",p.health.toString())
             it.sender.sendCopyableMsg("§7Food: ${p.exhaustion}/20.0",p.exhaustion.toString())
             it.sender.sendCopyableMsg("§7WalkSpeed: ${p.walkSpeed}(Default: 0.2)",p.walkSpeed.toString())
+            it.sender.sendCopyableMsg("§7Exp: ${p.totalExperience}",p.totalExperience.toString())
+            it.sender.sendCopyableMsg("§7Level: ${p.level}",p.level.toString())
             if (TororoPlugin.essentials != null){
                 val isAfk = TororoPlugin.essentials!!.getUser(p).isAfk
                 it.sender.sendCopyableMsg("§7Afk: $isAfk",isAfk.toString())
@@ -213,6 +215,20 @@ class TororoCommand: SCommand("tororo","","tororo.op") {
         .setNormalExecutor {
             val p = it.args[1].toPlayer()!!
             it.sender.sendCopyableMsg("§7WalkSpeed: ${p.walkSpeed}(Default: 0.2)",p.walkSpeed.toString())
+        }
+
+    @SCommandBody
+    val playerExpInfo = getPInfoCommand().addArg(SCommandArg().addAllowString("exp"))
+        .setNormalExecutor {
+            val p = it.args[1].toPlayer()!!
+            it.sender.sendCopyableMsg("§7Exp: ${p.totalExperience}",p.totalExperience.toString())
+        }
+
+    @SCommandBody
+    val playerLevelInfo = getPInfoCommand().addArg(SCommandArg().addAllowString("level"))
+        .setNormalExecutor {
+            val p = it.args[1].toPlayer()!!
+            it.sender.sendCopyableMsg("§7Level: ${p.level}",p.level.toString())
         }
 
     @SCommandBody

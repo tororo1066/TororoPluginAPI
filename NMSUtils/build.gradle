@@ -1,0 +1,13 @@
+
+tasks {
+    jar {
+        dependsOn("v1_17_1:build")
+        dependsOn("v1_19_2:build")
+    }
+}
+
+jar {
+    from {
+        files("v1_17_1/build/libs/v1_17_1-1.0-SNAPSHOT.jar","v1_19_2/build/libs/v1_19_2-1.0-SNAPSHOT.jar")
+    }
+}

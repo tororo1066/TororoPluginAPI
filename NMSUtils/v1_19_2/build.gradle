@@ -10,29 +10,8 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
-
 tasks {
     jar {
         finalizedBy(reobfJar)
-    }
-    reobfJar {
-        doLast {
-            delete "$buildDir/libs/v1_19_2-1.0-SNAPSHOT-dev.jar"
-        }
-        finalizedBy('generateMetadataFileForMavenPublication')
-    }
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifact("$buildDir/libs/v1_19_2-1.0-SNAPSHOT.jar"){
-                builtBy reobfJar
-            }
-            groupId project.group
-            artifactId project.name
-            version project.version
-            from components.java
-        }
     }
 }
