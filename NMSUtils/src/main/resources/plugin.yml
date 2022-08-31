@@ -1,3 +1,4 @@
 name: NMSUtils
 main: tororo1066.nmsutils.NMSUtilsClass
 version: 1.0
+api-version: 1.17
