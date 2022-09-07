@@ -5,7 +5,7 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.annotation.SCommandBody
-import tororo1066.tororopluginapi.annotation.SEvent
+import tororo1066.tororopluginapi.annotation.SEventHandler
 import tororo1066.tororopluginapi.otherPlugin.SVault
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.sCommand.SCommand
@@ -80,21 +80,25 @@ abstract class SJavaPlugin() : JavaPlugin() {
                 instancedClasses[instance.javaClass] = instance
             }
 
-            clazz.methods.forEach second@ { method ->
-                if (!method.isAnnotationPresent(SEvent::class.java))return@second
-                if (method.parameterTypes.size != 1)return@second
-                val sEvent = method.getAnnotation(SEvent::class.java)
-                val event = method.parameterTypes[0]
-                if (!sEvent.autoRegister)return@second
-                val instance =
-                    if (instancedClasses.contains(clazz)) instancedClasses[clazz]!! else clazz.getConstructor().newInstance()
-                val listener = object : Listener, EventExecutor {
-                    override fun execute(listener: Listener, e: Event) {
-                        if (e.javaClass != event)return
-                        method.invoke(instance,event.cast(e))
+            try {
+                clazz.declaredMethods.forEach second@ { method ->
+                    if (!method.isAnnotationPresent(SEventHandler::class.java))return@second
+                    if (method.parameterTypes.size != 1)return@second
+                    val sEvent = method.getAnnotation(SEventHandler::class.java)
+                    val event = method.parameterTypes[0]
+                    if (!sEvent.autoRegister)return@second
+                    val instance =
+                        if (instancedClasses.contains(clazz)) instancedClasses[clazz]!! else clazz.getConstructor().newInstance()
+                    val listener = object : Listener, EventExecutor {
+                        override fun execute(listener: Listener, e: Event) {
+                            if (e.javaClass != event)return
+                            method.invoke(instance,event.cast(e))
+                        }
                     }
+                    server.pluginManager.registerEvent(method.parameters[0].type as Class<out Event>,listener,sEvent.property,listener,this)
                 }
-                server.pluginManager.registerEvent(method.parameters[0].type as Class<out Event>,listener,sEvent.property,listener,this)
+            } catch (_: NoClassDefFoundError){
+
             }
         }
 

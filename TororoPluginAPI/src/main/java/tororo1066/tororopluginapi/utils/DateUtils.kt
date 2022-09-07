@@ -25,6 +25,7 @@ enum class DateType {
     MONTH,
     YEAR
 }
+
 fun Long.toJPNDateStr(longType: DateType, toDateType: DateType, vararg replaceDate: DateType): String? {
     var second = 0L
     var minute = 0L

@@ -1,22 +1,20 @@
 package tororo1066.tororoplugin.command
 
-import com.earth2me.essentials.Essentials
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.event.ClickEvent
-import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.command.CommandSender
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import tororo1066.tororoplugin.TororoPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
-import tororo1066.tororopluginapi.annotation.SEvent
+import tororo1066.tororopluginapi.annotation.SEventHandler
 import tororo1066.tororopluginapi.sCommand.SCommand
 import tororo1066.tororopluginapi.sCommand.SCommandArg
 import tororo1066.tororopluginapi.sCommand.SCommandArgType
@@ -25,7 +23,12 @@ import tororo1066.tororopluginapi.utils.toPlayer
 import java.util.*
 import kotlin.math.floor
 
+@Suppress("UNUSED")
 class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
+
+
+    val iInfoCommand = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("info"))
+
 
     @SCommandBody
     val sendToCommandLog = command().addArg(SCommandArg().addAllowString("commandLog")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))
@@ -243,7 +246,34 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
             it.sender.sendCopyableMsg("§7Afk: $isAfk",isAfk.toString())
         }
 
-    @SEvent
+    @SCommandBody
+    val itemInfo = iInfoCommand.setPlayerExecutor {
+        val item = it.sender.inventory.itemInMainHand
+        it.sender.sendCopyableMsg("§7Type: ${item.type.name}",item.type.name)
+        it.sender.sendCopyableMsg("§7DisplayName: §r${item.itemMeta.displayName}",item.itemMeta.displayName)
+        it.sender.sendMessage("§7Lore: ${if (item.itemMeta.lore.isNullOrEmpty()) "Empty" else ""}")
+        item.itemMeta.lore?.forEach { str ->
+            it.sender.sendCopyableMsg(str,str)
+        }
+        val cmd = if (item.itemMeta.hasCustomModelData()) item.itemMeta.customModelData.toString() else "None"
+        it.sender.sendCopyableMsg("§7CustomModelData: $cmd",cmd)
+        it.sender.sendCopyableMsg("§7isUnbreakable: ${item.itemMeta.isUnbreakable}",item.itemMeta.isUnbreakable.toString())
+        it.sender.sendMessage("§7Enchantments: ${if (item.enchantments.isEmpty()) "Empty" else ""}")
+        item.enchantments.forEach { (enchant, level) ->
+            it.sender.sendCopyableMsg(SStr("&7").appendTrans(enchant.translationKey()).plus(" Level $level").toTextComponent(),enchant.key.key)
+        }
+        it.sender.sendMessage("§7ItemFlags: ${if (item.itemFlags.isEmpty()) "Empty" else ""}")
+        item.itemFlags.forEach { flag ->
+            it.sender.sendCopyableMsg("§7${flag.name}",flag.name)
+        }
+        it.sender.sendMessage("§7Attributes: ${if (item.itemMeta.attributeModifiers == null || item.itemMeta.attributeModifiers!!.isEmpty) "Empty" else ""}")
+        item.itemMeta.attributeModifiers?.forEach { data, level ->
+            it.sender.sendCopyableMsg(SStr("&7").appendTrans(data.translationKey()).plus(" Level ${level.amount}").toTextComponent(),data.name)
+        }
+
+    }
+
+    @SEventHandler
     fun onCommandProcess(e: PlayerCommandPreprocessEvent){
         if (e.isCancelled)return
         TororoPlugin.commandLogPlayers.forEach {
@@ -259,8 +289,13 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
         return getPlayerCommand().addArg(SCommandArg().addAllowString("info"))
     }
 
+
+
     private fun CommandSender.sendCopyableMsg(msg: String, copy: String){
-        this.sendMessage(Component.text(msg).clickEvent(ClickEvent.copyToClipboard(copy)))
+        this.sendMessage(text(msg).clickEvent(ClickEvent.copyToClipboard(copy)))
     }
 
+    private fun CommandSender.sendCopyableMsg(msg: Component, copy: String){
+        this.sendMessage(msg.clickEvent(ClickEvent.copyToClipboard(copy)))
+    }
 }

@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.TranslatableComponent
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -29,13 +30,31 @@ class SStr {
         this.disableOptions.addAll(disableOptions)
     }
 
+    private constructor(component: Component){
+        componentBuilder.append(component)
+    }
+
     fun append(any: Any): SStr {
-        if (disableOptions.contains(DisableOption.COLOR_CODE)){
+        if (disableOptions.contains(DisableOption.COLOR_CODE)) {
             this.componentBuilder.append(Component.text(any.toString()))
             return this
         }
-        this.componentBuilder.append(Component.text(any.toString().replace("&","§")))
+        this.componentBuilder.append(Component.text(any.toString().replace("&", "§")))
         return this
+    }
+
+    fun appendTrans(key: String): SStr {
+        this.componentBuilder.append(Component.translatable(key))
+        return this
+    }
+
+
+    operator fun plus(any: Any): SStr {
+        return append(any)
+    }
+
+    operator fun plusAssign(any: Any) {
+        append(any)
     }
 
     fun toInt(): Int?{
@@ -77,8 +96,12 @@ class SStr {
     }
 
     companion object{
-        fun String.toSStr(): SStr{
+
+        fun Component.toSStr(): SStr {
             return SStr(this)
+        }
+        fun Any.toSStr(): SStr{
+            return SStr(this.toString())
         }
     }
 }

@@ -11,14 +11,17 @@ interface SNms {
     fun pickUpItemPacket(pickUpPlayer: Player, item: Item)
 
     companion object{
-        fun newInstance() : SNms? {
+        fun newInstance() : SNms {
+            return newNullableInstance()?:throw UnsupportedOperationException("SNms not supported mc_version ${Bukkit.getServer().minecraftVersion}.")
+        }
+
+        fun newNullableInstance() : SNms? {
             return try {
                 val version = Bukkit.getServer().bukkitVersion.split("-")[0].replace(".","_")
                 val clazz = Class.forName("tororo1066.nmsutils.v${version}.SNmsImpl")
                 val instance = clazz.getConstructor().newInstance() as SNms
                 instance
             } catch (e: Exception){
-                e.printStackTrace()
                 return null
             }
         }

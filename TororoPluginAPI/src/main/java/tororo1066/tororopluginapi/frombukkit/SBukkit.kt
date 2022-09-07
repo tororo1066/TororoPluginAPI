@@ -4,10 +4,10 @@ import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
-import tororo1066.tororopluginapi.defaultMenus.NormalInventory
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SJavaPlugin
-import tororo1066.tororopluginapi.annotation.SEvent
+import tororo1066.tororopluginapi.annotation.SEventHandler
+import tororo1066.tororopluginapi.defaultMenus.NormalInventory
 
 class SBukkit {
 
@@ -23,11 +23,11 @@ class SBukkit {
             return NormalInventory(plugin, name, row)
         }
 
-        fun registerSEvents(clazz: Any, plugin: JavaPlugin): Boolean{
+        fun registerSEvent(clazz: Any, plugin: JavaPlugin): Boolean{
             clazz.javaClass.methods.forEach { method ->
-                if (!method.isAnnotationPresent(SEvent::class.java))return@forEach
+                if (!method.isAnnotationPresent(SEventHandler::class.java))return@forEach
                 if (method.parameterTypes.size != 1)return@forEach
-                val sEvent = method.getAnnotation(SEvent::class.java)
+                val sEvent = method.getAnnotation(SEventHandler::class.java)
                 val event = method.parameterTypes[0]
 
                 val listener = object : Listener, EventExecutor {
@@ -42,8 +42,8 @@ class SBukkit {
             return true
         }
 
-        fun registerSEvents(clazz: Any): Boolean {
-            return registerSEvents(clazz,SJavaPlugin.plugin)
+        fun registerSEvent(clazz: Any): Boolean {
+            return registerSEvent(clazz,SJavaPlugin.plugin)
         }
 
     }
