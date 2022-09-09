@@ -2,8 +2,10 @@ package tororo1066.tororopluginapi.sCommand
 
 import org.bukkit.Bukkit
 import org.bukkit.command.*
+import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.SDebug
 import tororo1066.tororopluginapi.sCommand.report.ReportCommand
 import tororo1066.tororopluginapi.sCommand.report.ReportList
 import tororo1066.tororopluginapi.sCommand.report.ReportListAll
@@ -139,8 +141,19 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
                     Bukkit.dispatchCommand(it.player,"$command reportlist")
                 }
             }
-
         }
+    }
+
+    fun registerDebugCommand(){
+        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("debug")).addArg(SCommandArg().addAllowType(SCommandArgType.INT).addAlias("level"))
+            .setNormalExecutor {
+                if (it.sender is Player){
+                    SDebug.debugLevel[it.sender.uniqueId] = it.args[1].toInt()
+                } else {
+                    SDebug.consoleSenderLevel = it.args[1].toInt()
+                }
+                it.sender.sendMessage("${it.sender.name} debug level ${it.args[1]} now.")
+            })
     }
 
 }
