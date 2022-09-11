@@ -144,8 +144,9 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
         }
     }
 
-    fun registerDebugCommand(){
+    fun registerDebugCommand(perm: String){
         addCommand(SCommandObject().addArg(SCommandArg().addAllowString("debug")).addArg(SCommandArg().addAllowType(SCommandArgType.INT).addAlias("level"))
+            .addNeedPermission(perm)
             .setNormalExecutor {
                 if (it.sender is Player){
                     SDebug.debugLevel[it.sender.uniqueId] = it.args[1].toInt()
