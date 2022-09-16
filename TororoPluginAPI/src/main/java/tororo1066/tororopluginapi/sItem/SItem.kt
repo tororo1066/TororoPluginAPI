@@ -243,7 +243,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     /**
      * @return SInventoryItem
      */
-    fun toSInventoryItem(): SInventoryItem {
+    open fun toSInventoryItem(): SInventoryItem {
         return SInventoryItem(this)
     }
 

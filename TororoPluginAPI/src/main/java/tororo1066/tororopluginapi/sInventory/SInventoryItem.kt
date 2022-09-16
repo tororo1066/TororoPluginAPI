@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.sItem.SItem
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.function.BiConsumer
 import java.util.function.Consumer
 
 /**
@@ -18,7 +19,9 @@ import java.util.function.Consumer
 open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
 
     private val clickEvent = ArrayList<Consumer<InventoryClickEvent>>()
+    private val biClickEvent = ArrayList<BiConsumer<SInventoryItem,InventoryClickEvent>>()
     private val asyncClickEvent = ArrayList<Consumer<InventoryClickEvent>>()
+    private val biAsyncClickEvent = ArrayList<BiConsumer<SInventoryItem,InventoryClickEvent>>()
     private var canClick = true
     private val thread: ExecutorService = Executors.newCachedThreadPool()
 
@@ -36,6 +39,16 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
      */
     fun setClickEvent(event : Consumer<InventoryClickEvent>): SInventoryItem {
         clickEvent.add(event)
+        return this
+    }
+
+    fun setBiClickEvent(event: BiConsumer<SInventoryItem,InventoryClickEvent>): SInventoryItem {
+        biClickEvent.add(event)
+        return this
+    }
+
+    fun setAsyncBiClickEvent(event: BiConsumer<SInventoryItem,InventoryClickEvent>): SInventoryItem {
+        biAsyncClickEvent.add(event)
         return this
     }
 
@@ -62,8 +75,16 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
             event.accept(e)
         }
 
+        for (event in biClickEvent){
+            event.accept(this,e)
+        }
+
         for (event in asyncClickEvent){
             thread.execute { event.accept(e) }
+        }
+
+        for (event in biAsyncClickEvent){
+            thread.execute { event.accept(this,e) }
         }
     }
 
@@ -112,5 +133,7 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
         this.addUnsafeEnchantment(enchantment,level)
         return this
     }
+
+
 
 }
