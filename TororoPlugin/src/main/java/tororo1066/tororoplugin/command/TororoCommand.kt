@@ -3,6 +3,7 @@ package tororo1066.tororoplugin.command
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.event.ClickEvent
+import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -11,6 +12,9 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
+import org.bukkit.inventory.Recipe
+import org.bukkit.inventory.ShapedRecipe
+import org.bukkit.inventory.meta.Damageable
 import tororo1066.tororoplugin.TororoPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
@@ -124,6 +128,38 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
             it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
         }
 
+
+    @SCommandBody
+    val itemDura = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("durability"))
+        .addArg(SCommandArg().addAllowType(SCommandArgType.INT).addAlias("耐久"))
+        .setPlayerExecutor {
+            if (it.sender.inventory.itemInMainHand.type.isAir){
+                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                return@setPlayerExecutor
+            }
+            val meta = it.sender.inventory.itemInMainHand.itemMeta!!
+            if (meta !is Damageable){
+                it.sender.sendMessage(TororoPlugin.prefix + "§cこのアイテムには耐久が存在しません")
+                return@setPlayerExecutor
+            }
+            meta.damage = it.sender.inventory.itemInMainHand.type.maxDurability.toInt() - it.args[2].toInt()
+            it.sender.inventory.itemInMainHand.itemMeta = meta
+            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+        }
+
+    @SCommandBody
+    val itemUnbreakable = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("unbreakable")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))
+        .setPlayerExecutor {
+            if (it.sender.inventory.itemInMainHand.type.isAir){
+                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                return@setPlayerExecutor
+            }
+            val meta = it.sender.inventory.itemInMainHand.itemMeta!!
+            meta.isUnbreakable = it.args[2].toBoolean()
+            it.sender.inventory.itemInMainHand.itemMeta = meta
+            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+        }
+    
     @SCommandBody
     val playerInfo = getPInfoCommand()
         .setNormalExecutor {
@@ -258,9 +294,13 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
         val cmd = if (item.itemMeta.hasCustomModelData()) item.itemMeta.customModelData.toString() else "None"
         it.sender.sendCopyableMsg("§7CustomModelData: $cmd",cmd)
         it.sender.sendCopyableMsg("§7isUnbreakable: ${item.itemMeta.isUnbreakable}",item.itemMeta.isUnbreakable.toString())
+        if (item.itemMeta is Damageable){
+            it.sender.sendCopyableMsg("§7Durability: ${item.type.maxDurability.toInt() - (item.itemMeta as Damageable).damage}/${item.type.maxDurability.toInt()}"
+                ,(item.type.maxDurability.toInt() - (item.itemMeta as Damageable).damage).toString())
+        }
         it.sender.sendMessage("§7Enchantments: ${if (item.enchantments.isEmpty()) "Empty" else ""}")
         item.enchantments.forEach { (enchant, level) ->
-            it.sender.sendCopyableMsg(SStr("&7").appendTrans(enchant.translationKey()).plus(" Level $level").toTextComponent(),enchant.key.key)
+            it.sender.sendCopyableMsg(SStr("&7${enchant.key.key} Level $level").toTextComponent(),enchant.key.key)
         }
         it.sender.sendMessage("§7ItemFlags: ${if (item.itemFlags.isEmpty()) "Empty" else ""}")
         item.itemFlags.forEach { flag ->
@@ -268,7 +308,7 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
         }
         it.sender.sendMessage("§7Attributes: ${if (item.itemMeta.attributeModifiers == null || item.itemMeta.attributeModifiers!!.isEmpty) "Empty" else ""}")
         item.itemMeta.attributeModifiers?.forEach { data, level ->
-            it.sender.sendCopyableMsg(SStr("&7").appendTrans(data.translationKey()).plus(" Level ${level.amount}").toTextComponent(),data.name)
+            it.sender.sendCopyableMsg(SStr("&7${data.name} Level ${level.amount}").toTextComponent(),data.name)
         }
 
     }

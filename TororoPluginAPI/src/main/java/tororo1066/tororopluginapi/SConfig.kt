@@ -22,6 +22,16 @@ class SConfig(val plugin: JavaPlugin) {
         return YamlConfiguration.loadConfiguration(file)
     }
 
+    fun getConfigList(path: String): List<YamlConfiguration>{
+        val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}/")
+        val yaml = ArrayList<YamlConfiguration>()
+        (file.listFiles()?:return emptyList()).forEach {
+            if (it.extension != "yml")return@forEach
+            yaml.add(YamlConfiguration.loadConfiguration(it))
+        }
+        return yaml
+    }
+
     fun saveConfig(configuration: YamlConfiguration, path: String): Boolean {
         val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
         if (file.exists()){

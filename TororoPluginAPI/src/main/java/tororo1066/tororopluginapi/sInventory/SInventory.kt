@@ -158,6 +158,22 @@ abstract class SInventory(val plugin: JavaPlugin) {
         setItems(slot, SInventoryItem(material))
     }
 
+    fun setItems(slot : IntRange, item: SInventoryItem){
+        setItems(slot.toList(),item)
+    }
+
+    fun setItems(slot : IntRange, item: SItem){
+        setItems(slot.toList(),item)
+    }
+
+    fun setItems(slot : IntRange, item: ItemStack){
+        setItems(slot.toList(),item)
+    }
+
+    fun setItems(slot : IntRange, material: Material){
+        setItems(slot.toList(),material)
+    }
+
     /**
      * インベントリをクリアする
      */
@@ -174,6 +190,17 @@ abstract class SInventory(val plugin: JavaPlugin) {
     fun removeItem(slot : Int){
         items.remove(slot)
         inv.clear(slot)
+    }
+
+    fun removeItems(slot : List<Int>){
+        slot.forEach {
+            items.remove(it)
+            inv.clear(it)
+        }
+    }
+
+    fun removeItems(slot : IntRange){
+        removeItems(slot.toList())
     }
 
     /**
