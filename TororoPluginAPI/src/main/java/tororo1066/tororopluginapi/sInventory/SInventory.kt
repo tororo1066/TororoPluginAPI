@@ -30,7 +30,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     private var name = "Inventory"
     private var row = 9
-    private var inv : Inventory
+    var inv : Inventory
 
     private val thread: ExecutorService = Executors.newCachedThreadPool()
 
@@ -83,11 +83,11 @@ abstract class SInventory(val plugin: JavaPlugin) {
         p.closeInventory()
     }
 
-    fun getItem(slot: Int): SInventoryItem? {
-        return items[slot]
+    fun getItem(slot: Int): ItemStack? {
+        return inv.getItem(slot)
     }
 
-    fun getItems(slot: IntRange): List<SInventoryItem?> {
+    fun getItems(slot: IntRange): List<ItemStack?> {
         return slot.toList().map { getItem(it) }
     }
 
