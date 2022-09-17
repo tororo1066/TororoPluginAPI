@@ -2,6 +2,8 @@ package tororo1066.nmsutils.v1_19_2
 
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket.RelativeArgument
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket
 import net.minecraft.world.inventory.MenuType
 import org.bukkit.Bukkit
@@ -35,6 +37,11 @@ class SNmsImpl: SNms {
         Bukkit.getOnlinePlayers().forEach {
             (it as CraftPlayer).handle.connection.send(packet)
         }
+    }
+
+    override fun moveRotation(p: Player, yaw: Float, pitch: Float) {
+        val packet = ClientboundPlayerPositionPacket(0.0,0.0,0.0,yaw,pitch,RelativeArgument.values().toSet(),0,true)
+        (p as CraftPlayer).handle.connection.send(packet)
     }
 
 }

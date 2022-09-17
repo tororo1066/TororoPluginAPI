@@ -10,6 +10,8 @@ interface SNms {
 
     fun pickUpItemPacket(pickUpPlayer: Player, item: Item)
 
+    fun moveRotation(p: Player, yaw: Float, pitch: Float)
+
     companion object{
         fun newInstance() : SNms {
             return newNullableInstance()?:throw UnsupportedOperationException("SNms not supported mc_version ${Bukkit.getServer().minecraftVersion}.")
