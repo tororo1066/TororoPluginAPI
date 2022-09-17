@@ -216,7 +216,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
      * @param item SInventoryItem
      */
     fun fillItem(item: SInventoryItem){
-        for (i in 0 until row*9){
+        for (i in 0 until (row*9)){
             items[i] = item
             inv.setItem(i,item)
         }
