@@ -83,6 +83,14 @@ abstract class SInventory(val plugin: JavaPlugin) {
         p.closeInventory()
     }
 
+    fun getItem(slot: Int): SInventoryItem? {
+        return items[slot]
+    }
+
+    fun getItems(slot: IntRange): List<SInventoryItem?> {
+        return slot.toList().map { getItem(it) }
+    }
+
     /**
      * アイテムをインベントリにセットする
      * @param slot 位置(0~row*9)
