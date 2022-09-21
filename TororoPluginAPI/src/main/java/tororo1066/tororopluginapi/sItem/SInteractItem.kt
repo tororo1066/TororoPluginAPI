@@ -5,10 +5,11 @@ import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import java.util.function.BiConsumer
+import java.util.function.BiFunction
 
 class SInteractItem(private val manager: SInteractItemManager, private val itemStack: ItemStack) : ItemStack(itemStack) {
 
-    val interactEvents = ArrayList<BiConsumer<PlayerInteractEvent,SInteractItem>>()
+    val interactEvents = ArrayList<BiFunction<PlayerInteractEvent,SInteractItem,Boolean>>()
     val dropEvents = ArrayList<BiConsumer<PlayerDropItemEvent,SInteractItem>>()
     var interactCoolDown = 0
     var initialCoolDown = 0
@@ -22,7 +23,7 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
         manager.items[itemStack] = this
     }
 
-    fun setInteractEvent(e: BiConsumer<PlayerInteractEvent,SInteractItem>): SInteractItem {
+    fun setInteractEvent(e: BiFunction<PlayerInteractEvent,SInteractItem,Boolean>): SInteractItem {
         interactEvents.add(e)
         manager.items[itemStack] = this
         return this

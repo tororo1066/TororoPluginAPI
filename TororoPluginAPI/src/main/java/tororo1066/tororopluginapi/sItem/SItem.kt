@@ -20,8 +20,14 @@ import java.io.ByteArrayOutputStream
  */
 open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
 
-    constructor(material: Material) : this(ItemStack(material)){
+    constructor(material: Material) : this(ItemStack(material))
 
+    constructor(itemStack: ItemStack, amount: Int): this(itemStack){
+        this.setItemAmount(amount)
+    }
+
+    constructor(material: Material, amount: Int): this(ItemStack(material)){
+        this.setItemAmount(amount)
     }
 
     companion object{
@@ -132,7 +138,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun setDisplayName(name : String): SItem {
-        val meta = itemMeta?:return this
+        val meta = itemMeta
         meta.setDisplayName(name)
         itemMeta = meta
         return this
@@ -142,7 +148,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return アイテムの名前
      */
     fun getDisplayName(): String {
-        return itemMeta?.displayName?:return ""
+        return itemMeta.displayName
     }
 
     /**
@@ -150,7 +156,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun setLore(lore : List<String>): SItem {
-        val meta = itemMeta?:return this
+        val meta = itemMeta
         meta.lore = lore
         itemMeta = meta
         return this
@@ -160,7 +166,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return loreのリスト なければ空
      */
     fun getStringLore(): List<String> {
-        return this.itemMeta?.lore?: listOf()
+        return this.itemMeta.lore?: listOf()
     }
 
 
@@ -186,7 +192,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun setCustomModelData(csm : Int): SItem {
-        val meta = itemMeta?:return this
+        val meta = itemMeta
         meta.setCustomModelData(csm)
         itemMeta = meta
         return this
@@ -196,7 +202,8 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return カスタムモデルデータ
      */
     fun getCustomModelData(): Int {
-        return itemMeta?.customModelData?:0
+        if (!this.itemMeta.hasCustomModelData())return 0
+        return itemMeta.customModelData
     }
 
     /**
@@ -207,7 +214,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun<T : Any> setCustomData(plugin: JavaPlugin, key: String, type : PersistentDataType<T,T>, value: T): SItem {
-        val meta = this.itemMeta?:return this
+        val meta = this.itemMeta
         meta.persistentDataContainer[NamespacedKey(plugin,key),type] = value
         this.itemMeta = meta
         return this
@@ -220,7 +227,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return value
      */
     fun<T : Any> getCustomData(plugin: JavaPlugin, key: String, type: PersistentDataType<T,T>): T? {
-        return itemMeta?.persistentDataContainer?.get(NamespacedKey(plugin, key), type)
+        return itemMeta.persistentDataContainer.get(NamespacedKey(plugin, key), type)
     }
 
 
@@ -235,7 +242,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     }
 
     fun getEnchantment(enchantment: Enchantment): Int? {
-        val level = (this.itemMeta?:return null).getEnchantLevel(enchantment)
+        val level = this.itemMeta.getEnchantLevel(enchantment)
         if (level == 0)return null
         return level
     }
@@ -245,6 +252,10 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      */
     open fun toSInventoryItem(): SInventoryItem {
         return SInventoryItem(this)
+    }
+
+    override fun clone(): SItem {
+        return super.clone() as SItem
     }
 
     /**

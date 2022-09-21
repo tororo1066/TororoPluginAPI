@@ -8,7 +8,6 @@ import net.minecraft.network.protocol.game.PacketPlayOutPosition.EnumPlayerTelep
 import net.minecraft.world.inventory.Containers
 import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
-import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -44,4 +43,5 @@ class SNmsImpl: SNms {
         val packet = PacketPlayOutPosition(0.0,0.0,0.0,yaw,pitch,EnumPlayerTeleportFlags.values().toSet(),0,true)
         (p as CraftPlayer).handle.b.sendPacket(packet)
     }
+
 }

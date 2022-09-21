@@ -50,7 +50,7 @@ class SInteractItemManager(val plugin: JavaPlugin) {
                 return@register
             }
             interactItem.interactEvents.forEach {
-                it.accept(e,interactItem)
+                if (it.apply(e,interactItem))return@register
             }
 
             interactItem.interactCoolDown = interactItem.initialCoolDown
