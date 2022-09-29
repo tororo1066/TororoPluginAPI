@@ -16,6 +16,24 @@ import java.net.URISyntaxException
 import java.net.URL
 import java.util.jar.JarFile
 
+/**
+ * プラグインのクラス
+ * ```java
+ * //例 Java
+ * class Main implements SJavaPlugin() {
+ *
+ * }
+ * ```
+ * ```kotlin
+ * //例 Kotlin
+ * class Main: SJavaPlugin() {
+ *   override fun onStart() {
+ *     code...
+ *   }
+ * }
+ * ```
+ * @constructor 引数無し
+ */
 abstract class SJavaPlugin() : JavaPlugin() {
 
     companion object {
@@ -28,6 +46,20 @@ abstract class SJavaPlugin() : JavaPlugin() {
     private val useOptions = ArrayList<UseOption>()
     private var folder = ""
 
+    /**
+     * SConfig、SMySQL、Vaultなどをオプションとして指定する
+     *
+     * SJavaPlugin.vaultやSJavaPlugin.mysqlで取れる
+     * ```kotlin
+     * //例
+     * class Main: SJavaPlugin(UseOption.Vault) {
+     *   override fun onStart() {
+     *     code...
+     *   }
+     * }
+     * ```
+     * @param options [使用するオプション][SJavaPlugin.UseOption]
+     */
     constructor(vararg options: UseOption) : this(){
         this.useOptions.addAll(options)
     }
@@ -37,6 +69,11 @@ abstract class SJavaPlugin() : JavaPlugin() {
         this.folder = pluginFolder
     }
 
+    /**
+     * プラグイン起動時に行う処理
+     *
+     * 必須
+     */
     abstract fun onStart()
 
     @Suppress("UNCHECKED_CAST")
@@ -57,7 +94,6 @@ abstract class SJavaPlugin() : JavaPlugin() {
             val split = description.main.split(".").dropLast(1).joinToString(".")
             folder = split
         }
-
         val instancedClasses = HashMap<Class<*>,Any>()
         javaClass.protectionDomain.codeSource.location.getClasses(folder).forEach { clazz ->
             if (UsefulUtility.sTry({clazz.getConstructor()},{null}) == null){
@@ -105,9 +141,39 @@ abstract class SJavaPlugin() : JavaPlugin() {
         onStart()
     }
 
+    /**
+     * 使用するオプション
+     *
+     * SJavaPlugin.mysql、SJavaPlugin.vault、SJavaPlugin.sConfigでそれぞれ取得できる
+     */
     enum class UseOption {
+        /**
+         * MySQLのシステムを使う
+         *
+         * config.ymlから
+         * ```yaml
+         * mysql:
+         *   host: localhost
+         *   port: 3306
+         *   user: root
+         *   pass: pass
+         *   db: test_db
+         * ```
+         * といった形で設定できる
+         * @see SMySQL
+         */
         MySQL,
+
+        /**
+         * Vaultのシステムを使う
+         * @see SVault
+         */
         Vault,
+
+        /**
+         * configのシステムを使う
+         * @see SConfig
+         */
         SConfig
     }
 

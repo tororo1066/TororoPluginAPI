@@ -23,8 +23,11 @@ abstract class SEventInterface<T : Event>(val plugin : JavaPlugin, val event : C
         Bukkit.getServer().pluginManager.registerEvent(event,this,priority,this,plugin)
     }
 
+    /**
+     * @sample
+     *
+     */
     abstract fun executeEvent(e : T)
-
 
     override fun execute(p0: Listener, p1: Event) {
         if (event != p1.javaClass)return

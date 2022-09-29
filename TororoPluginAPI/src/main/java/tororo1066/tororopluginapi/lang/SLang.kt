@@ -18,23 +18,22 @@ class SLang(private val plugin: JavaPlugin) {
         prefix = prefixString
     }
 
-
-
     init {
         init()
     }
     fun init(){
         langFile.clear()
+        if (!File(plugin.dataFolder.path + "/config.yml").exists())return
+        plugin.reloadConfig()
         defaultLanguage = plugin.config.getString("defaultLanguage","en_us")!!
+        val overwrite = plugin.config.getBoolean("langOverwrite")
         val file = File(plugin.dataFolder.path + "/LangFolder/")
         if (!file.exists()) file.mkdirs()
         val langList = plugin.getResource("LangFolder/lang.txt")
         langList?.bufferedReader()?.readLines()?.forEach {
-            if (File(file.path + "$it.yml").exists())return@forEach
+            if (File(file.path + "/$it.yml").exists() && !overwrite)return@forEach
             plugin.saveResource("LangFolder/${it}.yml",true)
         }
-
-
 
         for (config in file.listFiles()?:return){
             if (config.extension != "yml")continue
@@ -64,7 +63,7 @@ class SLang(private val plugin: JavaPlugin) {
     companion object{
 
 
-        private val langFile = HashMap<String,YamlConfiguration>()
+        val langFile = HashMap<String,YamlConfiguration>()
         var defaultLanguage = "en_us"
         private var prefix = ""
         /**

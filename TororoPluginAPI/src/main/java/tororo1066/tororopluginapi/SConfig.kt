@@ -4,24 +4,62 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
+/**
+ * Config関連のクラス
+ * @param plugin JavaPlugin.
+ */
 class SConfig(val plugin: JavaPlugin) {
 
     private var alwaysPath = ""
 
+    /**
+     * @param alwaysPath 常に使うパス(plugins/<プラグイン名>/は指定しなくていい)
+     */
     constructor(plugin: JavaPlugin, alwaysPath: String): this(plugin){
         this.alwaysPath = alwaysPath
     }
 
-    fun setAlwaysPath(alwaysPath: String){
+    /**
+     * 常に使うパスを指定する
+     * @param alwaysPath 常に使うパス(plugins/<プラグイン名>/は指定しなくていい)
+     */
+    fun setAlwaysPath(alwaysPath: String): SConfig {
         this.alwaysPath = alwaysPath
+        return this
     }
 
+    /**
+     * configファイルを取得する
+     * ```java
+     * //例 Java
+     * YamlConfiguration testConfig = sConfig.getConfig("testfolder/test");
+     * ```
+     * ```kotlin
+     * //例 Kotlin
+     * val testConfig = sConfig.getConfig("testfolder/test")
+     * ```
+     * @param path ファイルのパス(.ymlは必要ない)
+     * @return [YamlConfiguration(存在しなかったらnull)][YamlConfiguration]
+     */
     fun getConfig(path: String): YamlConfiguration? {
         val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
         if (!file.exists())return null
         return YamlConfiguration.loadConfiguration(file)
     }
 
+    /**
+     * configファイルのリストを取得する
+     * ```java
+     * //例 Java
+     * List<YamlConfiguration> testConfigs = sConfig.getConfigList("testfolder");
+     * ```
+     * ```kotlin
+     * //例 Kotlin
+     * val testConfigs = sConfig.getConfigList("testfolder")
+     * ```
+     * @param path フォルダのパス
+     * @return [YamlConfigurationのリスト(存在しなかったら空)][YamlConfiguration]
+     */
     fun getConfigList(path: String): List<YamlConfiguration>{
         val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}/")
         val yaml = ArrayList<YamlConfiguration>()
@@ -32,6 +70,26 @@ class SConfig(val plugin: JavaPlugin) {
         return yaml
     }
 
+    /**
+     * configファイルを保存する
+     *
+     * フォルダやファイルがなくても基本的に生成してくれる
+     * ```java
+     * //例 Java
+     * YamlConfiguration testConfig = sConfig.getConfig("testfolder/test");
+     * testConfig.set("test","test");
+     * sConfig.saveConfig(testConfig,"testfolder\test");
+     * ```
+     * ```kotlin
+     * //例 Kotlin
+     * val testConfig = sConfig.getConfig("testfolder/test")
+     * testConfig.set("test","test")
+     * sConfig.saveConfig(testConfig,"testfolder\test")
+     * ```
+     * @param configuration [YamlConfiguration]
+     * @param path ファイルのパス(.ymlは必要ない)
+     * @return 成功したらtrue、失敗したらfalse
+     */
     fun saveConfig(configuration: YamlConfiguration, path: String): Boolean {
         val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
         if (file.exists()){
@@ -51,8 +109,44 @@ class SConfig(val plugin: JavaPlugin) {
         return true
     }
 
+    /**
+     * configファイルが存在するか確かめる
+     * ```java
+     * //例 Java
+     * if (sConfig.exists("testfolder/test")){
+     *   code...
+     * }
+     * ```
+     * ```kotlin
+     * //例 Kotlin
+     * if (sConfig.exists("testfolder/test")){
+     *   code...
+     * }
+     * ```
+     * @param path ファイルのパス(.ymlは必要ない)
+     * @return configファイルが存在するかどうか
+     */
     fun exists(path: String): Boolean {
         val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
         return file.exists()
+    }
+
+    /**
+     * configファイルをFileに変換する
+     * ```java
+     * //例 Java
+     * YamlConfiguration testConfig = sConfig.getConfig("testfolder/test");
+     * File file = testConfig.toFile();
+     * ```
+     * ```kotlin
+     * //例 Kotlin
+     * val testConfig = sConfig.getConfig("testfolder/test")
+     * val file = testConfig.toFile()
+     * ```
+     * @param path ファイルのパス(.ymlは必要ない)
+     * @return configファイルが存在するかどうか
+     */
+    fun YamlConfiguration.toFile(): File {
+        return File(currentPath)
     }
 }

@@ -4,6 +4,7 @@ import net.md_5.bungee.api.ChatMessageType
 import org.bukkit.Material
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
@@ -35,6 +36,7 @@ class SInteractItemManager(val plugin: JavaPlugin) {
 
     init {
         SEvent(plugin).register(PlayerInteractEvent::class.java) { e ->
+            if (e.hand == EquipmentSlot.OFF_HAND)return@register
             if (!e.hasItem())return@register
             val item = e.item!!.clone()
             item.amount = 1

@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.sInventory
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -61,6 +62,13 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     init {
         this.inv = Bukkit.createInventory(null,row,name)
+    }
+
+    fun registerClickSound(){
+        setOnClick {
+            val p = it.whoClicked as Player
+            p.playSound(p.location,Sound.UI_BUTTON_CLICK,1f,1f)
+        }
     }
 
     fun setParent(inventory: SInventory){
