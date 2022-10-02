@@ -5,6 +5,9 @@ import org.bukkit.Bukkit
 import java.util.*
 
 
+/**
+ * Vaultを楽に使えるクラス
+ */
 class SVault {
 
     private lateinit var economy: Economy

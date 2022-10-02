@@ -1,11 +1,27 @@
 package tororo1066.tororopluginapi.sCommand
 
-class SCommandArg {
+class SCommandArg() {
 
     val alias = ArrayList<String>()
     val allowString = ArrayList<String>()
 
     val allowType = ArrayList<SCommandArgType>()
+
+    constructor(allowString: String) : this() {
+        addAllowString(allowString)
+    }
+
+    constructor(allowString: Collection<String>) : this() {
+        addAllowString(allowString)
+    }
+
+    constructor(allowString: Array<out String>) : this() {
+        addAllowString(allowString)
+    }
+
+    constructor(allowType: SCommandArgType) : this() {
+        addAllowType(allowType)
+    }
 
     fun addAllowString(string: String): SCommandArg {
         this.allowString.add(string)
@@ -26,18 +42,29 @@ class SCommandArg {
         return this
     }
 
-    fun addAlias(alias : String): SCommandArg {
+    fun addAllowString(string: Collection<String>): SCommandArg {
+        this.allowString.addAll(string)
+        addAlias(string)
+        return this
+    }
+
+    fun addAlias(alias: String): SCommandArg {
         this.alias.add(alias)
         return this
     }
 
-    fun addAlias(vararg alias : String): SCommandArg {
+    fun addAlias(vararg alias: String): SCommandArg {
         this.alias.addAll(alias)
         return this
     }
 
     @JvmName("addAlias1")
-    fun addAlias(alias : Array<out String>): SCommandArg {
+    fun addAlias(alias: Array<out String>): SCommandArg {
+        this.alias.addAll(alias)
+        return this
+    }
+
+    fun addAlias(alias: Collection<String>): SCommandArg {
         this.alias.addAll(alias)
         return this
     }

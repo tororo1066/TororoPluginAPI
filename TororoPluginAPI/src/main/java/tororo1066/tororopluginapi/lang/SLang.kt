@@ -10,7 +10,24 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
 /**
- * 言語を簡単にいじれるようにしたクラス
+ * 言語によってメッセージが変わるクラス
+ *
+ * resourcesの下にLangFolderというフォルダを作り、その下に言語ファイルを置く
+ *
+ * LangFolderの下にlang.txtを作り、使用する言語を書く
+ * ```txt
+ * //例
+ * en_us
+ * ja_jp
+ * ```
+ * ```txt
+ * //ファイル構成
+ * resources
+ *   |-> LangFolder
+ *       |-> en_us.yml
+ *       |-> ja_jp.yml
+ *       |-> lang.txt
+ * ```
  */
 class SLang(private val plugin: JavaPlugin) {
 
@@ -79,7 +96,7 @@ class SLang(private val plugin: JavaPlugin) {
                 string.append("item.")
             }
 
-            string.append("minecraft.${material.name.toLowerCase()}")
+            string.append("minecraft.${material.name.lowercase()}")
 
             val getString = this[string.toString()] ?: return ""
 
@@ -87,6 +104,23 @@ class SLang(private val plugin: JavaPlugin) {
 
         }
 
+        /**
+         * [CommandSender(Player)][CommandSender]に言語によって変わるメッセージを送る
+         *
+         * プレイヤーの場合、そのプレイヤーの言語が優先される(存在しなかったらデフォルト)
+         * ```java
+         * //例 Java
+         * SLang.sendTranslateMsg(p,"test_message");
+         * ```
+         *
+         * ```kotlin
+         * //例 Kotlin
+         * p.sendTranslateMsg("test_message")
+         * ```
+         *
+         * @param msg configのパス
+         * @param value {<数字>}の文字を置き換える
+         */
         fun CommandSender.sendTranslateMsg(msg: String, vararg value: String){
             if (this !is Player){
                 val defaultLang = langFile[defaultLanguage]
@@ -110,6 +144,23 @@ class SLang(private val plugin: JavaPlugin) {
             this.sendMessage(prefix + modifyValue(lang.getString(msg,msg)!!,value))
         }
 
+
+        /**
+         * 言語によってメッセージを変更する
+         *
+         * ```java
+         * //例 Java
+         * String translate = SLang.translate("test_message");
+         * ```
+         *
+         * ```kotlin
+         * //例 Kotlin
+         * val translate = translate("test_message")
+         * ```
+         *
+         * @param msg configのパス
+         * @param value {<数字>}の文字を置き換える
+         */
         fun translate(msg: String, vararg value: String): String {
             val defaultLang = langFile[defaultLanguage]
                 ?: return "§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File."

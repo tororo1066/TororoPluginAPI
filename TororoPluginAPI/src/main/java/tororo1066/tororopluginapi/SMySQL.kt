@@ -2,16 +2,16 @@ package tororo1066.tororopluginapi
 
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
-import java.math.BigDecimal
 import java.sql.*
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
-import java.util.Date
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
+/**
+ * sQuery、asyncQueryで取得できるResultSet
+ */
 class SMySQLResultSet(val result : HashMap<String,Any>){
     fun getString(name: String): String {
         return result[name].toString()
@@ -47,6 +47,12 @@ class SMySQLResultSet(val result : HashMap<String,Any>){
 
 }
 
+/**
+ * MySQLを楽に使えるクラス
+ *
+ * [MySQLドキュメント](https://dev.mysql.com/doc/refman/8.0/ja/)
+ * @param plugin JavaPlugin.
+ */
 class SMySQL(val plugin : JavaPlugin) {
 
     private val host : String = plugin.config.getString("mysql.host")?:throw NullPointerException("hostが指定されていません")
@@ -60,86 +66,11 @@ class SMySQL(val plugin : JavaPlugin) {
 
     private val thread: ExecutorService = Executors.newCachedThreadPool()
 
-    companion object{
-
-        fun insertQuery(table: String, vararg column: Pair<String,Any>): String {
-            return insertQuery(table, HashMap(column.toMap()))
-        }
-
-        fun insertQuery(table: String ,column: HashMap<String,Any>): String {
-            val string = StringBuilder("insert into $table (")
-            for (data in column){
-                string.append(data.key + ",")
-            }
-
-            string.deleteAt(string.length-1)
-            string.append(") values (")
-
-            for (data in column){
-                when(data.value.javaClass){
-                    Integer::class.java,java.lang.Double::class.java,java.lang.Long::class.java,BigDecimal::class.java->{
-                        string.append(data.value.toString() + ",")
-                    }
-                    java.lang.String::class.java->{
-                        if ((data.value as String) == "now()"){
-                            string.append(data.value.toString() + ",")
-                        }else{
-                            string.append("'${data.value}'" + ",")
-                        }
-                    }
-                    Date::class.java->{
-                        val date = data.value as Date
-                        string.append("'${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)}',")
-                    }
-                    else->{
-                        string.append("'${data.value}'" + ",")
-                    }
-                }
-            }
-
-            string.deleteAt(string.length-1)
-            string.append(")")
-
-            return string.toString()
-        }
-
-        fun updateQuery(table: String ,column: HashMap<String,Any>, where: String): String {
-            val string = StringBuilder("update $table set ")
-
-            for (data in column){
-                string.append(data.key + " = ")
-                when(data.value.javaClass){
-                    Integer::class.java,java.lang.Double::class.java,java.lang.Long::class.java,BigDecimal::class.java->{
-                        string.append(data.value.toString() + ",")
-                    }
-                    java.lang.String::class.java->{
-                        if ((data.value as String) == "now()"){
-                            string.append(data.value.toString() + ",")
-                        }else{
-                            string.append("'${data.value}'" + ",")
-                        }
-                    }
-                    Date::class.java->{
-                        val date = data.value as Date
-                        string.append("'${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)}'")
-                    }
-                    else->{
-                        string.append("'${data.value}'" + ",")
-                    }
-                }
-
-            }
-
-            string.deleteAt(string.length-1)
-            string.append(" where ")
-
-            string.append(where)
-
-            return string.toString()
-
-        }
-    }
-
+    /**
+     * データベースを開く
+     *
+     * 基本的に使わない
+     */
     fun open(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver")
@@ -149,10 +80,36 @@ class SMySQL(val plugin : JavaPlugin) {
         }
     }
 
+    /**
+     * データベースを閉じる
+     *
+     * [query]のみで使う
+     */
     fun close(){
         conn?.close()
     }
 
+    /**
+     * queryを実行する
+     * ```java
+     * //例 Java
+     * if (mysql.execute("insert into test_db (name) values('test')")){
+     *   //成功時
+     * } else {
+     *   //失敗時
+     * }
+     * ```
+     * ```kotlin
+     * //例 Kotlin
+     * if (mysql.execute("insert into test_db (name) values('test')")){
+     *   //成功時
+     * } else {
+     *   //失敗時
+     * }
+     * ```
+     * @param query クエリ文
+     * @return [Boolean]
+     */
     fun execute(query : String): Boolean {
         open()
         if (conn == null){
@@ -173,6 +130,21 @@ class SMySQL(val plugin : JavaPlugin) {
         }
     }
 
+    /**
+     * queryを実行して結果を取る
+     *
+     * これだけResultSetを使い終わった後に[close]が必要
+     * ```java
+     * //例 Java
+     * ResultSet rs = mysql.query("select * from test_db");
+     * ```
+     * ```kotlin
+     * //例 Kotlin
+     * val rs = mysql.query("select * from test_db")
+     * ```
+     * @param query クエリ文
+     * @return [ResultSet(取得に失敗した場合null)][ResultSet]
+     */
     fun query(query : String): ResultSet? {
         open()
         if (conn == null){
@@ -189,6 +161,19 @@ class SMySQL(val plugin : JavaPlugin) {
         }
     }
 
+    /**
+     * queryを実行して結果を取る
+     * ```java
+     * //例 Java
+     * ArrayList<SMySQLResultSet> rs = mysql.sQuery("select * from test_db");
+     * ```
+     * ```kotlin
+     * //例 Kotlin
+     * val rs = mysql.sQuery("select * from test_db")
+     * ```
+     * @param query クエリ文
+     * @return [SMySQLResultSetのlist(取得に失敗した場合空)][SMySQLResultSet]
+     */
     fun sQuery(query: String): ArrayList<SMySQLResultSet>{
         val rs = query(query)?:return arrayListOf()
         val result = ArrayList<SMySQLResultSet>()
@@ -213,7 +198,27 @@ class SMySQL(val plugin : JavaPlugin) {
     }
 
 
-
+    /**
+     * 非同期でqueryを実行する
+     * ```java
+     * //例 Java
+     * if (mysql.asyncExecute("insert into test_db (name) values('test')")){
+     *   //成功時
+     * } else {
+     *   //失敗時
+     * }
+     * ```
+     * ```kotlin
+     * //例 Kotlin
+     * if (mysql.asyncExecute("insert into test_db (name) values('test')")){
+     *   //成功時
+     * } else {
+     *   //失敗時
+     * }
+     * ```
+     * @param query クエリ文
+     * @return [Boolean]
+     */
     fun asyncExecute(query: String): Boolean {
         return try {
             thread.submit(Callable { execute(query) }).get()
@@ -222,6 +227,19 @@ class SMySQL(val plugin : JavaPlugin) {
         }
     }
 
+    /**
+     * 非同期でqueryを実行して結果を取る
+     * ```java
+     * //例 Java
+     * ArrayList<SMySQLResultSet> rs = mysql.asyncQuery("select * from test_db");
+     * ```
+     * ```kotlin
+     * //例 Kotlin
+     * val rs = mysql.asyncQuery("select * from test_db")
+     * ```
+     * @param query クエリ文
+     * @return [SMySQLResultSetのlist(取得に失敗した場合空)][SMySQLResultSet]
+     */
     fun asyncQuery(query: String): ArrayList<SMySQLResultSet> {
         return try {
             thread.submit(Callable { sQuery(query) }).get()

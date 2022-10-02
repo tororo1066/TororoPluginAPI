@@ -25,6 +25,7 @@ class UsefulUtility(val plugin: JavaPlugin) {
                 onError.invoke(e)
             }
         }
+
     }
 
     fun runTask(consumer: Consumer<BukkitTask>){

@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SDebug
 import tororo1066.tororopluginapi.annotation.SCommandBody
+import tororo1066.tororopluginapi.lang.LangEditor
 import tororo1066.tororopluginapi.lang.SLang
 import tororo1066.tororopluginapi.sCommand.report.ReportCommand
 import tororo1066.tororopluginapi.sCommand.report.ReportList
@@ -178,6 +179,7 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
             it.sender.sendMessage("§b/${command} lang default <Language> §7Set default language.")
             it.sender.sendMessage("§a==================LanguageHelp==================")
         })
+
         addCommand(SCommandObject().addArg(SCommandArg().addAllowString("lang")).addArg(SCommandArg().addAllowString("list")).addNeedPermission(perm).setNormalExecutor {
             if (SLang.langFile.isEmpty()){
                 it.sender.sendMessage("$prefix§cLanguages is Empty.")
@@ -189,12 +191,17 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
                 }
             }
         })
+
         addCommand(SCommandObject().addArg(SCommandArg().addAllowString("lang")).addArg(SCommandArg().addAllowString("default")).addArg(SCommandArg().addAllowString(SLang.langFile.keys.toTypedArray()).addAlias("Lang")).addNeedPermission(perm).setNormalExecutor {
             val lang = it.args[2]
             SLang.defaultLanguage = lang
             plugin.config.set("defaultLanguage",lang)
             plugin.saveConfig()
             it.sender.sendMessage("$prefix§aDefault lang is $lang now.")
+        })
+
+        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("lang")).addArg(SCommandArg().addAllowString("editor")).addNeedPermission(perm).setPlayerExecutor {
+            LangEditor(plugin).open(it.sender)
         })
     }
 

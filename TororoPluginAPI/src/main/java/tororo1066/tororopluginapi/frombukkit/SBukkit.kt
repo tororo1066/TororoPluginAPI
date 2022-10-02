@@ -23,6 +23,11 @@ class SBukkit {
             return NormalInventory(plugin, name, row)
         }
 
+        /**
+         * [SEventHandler]のイベントを登録する
+         *
+         * [autoRegister][SEventHandler.autoRegister]がfalseの時だけ有効
+         */
         fun registerSEvent(clazz: Any, plugin: JavaPlugin): Boolean{
             clazz.javaClass.methods.forEach { method ->
                 if (!method.isAnnotationPresent(SEventHandler::class.java))return@forEach
@@ -42,6 +47,11 @@ class SBukkit {
             return true
         }
 
+        /**
+         * [SEventHandler]のイベントを登録する
+         *
+         * [autoRegister][SEventHandler.autoRegister]がfalseの時だけ有効
+         */
         fun registerSEvent(clazz: Any): Boolean {
             return registerSEvent(clazz,SJavaPlugin.plugin)
         }
