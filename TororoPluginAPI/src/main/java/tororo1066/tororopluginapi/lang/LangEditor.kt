@@ -56,7 +56,7 @@ class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
     }
 
     fun createMsgEditItem(inv: SInventory, section: ConfigurationSection, path: String, yaml: YamlConfiguration, fileName: String): SInventoryItem {
-        return inv.createInputItem(SItem(Material.WRITTEN_BOOK).setDisplayName(path + " : " + section.getString(path)!!),String::class.java,"メッセージを入力してください") { str, p ->
+        return inv.createInputItem(SItem(Material.WRITTEN_BOOK).setDisplayName(path + " : " + section.getString(path)!!),String::class.java,"Please enter translated message (null to delete).") { str, p ->
             section.set(path,if (str == "null") null else str)
             yaml.save(File(plugin.dataFolder.path + "/LangFolder/${fileName}.yml"))
             SLang.langFile[fileName] = yaml
