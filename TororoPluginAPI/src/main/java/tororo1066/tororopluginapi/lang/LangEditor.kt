@@ -59,6 +59,7 @@ class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
         return inv.createInputItem(SItem(Material.WRITTEN_BOOK).setDisplayName(path + " : " + section.getString(path)!!),String::class.java,"メッセージを入力してください") { str, p ->
             section.set(path,if (str == "null") null else str)
             yaml.save(File(plugin.dataFolder.path + "/LangFolder/${fileName}.yml"))
+            SLang.langFile[fileName] = yaml
         }
     }
 
@@ -81,6 +82,7 @@ class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
                         SInput(plugin).sendInputCUI(p,String::class.java,"Please enter translated message.") {
                             section.set("$path.$str",it)
                             yaml.save(File(plugin.dataFolder.path + "/LangFolder/${fileName}.yml"))
+                            SLang.langFile[fileName] = yaml
                             this.open(p)
                         }
                     })
