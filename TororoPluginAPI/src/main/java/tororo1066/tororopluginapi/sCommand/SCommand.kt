@@ -3,19 +3,12 @@ package tororo1066.tororopluginapi.sCommand
 import org.bukkit.Bukkit
 import org.bukkit.command.*
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SDebug
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.lang.LangEditor
 import tororo1066.tororopluginapi.lang.SLang
-import tororo1066.tororopluginapi.sCommand.report.ReportCommand
-import tororo1066.tororopluginapi.sCommand.report.ReportList
-import tororo1066.tororopluginapi.sCommand.report.ReportListAll
-import tororo1066.tororopluginapi.sCommand.report.ReportLog
-import tororo1066.tororopluginapi.sEvent.SEvent
 import java.util.function.Consumer
-import kotlin.collections.ArrayList
 
 open class SCommand(private val command : String) : CommandExecutor, TabCompleter {
 
@@ -141,24 +134,6 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
     private fun sendPrefixMessage(p : CommandSender, message : String){
         p.sendMessage(this.prefix + message)
     }
-
-    fun registerReportCommand(plugin: JavaPlugin, reportPerm: String, logPerm: String){
-        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("report")).addArg(SCommandArg().addAlias("件名")).addArg(SCommandArg().addAlias("本文")).noLimit(true).addNeedPermission(reportPerm).setExecutor(
-            ReportCommand(plugin)
-        ))
-        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportop")).addArg(SCommandArg().addAllowString("list")).setExecutor(ReportList(plugin,logPerm)))
-        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportop")).addArg(SCommandArg().addAllowString("log")).addArg(SCommandArg().addAlias("ファイル名")).setExecutor(ReportLog(plugin,logPerm)))
-        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("reportop")).addArg(SCommandArg().addAllowString("pageList")).addArg(SCommandArg().addAllowType(SCommandArgType.INT).addAlias("ページ")).setExecutor(ReportListAll(plugin,logPerm)))
-        if (plugin.description.authors.isEmpty())return
-        SEvent(plugin).register(PlayerJoinEvent::class.java){
-            for (author in plugin.description.authors){
-                if (it.player.uniqueId == Bukkit.getOfflinePlayer(author).uniqueId){
-                    Bukkit.dispatchCommand(it.player,"$command reportlist")
-                }
-            }
-        }
-    }
-
     fun registerDebugCommand(perm: String){
         addCommand(SCommandObject().addArg(SCommandArg().addAllowString("debug")).addArg(SCommandArg().addAllowType(SCommandArgType.INT).addAlias("level"))
             .addNeedPermission(perm)
@@ -177,6 +152,7 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
             it.sender.sendMessage("§a==================LanguageHelp==================")
             it.sender.sendMessage("§b/${command} lang list §7Show languages list.")
             it.sender.sendMessage("§b/${command} lang default <Language> §7Set default language.")
+            it.sender.sendMessage("§b/${command} lang editor §7Open lang editor.")
             it.sender.sendMessage("§a==================LanguageHelp==================")
         })
 

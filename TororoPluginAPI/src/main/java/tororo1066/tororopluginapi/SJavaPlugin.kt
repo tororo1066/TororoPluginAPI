@@ -76,6 +76,10 @@ abstract class SJavaPlugin() : JavaPlugin() {
      */
     abstract fun onStart()
 
+    open fun prepareStart(){
+
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun onEnable() {
         plugin = this
@@ -89,6 +93,8 @@ abstract class SJavaPlugin() : JavaPlugin() {
         if (useOptions.contains(UseOption.Vault)){
             vault = SVault()
         }
+
+        prepareStart()
 
         if (folder.isBlank()){
             val split = description.main.split(".").dropLast(1).joinToString(".")
