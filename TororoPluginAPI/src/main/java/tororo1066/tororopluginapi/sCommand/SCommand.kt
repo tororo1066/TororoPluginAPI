@@ -61,7 +61,9 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
                 it.isAccessible = true
                 val data = it.get(this) as SCommandObject
                 val sCommand = it.getAnnotation(SCommandBody::class.java)
-                addCommand(data.addNeedPermission(sCommand.permission))
+                if (sCommand.permission.isNotBlank()){
+                    addCommand(data.addNeedPermission(sCommand.permission))
+                }
             }
         }
     }

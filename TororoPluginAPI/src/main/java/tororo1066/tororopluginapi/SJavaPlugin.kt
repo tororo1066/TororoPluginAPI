@@ -32,7 +32,6 @@ import java.util.jar.JarFile
  *   }
  * }
  * ```
- * @constructor 引数無し
  */
 abstract class SJavaPlugin() : JavaPlugin() {
 
