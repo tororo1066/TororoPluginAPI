@@ -55,6 +55,10 @@ class SInput(private val plugin: JavaPlugin) {
                     if (value.isBlank())return null
                     return clazz.cast(value)
                 }
+                SStr::class.java-> {
+                    if (value.isBlank())return null
+                    return clazz.cast(SStr(value)) as T
+                }
                 Int::class.java,java.lang.Integer::class.java -> {
                     val int = value.toIntOrNull()?:return null
                     return clazz.cast(int)

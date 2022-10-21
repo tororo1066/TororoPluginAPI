@@ -25,7 +25,7 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
         val slots = 45..53
 
         val backGround = SItem(Material.BLUE_STAINED_GLASS_PANE).setDisplayName(" ").toSInventoryItem().setCanClick(false)
-        setItems(slots.toList(),backGround)
+        setItems(slots,backGround)
 
         val left = SItem(Material.RED_STAINED_GLASS_PANE).setDisplayName("§c§l前へ").toSInventoryItem().setCanClick(false).setClickEvent {
             nowPage--
@@ -38,7 +38,7 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
         }
 
         if (nowPage != 0) setItem(slots.first,left)
-        if ((nowPage + 1) * 45 <= items.size - 1) setItem(slots.last,right)
+        if ((nowPage + 1) * 45 <= items[nowCategory]!!.size - 1) setItem(slots.last,right)
 
         if (items.size == 1)return
 
@@ -60,7 +60,6 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
 
         if (categoryIndex != 0) setItem(slots.toList()[3],categoryLeft)
         if (categoryIndex+2 <= items.keys.size) setItem(slots.toList()[5],categoryRight)
-
 
     }
 

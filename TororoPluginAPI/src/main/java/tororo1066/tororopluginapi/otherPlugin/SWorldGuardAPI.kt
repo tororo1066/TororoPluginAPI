@@ -20,9 +20,7 @@ class SWorldGuardAPI {
      * @return ArrayListのRegionクラス
      */
     fun getRegions(player: Player): ArrayList<ProtectedRegion>{
-        val loc = player.location
-        val regions = container.get(BukkitAdapter.adapt(loc.world))?.getApplicableRegions(BlockVector3.at(loc.x,loc.y,loc.z))?.regions?:return arrayListOf()
-        return ArrayList(regions)
+        return getRegions(player.location)
     }
 
     /**
