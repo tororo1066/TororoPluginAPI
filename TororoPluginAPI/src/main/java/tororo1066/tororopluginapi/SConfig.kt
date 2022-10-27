@@ -127,7 +127,7 @@ class SConfig(val plugin: JavaPlugin) {
      * @return configファイルが存在するかどうか
      */
     fun exists(path: String): Boolean {
-        val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
+        val file = File(plugin.dataFolder.path + File.separator + alwaysPath + File.separator + "${path}.yml")
         return file.exists()
     }
 
@@ -148,5 +148,24 @@ class SConfig(val plugin: JavaPlugin) {
      */
     fun YamlConfiguration.toFile(): File {
         return File(currentPath)
+    }
+
+    fun loadAllFiles(folder: File): List<File> {
+        if (!folder.exists()) return emptyList()
+        val fileList = ArrayList<File>()
+        (folder.listFiles()?:return emptyList()).forEach {
+            if (it.isDirectory){
+                fileList.addAll(loadAllFiles(it))
+            } else {
+                fileList.add(folder)
+            }
+        }
+        return fileList
+    }
+
+    fun loadAllFiles(path: String): List<File> {
+        val file = File(plugin.dataFolder.path + File.separator + alwaysPath + File.separator + path + File.separator)
+        if (!file.exists()) return emptyList()
+        return loadAllFiles(file)
     }
 }

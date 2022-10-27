@@ -12,6 +12,8 @@ interface SNms {
 
     fun moveRotation(p: Player, yaw: Float, pitch: Float)
 
+    fun damagePacket(p: Player)
+
     companion object{
         fun newInstance() : SNms {
             return newNullableInstance()?:throw UnsupportedOperationException("SNms not supported mc_version ${Bukkit.getServer().minecraftVersion}.")

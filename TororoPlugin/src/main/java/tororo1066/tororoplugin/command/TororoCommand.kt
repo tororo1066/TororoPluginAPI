@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -20,13 +21,16 @@ import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
+import tororo1066.tororopluginapi.defaultMenus.CategorySInventory
 import tororo1066.tororopluginapi.lang.LangEditor
 import tororo1066.tororopluginapi.sCommand.SCommand
 import tororo1066.tororopluginapi.sCommand.SCommandArg
 import tororo1066.tororopluginapi.sCommand.SCommandArgType
 import tororo1066.tororopluginapi.sCommand.SCommandObject
+import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import tororo1066.tororopluginapi.utils.toPlayer
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.floor
 
 @Suppress("UNUSED")
@@ -36,8 +40,24 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
     val iInfoCommand = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("info"))
 
     @SCommandBody
-    val test = command().setPlayerExecutor {
-        LangEditor(SJavaPlugin.plugin).open(it.sender)
+    val test = command().addArg(SCommandArg("rererere")).setPlayerExecutor {
+        val testt = object : CategorySInventory(TororoPlugin.plugin,"test") {
+            override fun renderMenu(): Boolean {
+                val testa = linkedMapOf<String,ArrayList<SInventoryItem>>()
+                testa["aaa"] = arrayListOf()
+                for (i in 1..60){
+                    testa["aaa"]!!.add(SInventoryItem(Material.STONE).setDisplayName(i.toString()))
+                }
+
+                testa["bbb"] = arrayListOf()
+                for (i in 1..60){
+                    testa["bbb"]!!.add(SInventoryItem(Material.STONE).setDisplayName(i.toString()))
+                }
+
+                setResourceItems(testa)
+                return true
+            }
+        }.open(it.sender)
     }
 
     @SCommandBody
@@ -184,10 +204,6 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
             it.sender.sendCopyableMsg("§7WalkSpeed: ${p.walkSpeed}(Default: 0.2)",p.walkSpeed.toString())
             it.sender.sendCopyableMsg("§7Exp: ${p.totalExperience}",p.totalExperience.toString())
             it.sender.sendCopyableMsg("§7Level: ${p.level}",p.level.toString())
-            if (TororoPlugin.essentials != null){
-                val isAfk = TororoPlugin.essentials!!.getUser(p).isAfk
-                it.sender.sendCopyableMsg("§7Afk: $isAfk",isAfk.toString())
-            }
             it.sender.sendMessage("§e======${p.name}の情報(クリックでコピー)======")
 
         }
@@ -274,18 +290,6 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
         .setNormalExecutor {
             val p = it.args[1].toPlayer()!!
             it.sender.sendCopyableMsg("§7Level: ${p.level}",p.level.toString())
-        }
-
-    @SCommandBody
-    val playerAfkInfo = getPInfoCommand().addArg(SCommandArg().addAllowString("afk"))
-        .setNormalExecutor {
-            val p = it.args[1].toPlayer()!!
-            if (TororoPlugin.essentials == null){
-                it.sender.sendMessage(TororoPlugin.prefix + "§cこのサーバーにはEssentialsが入っていません")
-                return@setNormalExecutor
-            }
-            val isAfk = TororoPlugin.essentials!!.getUser(p).isAfk
-            it.sender.sendCopyableMsg("§7Afk: $isAfk",isAfk.toString())
         }
 
     @SCommandBody

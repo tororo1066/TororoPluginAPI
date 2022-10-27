@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.BiConsumer
 import java.util.function.Consumer
+import kotlin.collections.HashMap
 
 /**
  * 拡張機能を持たせたInventory
@@ -51,6 +52,8 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     private var throughEvent = ArrayList<UUID>()
 
+    private var savePlaceItems = false
+
     constructor(plugin : JavaPlugin, name : String, row : Int) : this(plugin) {
         this.name = name
         if (row !in 1..6){
@@ -69,6 +72,10 @@ abstract class SInventory(val plugin: JavaPlugin) {
             val p = it.whoClicked as Player
             p.playSound(p.location,Sound.UI_BUTTON_CLICK,1f,1f)
         }
+    }
+
+    fun savePlaceItems(boolean: Boolean){
+        savePlaceItems = boolean
     }
 
     fun setParent(inventory: SInventory){
@@ -224,10 +231,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
      * @param item SInventoryItem
      */
     fun fillItem(item: SInventoryItem){
-        for (i in 0 until (row*9)){
-            items[i] = item
-            inv.setItem(i,item)
-        }
+        setItems(0 until row*9,item)
     }
 
 
@@ -316,8 +320,20 @@ abstract class SInventory(val plugin: JavaPlugin) {
                 p.sendMessage("§4何かしらの情報を入力中です")
                 return@Runnable
             }
+            val saveItems = HashMap<Int,ItemStack>()
+            if (savePlaceItems){
+                (0 until row*9).forEach {
+                    if (items.containsKey(it))return@forEach
+                    saveItems[it] = inv.getItem(it)?:return@forEach
+                }
+            }
             if (!renderMenu()) return@Runnable
             afterRenderMenu()
+            if (savePlaceItems){
+                saveItems.forEach { (i, item) ->
+                    inv.setItem(i,item)
+                }
+            }
             p.openInventory(inv)
 
             for (open in onOpen){

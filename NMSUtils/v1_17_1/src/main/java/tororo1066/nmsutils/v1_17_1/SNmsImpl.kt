@@ -2,9 +2,11 @@ package tororo1066.nmsutils.v1_17_1
 
 import net.minecraft.network.chat.ChatMessage
 import net.minecraft.network.protocol.game.PacketPlayOutCollect
+import net.minecraft.network.protocol.game.PacketPlayOutEntityStatus
 import net.minecraft.network.protocol.game.PacketPlayOutOpenWindow
 import net.minecraft.network.protocol.game.PacketPlayOutPosition
 import net.minecraft.network.protocol.game.PacketPlayOutPosition.EnumPlayerTeleportFlags
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.inventory.Containers
 import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
@@ -42,6 +44,13 @@ class SNmsImpl: SNms {
     override fun moveRotation(p: Player, yaw: Float, pitch: Float) {
         val packet = PacketPlayOutPosition(0.0,0.0,0.0,yaw,pitch,EnumPlayerTeleportFlags.values().toSet(),0,true)
         (p as CraftPlayer).handle.b.sendPacket(packet)
+    }
+
+    override fun damagePacket(p: Player) {
+        val packet = PacketPlayOutEntityStatus((p as CraftPlayer).handle,2)
+        Bukkit.getOnlinePlayers().forEach {
+            (it as CraftPlayer).handle.b.sendPacket(packet)
+        }
     }
 
 }
