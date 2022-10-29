@@ -17,7 +17,7 @@ import java.net.URL
 import java.util.jar.JarFile
 
 /**
- * プラグインのクラス
+ * JavaPluginの代わりになるクラス
  * ```java
  * //例 Java
  * class Main implements SJavaPlugin() {
