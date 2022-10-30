@@ -12,8 +12,8 @@ open class PagedSInventory(plugin: JavaPlugin,name: String,val row: Int): SInven
 
     var nowPage = 0
 
-    private var leftSlots = listOf<Int>()
-    private var rightSlots = listOf<Int>()
+    private var leftSlots = arrayListOf<Int>()
+    private var rightSlots = arrayListOf<Int>()
 
     fun setResourceItems(items: ArrayList<HashMap<Int,SInventoryItem>>) {
         this.items = items
@@ -28,6 +28,23 @@ open class PagedSInventory(plugin: JavaPlugin,name: String,val row: Int): SInven
     fun addPage(items: HashMap<Int,SInventoryItem>){
         this.items.add(items)
     }
+
+    fun setLeftSlots(slots: List<Int>){
+        leftSlots = ArrayList(slots)
+    }
+
+    fun setRightSlots(slots: List<Int>){
+        rightSlots = ArrayList(slots)
+    }
+
+    fun addLeftSlot(slot: Int){
+        leftSlots.add(slot)
+    }
+
+    fun addRightSlot(slot: Int){
+        rightSlots.add(slot)
+    }
+
 
     fun renderBar(){
 
