@@ -67,6 +67,10 @@ abstract class SInventory(val plugin: JavaPlugin) {
         this.inv = Bukkit.createInventory(null,row,name)
     }
 
+    fun getSInvItems(): HashMap<Int, SInventoryItem> {
+        return items
+    }
+
     fun registerClickSound(){
         setOnClick {
             val p = it.whoClicked as Player

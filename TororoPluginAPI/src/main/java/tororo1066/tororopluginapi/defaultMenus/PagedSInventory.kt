@@ -19,12 +19,9 @@ open class PagedSInventory(plugin: JavaPlugin,name: String,val row: Int): SInven
         this.items = items
     }
 
-    @Suppress("UNCHECKED_CAST")
+
     fun addPage(inv: SInventory){
-        val field = inv.javaClass.getDeclaredField("items")
-        field.isAccessible = true
-        val invItems = field.get(inv) as HashMap<Int,SInventoryItem>
-        items.add(invItems)
+        items.add(inv.getSInvItems())
     }
 
     fun addPage(items: HashMap<Int,SInventoryItem>){
