@@ -62,6 +62,7 @@ open class PagedSInventory(plugin: JavaPlugin,name: String,val row: Int): SInven
                 setItem(it,left)
             }
         }
+
         if (nowPage+1 < items.size){
             rightSlots.forEach {
                 setItem(it,right)
@@ -72,11 +73,11 @@ open class PagedSInventory(plugin: JavaPlugin,name: String,val row: Int): SInven
 
     fun renderInventory(page: Int) {
         clear()
-        renderBar()
 
         for (i in 0 until row*9) {
             setItem(i, this.items[page][i]?:continue)
         }
+        renderBar()
     }
 
 
