@@ -6,7 +6,7 @@ import tororo1066.tororopluginapi.sInventory.SInventory
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import tororo1066.tororopluginapi.sItem.SItem
 
-class PagedSInventory(plugin: JavaPlugin,name: String,val row: Int): SInventory(plugin,name,row) {
+open class PagedSInventory(plugin: JavaPlugin,name: String,val row: Int): SInventory(plugin,name,row) {
 
     private var items = ArrayList<HashMap<Int,SInventoryItem>>()
 
