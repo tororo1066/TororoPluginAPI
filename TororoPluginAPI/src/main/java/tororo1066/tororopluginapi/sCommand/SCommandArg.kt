@@ -1,11 +1,15 @@
 package tororo1066.tororopluginapi.sCommand
 
+import java.util.function.Function
+
 class SCommandArg() {
 
     val alias = ArrayList<String>()
     val allowString = ArrayList<String>()
 
     val allowType = ArrayList<SCommandArgType>()
+
+    val changeableAllowString = ArrayList<Function<List<String>,List<String>>>()
 
     constructor(allowString: String) : this() {
         addAllowString(allowString)
@@ -74,6 +78,11 @@ class SCommandArg() {
         return this
     }
 
+    fun addChangeableAllowString(function: Function<List<String>,List<String>>): SCommandArg {
+        this.changeableAllowString.add(function)
+        return this
+    }
+
     fun hasType(type : SCommandArgType): Boolean {
         return this.allowType.contains(type)
     }
@@ -85,11 +94,14 @@ class SCommandArg() {
         return true
     }
 
-    fun matches(arg : String): Boolean {
+    fun matches(arg : String, args: Array<out String>): Boolean {
         if (!allMatch(arg))return false
-        if (allowString.isEmpty())return true
+        if (allowString.isEmpty() && changeableAllowString.isEmpty())return true
         for (string in allowString){
             if (string.equals(arg,true))return true
+        }
+        for (changeable in changeableAllowString){
+            if (changeable.apply(args.toList()).contains(arg))return true
         }
         return false
     }

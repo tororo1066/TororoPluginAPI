@@ -130,6 +130,9 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
                 result.add("false")
             }
             result.addAll(arg.alias)
+            arg.changeableAllowString.forEach {
+                result.addAll(it.apply(args.toList()))
+            }
         }
         return result
     }

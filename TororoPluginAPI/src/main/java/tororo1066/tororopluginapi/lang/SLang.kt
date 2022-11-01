@@ -48,7 +48,7 @@ class SLang(private val plugin: JavaPlugin) {
         if (!file.exists()) file.mkdirs()
         val langList = plugin.getResource("LangFolder/lang.txt")
         langList?.bufferedReader()?.readLines()?.forEach {
-            if (File(file.path + "/$it.yml").exists() && !overwrite)return@forEach
+            if (File(file.path + "$it.yml").exists() && !overwrite)return@forEach
             plugin.saveResource("LangFolder/${it}.yml",true)
         }
 
@@ -69,40 +69,12 @@ class SLang(private val plugin: JavaPlugin) {
         return langFile[lang]
     }
 
-
-
-    fun loadDefaultFile(file: String): JsonObject {
-        val resource = javaClass.getResourceAsStream("/lang/${file}.json")
-            ?: throw NullPointerException("${file}.jsonがデフォルトに存在しません(TororoPluginAPI)")
-        return Gson().fromJson(resource.bufferedReader().readText(),JsonObject::class.java)?:throw ClassCastException("JsonObjectとして読み込めませんでした(TororoPluginAPI,${file}.json)")
-    }
-
     companion object{
 
 
         val langFile = HashMap<String,YamlConfiguration>()
         var defaultLanguage = "en_us"
         private var prefix = ""
-        /**
-         * materialを言語名にする
-         * @param material Material
-         * @return 失敗すると空の文字列が返ってくる
-         */
-        fun JsonObject.materialToText(material: Material): String {
-            val string = StringBuilder()
-            if (material.isBlock){
-                string.append("block.")
-            }else{
-                string.append("item.")
-            }
-
-            string.append("minecraft.${material.name.lowercase()}")
-
-            val getString = this[string.toString()] ?: return ""
-
-            return getString.asString
-
-        }
 
         /**
          * [CommandSender(Player)][CommandSender]に言語によって変わるメッセージを送る
