@@ -119,12 +119,14 @@ class SInput(private val plugin: JavaPlugin) {
                     return world as T
                 }
                 Date::class.java->{
-                    val date = UsefulUtility.sTry({SimpleDateFormat("yyyy/MM/dd/mm/ss").parse(value)},{
-                        UsefulUtility.sTry({SimpleDateFormat("yyyy/MM/dd/mm").parse(value)}) {
-                            UsefulUtility.sTry({ SimpleDateFormat("yyyy/MM/dd").parse(value)}) {
-                                UsefulUtility.sTry({ SimpleDateFormat("yyyy/MM").parse(value)}) {
-                                    UsefulUtility.sTry({ SimpleDateFormat("yyyy").parse(value)}) {
-                                        null
+                    val date = UsefulUtility.sTry({SimpleDateFormat("yyyy/MM/dd kk:mm:ss").parse(value)},{
+                        UsefulUtility.sTry({SimpleDateFormat("yyyy/MM/dd kk:mm").parse(value)}) {
+                            UsefulUtility.sTry({ SimpleDateFormat("yyyy/MM/dd kk").parse(value)}) {
+                                UsefulUtility.sTry({ SimpleDateFormat("yyyy/MM/dd").parse(value)}) {
+                                    UsefulUtility.sTry({ SimpleDateFormat("yyyy/MM").parse(value)}) {
+                                        UsefulUtility.sTry({ SimpleDateFormat("yyyy").parse(value)}) {
+                                            null
+                                        }
                                     }
                                 }
                             }
