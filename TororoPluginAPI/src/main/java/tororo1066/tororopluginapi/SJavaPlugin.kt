@@ -6,6 +6,7 @@ import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
+import tororo1066.tororopluginapi.config.SConfig
 import tororo1066.tororopluginapi.otherPlugin.SVault
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.sCommand.SCommand
@@ -97,7 +98,7 @@ abstract class SJavaPlugin() : JavaPlugin() {
         }
         val instancedClasses = HashMap<Class<*>,Any>()
         javaClass.protectionDomain.codeSource.location.getClasses(folder).forEach { clazz ->
-            if (UsefulUtility.sTry({clazz.getConstructor()},{null}) == null){
+            if (UsefulUtility.sTry({clazz.getConstructor()}) { null } == null){
                 return@forEach
             }
             if (clazz.superclass == SCommand::class.java){

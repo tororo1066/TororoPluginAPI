@@ -14,5 +14,5 @@ fun String.toIntRange(): IntRange {
 }
 
 fun String.toIntRangeOrNull(): IntRange? {
-    return UsefulUtility.sTry({ this.toIntRange() }, { null })
+    return UsefulUtility.sTry({ this.toIntRange() }) { null }
 }

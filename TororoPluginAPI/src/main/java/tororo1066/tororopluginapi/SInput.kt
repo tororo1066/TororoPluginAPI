@@ -11,6 +11,8 @@ import tororo1066.tororopluginapi.integer.PlusInt
 import tororo1066.tororopluginapi.integer.PlusInt.Companion.toPlusInt
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.sEvent.SEvent
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.function.Consumer
 
 class SInput(private val plugin: JavaPlugin) {
@@ -61,15 +63,19 @@ class SInput(private val plugin: JavaPlugin) {
                 }
                 Int::class.java,java.lang.Integer::class.java -> {
                     val int = value.toIntOrNull()?:return null
-                    return clazz.cast(int)
+                    return int as T
                 }
                 Double::class.java,java.lang.Double::class.java -> {
                     val double = value.toDoubleOrNull()?:return null
-                    return clazz.cast(double)
+                    return double as T
                 }
                 Long::class.java,java.lang.Long::class.java -> {
                     val long = value.toLongOrNull()?:return null
-                    return clazz.cast(long)
+                    return long as T
+                }
+                Boolean::class.java,java.lang.Boolean::class.java->{
+                    if (value != "true" && value != "false")return null
+                    return value.toBoolean() as T
                 }
                 Player::class.java -> {
                     val player = Bukkit.getPlayer(value)?:return null
@@ -105,12 +111,26 @@ class SInput(private val plugin: JavaPlugin) {
                     return clazz.cast(int) as T
                 }
                 BlockFace::class.java -> {
-                    val face = UsefulUtility.sTry({BlockFace.valueOf(value.uppercase())},{null})?:return null
+                    val face = UsefulUtility.sTry({BlockFace.valueOf(value.uppercase())}) { null } ?:return null
                     return clazz.cast(face) as T
                 }
                 World::class.java -> {
                     val world = Bukkit.getWorld(value)?:return null
                     return world as T
+                }
+                Date::class.java->{
+                    val date = UsefulUtility.sTry({SimpleDateFormat("yyyy/MM/dd/mm/ss").parse(value)},{
+                        UsefulUtility.sTry({SimpleDateFormat("yyyy/MM/dd/mm").parse(value)}) {
+                            UsefulUtility.sTry({ SimpleDateFormat("yyyy/MM/dd").parse(value)}) {
+                                UsefulUtility.sTry({ SimpleDateFormat("yyyy/MM").parse(value)}) {
+                                    UsefulUtility.sTry({ SimpleDateFormat("yyyy").parse(value)}) {
+                                        null
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    return date as? T
                 }
 
             }

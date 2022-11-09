@@ -3,7 +3,6 @@ package tororo1066.tororopluginapi.otherUtils
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
-import java.util.Calendar
 import java.util.Date
 import java.util.function.Consumer
 
@@ -18,7 +17,7 @@ class UsefulUtility(val plugin: JavaPlugin) {
             return doubleToFormatString(this)
         }
 
-        fun<V> sTry(unit: ()->V,onError: (Exception)->V) : V {
+        fun<V> sTry(unit: ()->V, onError: (Exception)->V) : V {
             return try {
                 unit.invoke()
             }catch (e : Exception){

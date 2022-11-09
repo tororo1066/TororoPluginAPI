@@ -29,11 +29,11 @@ class PlusInt() {
 
     companion object{
         fun Int.toPlusInt(): PlusInt?{
-            return UsefulUtility.sTry({PlusInt(this)},{null})
+            return UsefulUtility.sTry({PlusInt(this)}) { null }
         }
 
         fun String.toPlusInt(): PlusInt?{
-            return UsefulUtility.sTry({PlusInt(this.toIntOrNull()?:return@sTry null)},{null})
+            return UsefulUtility.sTry({PlusInt(this.toIntOrNull()?:return@sTry null)}) { null }
         }
     }
 }

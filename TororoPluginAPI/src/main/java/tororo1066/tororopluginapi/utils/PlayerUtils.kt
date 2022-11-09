@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.utils
 
 import org.bukkit.Bukkit
 import org.bukkit.World
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import tororo1066.tororopluginapi.SStr
 import java.util.UUID
@@ -32,7 +33,7 @@ fun String.toPlayer(onFail: (String) -> Unit): Player? {
     return p
 }
 
-fun Player.sendMessage(sStr: SStr){
+fun CommandSender.sendMessage(sStr: SStr){
     this.sendMessage(sStr.toTextComponent())
 }
 

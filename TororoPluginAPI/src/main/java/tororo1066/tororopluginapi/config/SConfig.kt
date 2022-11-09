@@ -1,4 +1,4 @@
-package tororo1066.tororopluginapi
+package tororo1066.tororopluginapi.config
 
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin

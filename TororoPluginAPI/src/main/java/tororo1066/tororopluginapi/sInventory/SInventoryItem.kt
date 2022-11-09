@@ -2,7 +2,9 @@ package tororo1066.tororopluginapi.sInventory
 
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.Sound
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
@@ -68,6 +70,17 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
     fun setCanClick(boolean: Boolean): SInventoryItem {
         canClick = boolean
         return this
+    }
+
+    fun sound(sound: Sound, volume: Float, pitch: Float): SInventoryItem {
+        return setClickEvent {
+            val p = it.whoClicked as Player
+            p.playSound(p.location,sound,volume,pitch)
+        }
+    }
+
+    fun uiSound(): SInventoryItem {
+        return sound(Sound.UI_BUTTON_CLICK,1f,1f)
     }
 
     fun active(e : InventoryClickEvent){
