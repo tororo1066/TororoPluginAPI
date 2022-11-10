@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
 import tororo1066.tororopluginapi.config.SConfig
+import tororo1066.tororopluginapi.mysql.SMySQL
 import tororo1066.tororopluginapi.otherPlugin.SVault
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.sCommand.SCommand

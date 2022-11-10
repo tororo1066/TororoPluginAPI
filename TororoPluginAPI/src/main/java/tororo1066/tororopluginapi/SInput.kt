@@ -1,10 +1,13 @@
 package tororo1066.tororopluginapi
 
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
+import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.integer.PlusInt
@@ -14,6 +17,7 @@ import tororo1066.tororopluginapi.sEvent.SEvent
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.function.Consumer
+import kotlin.random.Random
 
 class SInput(private val plugin: JavaPlugin) {
 
@@ -38,6 +42,25 @@ class SInput(private val plugin: JavaPlugin) {
             action.accept(modifyValue)
             unit.unregister()
         }
+    }
+
+    fun clickAccept(p: Player, message: String, action: ()->Unit, fail: ()->Unit, timeSecond: Int){
+        val randomCommand = Random.nextDouble(-90000000.0,90000000.0)
+        var unregistered = false
+        p.sendMessage(Component.text(message).clickEvent(ClickEvent.runCommand("/${randomCommand}")))
+        val event = SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
+            if (cEvent.player != p && cEvent.message.replaceFirst("/","") != randomCommand.toString()) return@biRegister
+            cEvent.isCancelled = true
+
+            action.invoke()
+            unregistered = true
+            unit.unregister()
+        }
+        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+            if (!unregistered)return@Runnable
+            fail.invoke()
+            event.unregister()
+        },timeSecond * 20L)
     }
 
     fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: Consumer<T>) {

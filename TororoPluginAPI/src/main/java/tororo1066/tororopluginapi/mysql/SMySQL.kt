@@ -1,51 +1,11 @@
-package tororo1066.tororopluginapi
+package tororo1066.tororopluginapi.mysql
 
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.sql.*
-import java.time.LocalDateTime
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
-
-/**
- * sQuery、asyncQueryで取得できるResultSet
- */
-class SMySQLResultSet(val result : HashMap<String,Any>){
-    fun getString(name: String): String {
-        return result[name].toString()
-    }
-
-    fun getInt(name: String): Int {
-        return result[name] as Int
-    }
-
-    fun getDouble(name: String): Double {
-        return result[name] as Double
-    }
-
-    fun getBoolean(name: String): Boolean {
-        return result[name] as Boolean
-    }
-
-    fun getDate(name: String): LocalDateTime {
-        return result[name] as LocalDateTime
-    }
-
-    fun getType(name: String): Class<*> {
-        return result[name]!!.javaClass
-    }
-
-    fun getLong(name: String): Long {
-        return result[name] as Long
-    }
-
-    fun getObject(name: String): Any {
-        return result[name]!!
-    }
-
-}
 
 /**
  * MySQLを楽に使えるクラス
