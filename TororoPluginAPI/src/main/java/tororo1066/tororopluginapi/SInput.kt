@@ -10,16 +10,21 @@ import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitTask
 import tororo1066.tororopluginapi.integer.PlusInt
 import tororo1066.tororopluginapi.integer.PlusInt.Companion.toPlusInt
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
+import tororo1066.tororopluginapi.sEvent.BiSEventUnit
 import tororo1066.tororopluginapi.sEvent.SEvent
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.UUID
 import java.util.function.Consumer
 import kotlin.random.Random
 
 class SInput(private val plugin: JavaPlugin) {
+
+    val acceptPlayers = HashMap<UUID,Pair<BiSEventUnit<PlayerCommandPreprocessEvent>,BukkitTask>>()
 
     fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: Consumer<T>, errorMsg: (String) -> String) {
         p.sendMessage(message)
@@ -45,6 +50,12 @@ class SInput(private val plugin: JavaPlugin) {
     }
 
     fun clickAccept(p: Player, message: String, action: ()->Unit, fail: ()->Unit, timeSecond: Int){
+        if (acceptPlayers.containsKey(p.uniqueId)){
+            val value = acceptPlayers[p.uniqueId]!!
+            value.first.unregister()
+            value.second.cancel()
+            acceptPlayers.remove(p.uniqueId)
+        }
         val randomCommand = Random.nextDouble(-90000000.0,90000000.0)
         var unregistered = false
         p.sendMessage(Component.text(message).clickEvent(ClickEvent.runCommand("/${randomCommand}")))
@@ -56,11 +67,12 @@ class SInput(private val plugin: JavaPlugin) {
             unregistered = true
             unit.unregister()
         }
-        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+        val task = Bukkit.getScheduler().runTaskLater(plugin, Runnable {
             if (!unregistered)return@Runnable
             fail.invoke()
             event.unregister()
         },timeSecond * 20L)
+        acceptPlayers[p.uniqueId] = Pair(event,task)
     }
 
     fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: Consumer<T>) {
