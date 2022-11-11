@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi.sInventory
 
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.Sound
@@ -7,13 +8,16 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.sItem.SItem
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.BiConsumer
 import java.util.function.Consumer
+import kotlin.collections.ArrayList
 
 /**
  * SInventoryに使えるitem。eventとか入れられる
@@ -128,6 +132,10 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
         return addLore(mutableListOf(lore))
     }
 
+    override fun addLore(vararg lore : String): SInventoryItem {
+        return addLore(lore.toList())
+    }
+
     override fun setCustomModelData(csm: Int): SInventoryItem {
         val meta = itemMeta?:return this
         meta.setCustomModelData(csm)
@@ -144,6 +152,13 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
 
     override fun setEnchantment(enchantment: Enchantment, level: Int): SInventoryItem {
         this.addUnsafeEnchantment(enchantment,level)
+        return this
+    }
+
+    override fun setSkullOwner(uuid: UUID): SInventoryItem {
+        val meta = itemMeta as SkullMeta
+        meta.owningPlayer = Bukkit.getOfflinePlayer(uuid)
+        itemMeta = meta
         return this
     }
 

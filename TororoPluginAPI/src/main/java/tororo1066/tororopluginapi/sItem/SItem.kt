@@ -190,6 +190,10 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
         return addLore(mutableListOf(lore))
     }
 
+    open fun addLore(vararg lore : String): SItem {
+        return addLore(lore.toList())
+    }
+
 
     /**
      * @param csm カスタムモデルデータ
@@ -251,7 +255,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
         return level
     }
 
-    fun setSkullOwner(uuid: UUID): SItem {
+    open fun setSkullOwner(uuid: UUID): SItem {
         val meta = itemMeta as SkullMeta
         meta.owningPlayer = Bukkit.getOfflinePlayer(uuid)
         itemMeta = meta
