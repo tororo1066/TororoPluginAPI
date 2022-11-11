@@ -56,11 +56,11 @@ class SInput(private val plugin: JavaPlugin) {
             value.second.cancel()
             acceptPlayers.remove(p.uniqueId)
         }
-        val randomCommand = Random.nextDouble(-90000000.0,90000000.0)
+        val randomCommand = Random.nextInt(-90000000,90000000)
         var unregistered = false
         p.sendMessage(Component.text(message).clickEvent(ClickEvent.runCommand("/${randomCommand}")))
         val event = SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
-            if (cEvent.player != p && cEvent.message.replaceFirst("/","") != randomCommand.toString()) return@biRegister
+            if (cEvent.player != p && cEvent.message.replaceFirst("/","") != randomCommand.toString())return@biRegister
             cEvent.isCancelled = true
 
             action.invoke()
