@@ -60,7 +60,7 @@ class SInput(private val plugin: JavaPlugin) {
         var unregistered = false
         p.sendMessage(Component.text(message).clickEvent(ClickEvent.runCommand("/${randomCommand}")))
         val event = SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
-            if (cEvent.player != p && cEvent.message.replaceFirst("/","") != randomCommand.toString())return@biRegister
+            if (cEvent.player != p || cEvent.message.replaceFirst("/","") != randomCommand.toString())return@biRegister
             cEvent.isCancelled = true
 
             action.invoke()
