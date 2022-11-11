@@ -56,7 +56,7 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
 
     fun reloadSCommandBodies(){
         clearCommands()
-        javaClass.fields.forEach {
+        javaClass.declaredFields.forEach {
             if (it.isAnnotationPresent(SCommandBody::class.java) && it.type == SCommandObject::class.java){
                 it.isAccessible = true
                 val data = it.get(this) as SCommandObject
