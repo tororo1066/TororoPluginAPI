@@ -1,9 +1,11 @@
 package tororo1066.tororopluginapi.sItem
 
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.io.BukkitObjectInputStream
@@ -12,6 +14,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.util.UUID
 
 
 /**
@@ -246,6 +249,13 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
         val level = this.itemMeta.getEnchantLevel(enchantment)
         if (level == 0)return null
         return level
+    }
+
+    fun setSkullOwner(uuid: UUID): SItem {
+        val meta = itemMeta as SkullMeta
+        meta.owningPlayer = Bukkit.getOfflinePlayer(uuid)
+        itemMeta = meta
+        return this
     }
 
     /**
