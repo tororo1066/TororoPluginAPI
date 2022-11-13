@@ -24,8 +24,6 @@ import kotlin.random.Random
 
 class SInput(private val plugin: JavaPlugin) {
 
-    val acceptPlayers = HashMap<UUID,Pair<BiSEventUnit<PlayerCommandPreprocessEvent>,BukkitTask>>()
-
     fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: Consumer<T>, errorMsg: (String) -> String) {
         p.sendMessage(message)
         SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
@@ -50,12 +48,6 @@ class SInput(private val plugin: JavaPlugin) {
     }
 
     fun clickAccept(p: Player, message: String, action: ()->Unit, fail: ()->Unit, timeSecond: Int){
-        if (acceptPlayers.containsKey(p.uniqueId)){
-            val value = acceptPlayers[p.uniqueId]!!
-            value.first.unregister()
-            value.second.cancel()
-            acceptPlayers.remove(p.uniqueId)
-        }
         val randomCommand = Random.nextInt(-90000000,90000000)
         var unregistered = false
         p.sendMessage(Component.text(message).clickEvent(ClickEvent.runCommand("/${randomCommand}")))
@@ -67,12 +59,11 @@ class SInput(private val plugin: JavaPlugin) {
             unregistered = true
             unit.unregister()
         }
-        val task = Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
             if (!unregistered)return@Runnable
             fail.invoke()
             event.unregister()
         },timeSecond * 20L)
-        acceptPlayers[p.uniqueId] = Pair(event,task)
     }
 
     fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: Consumer<T>) {
