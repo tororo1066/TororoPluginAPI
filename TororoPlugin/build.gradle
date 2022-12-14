@@ -15,16 +15,11 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
-    maven {
-        name "essentialsx-releases"
-        url "https://repo.essentialsx.net/releases/"
-    }
 }
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
-    compileOnly 'net.essentialsx:EssentialsX:2.19.0'
 
     api project(":TororoPluginAPI")
 }

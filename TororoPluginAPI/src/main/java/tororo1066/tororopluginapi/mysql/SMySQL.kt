@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.mysql
 
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
+import java.lang.NullPointerException
 import java.sql.*
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
@@ -15,11 +16,17 @@ import java.util.concurrent.Executors
  */
 class SMySQL(val plugin : JavaPlugin) {
 
-    private val host : String = plugin.config.getString("mysql.host")?:throw NullPointerException("hostが指定されていません")
-    private val port : String = plugin.config.getString("mysql.port")?:throw NullPointerException("portが指定されていません")
-    private val pass : String = plugin.config.getString("mysql.pass")?:throw NullPointerException("passが指定されていません")
-    private val db : String = plugin.config.getString("mysql.db")?:throw NullPointerException("dbが指定されていません")
-    private val user : String = plugin.config.getString("mysql.user")?:throw NullPointerException("userが指定されていません")
+    constructor(plugin: JavaPlugin, useSQLite: Boolean): this(plugin){
+        this.useSQLite = useSQLite
+    }
+
+    private val host = plugin.config.getString("mysql.host")
+    private val port = plugin.config.getString("mysql.port")
+    private val pass = plugin.config.getString("mysql.pass")
+    private val db = plugin.config.getString("mysql.db")
+    private val user = plugin.config.getString("mysql.user")
+
+    private var useSQLite = false
 
     private var conn : Connection? = null
     private var stmt : Statement? = null
@@ -33,9 +40,32 @@ class SMySQL(val plugin : JavaPlugin) {
      */
     fun open(){
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver")
-            conn = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.db + "?useSSL=false", this.user, this.pass)
-        }catch (e : Exception){
+            if (useSQLite){
+                if (db == null){
+                    throw NullPointerException("Database name is empty.")
+                }
+                Class.forName("org.sqlite.JDBC")
+                conn = DriverManager.getConnection("jdbc:sqlite:${plugin.dataFolder.absolutePath}/${db}.db")
+            } else {
+                if (host == null){
+                    throw NullPointerException("Host name is empty.")
+                }
+                if (port == null){
+                    throw NullPointerException("Port number is empty.")
+                }
+                if (pass == null){
+                    throw NullPointerException("Password is empty.")
+                }
+                if (user == null){
+                    throw NullPointerException("User name is empty.")
+                }
+                if (db == null){
+                    throw NullPointerException("Database name is empty.")
+                }
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                conn = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.db + "?useSSL=false", this.user, this.pass)
+            }
+        }catch (e : SQLException){
             Bukkit.getLogger().warning(e.stackTraceToString())
         }
     }
