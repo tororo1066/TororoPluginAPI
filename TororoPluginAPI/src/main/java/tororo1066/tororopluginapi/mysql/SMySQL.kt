@@ -1,12 +1,15 @@
 package tororo1066.tororopluginapi.mysql
 
 import org.bukkit.Bukkit
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.File
 import java.lang.NullPointerException
 import java.sql.*
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import javax.security.auth.callback.Callback
 
 /**
  * MySQLを楽に使えるクラス
@@ -20,11 +23,39 @@ class SMySQL(val plugin : JavaPlugin) {
         this.useSQLite = useSQLite
     }
 
-    private val host = plugin.config.getString("mysql.host")
-    private val port = plugin.config.getString("mysql.port")
-    private val pass = plugin.config.getString("mysql.pass")
-    private val db = plugin.config.getString("mysql.db")
-    private val user = plugin.config.getString("mysql.user")
+    constructor(plugin: JavaPlugin, configFile: String?, configPath: String?, useSQLite: Boolean): this(plugin){
+        this.configFile = configFile
+        this.configPath = configPath
+        this.useSQLite = useSQLite
+    }
+
+    private var configFile: String? = null
+    private var configPath: String? = null
+    private val host: String?
+    private val port: String?
+    private val pass: String?
+    private val db: String?
+    private val user: String?
+    init {
+        var yml = plugin.config
+        if (configFile != null){
+            yml = YamlConfiguration.loadConfiguration(File(plugin.dataFolder.path + File.separator + configFile))
+        }
+        if (configPath != null){
+            host = yml.getString("$configPath.host")
+            port = yml.getString("$configPath.port")
+            pass = yml.getString("$configPath.pass")
+            user = yml.getString("$configPath.user")
+            db = yml.getString("$configPath.db")
+        } else {
+            host = yml.getString("mysql.host")
+            port = yml.getString("mysql.port")
+            pass = yml.getString("mysql.pass")
+            user = yml.getString("mysql.user")
+            db = yml.getString("mysql.db")
+        }
+
+    }
 
     private var useSQLite = false
 
@@ -46,6 +77,7 @@ class SMySQL(val plugin : JavaPlugin) {
                 }
                 Class.forName("org.sqlite.JDBC")
                 conn = DriverManager.getConnection("jdbc:sqlite:${plugin.dataFolder.absolutePath}/${db}.db")
+                conn!!.metaData
             } else {
                 if (host == null){
                     throw NullPointerException("Host name is empty.")
@@ -235,6 +267,25 @@ class SMySQL(val plugin : JavaPlugin) {
             thread.submit(Callable { sQuery(query) }).get()
         }catch (e : Exception){
             return arrayListOf()
+        }
+    }
+
+    fun callbackExecute(query: String, callback: (Boolean)-> Unit){
+        try {
+            thread.execute {
+                callback.invoke(execute(query))
+            }
+        }catch (e: Exception){
+            callback.invoke(false)
+        }
+    }
+    fun callbackQuery(query: String, callback: (ArrayList<SMySQLResultSet>)-> Unit){
+        try {
+            thread.execute {
+                callback.invoke(sQuery(query))
+            }
+        }catch (e: Exception){
+            callback.invoke(arrayListOf())
         }
     }
 
