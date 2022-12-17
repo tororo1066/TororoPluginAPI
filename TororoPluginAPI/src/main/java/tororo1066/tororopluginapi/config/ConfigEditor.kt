@@ -63,8 +63,7 @@ class ConfigEditor(plugin: JavaPlugin): LargeSInventory(plugin,"ConfigEditor") {
                 val item = p.inventory.itemInMainHand
                 section.set(path,item)
                 yaml.save(file)
-                inv.renderMenu()
-                inv.afterRenderMenu()
+                inv.allRenderMenu()
             }
         }
 
