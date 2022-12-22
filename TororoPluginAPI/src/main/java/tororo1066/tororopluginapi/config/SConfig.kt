@@ -157,7 +157,7 @@ class SConfig(val plugin: JavaPlugin) {
             if (it.isDirectory){
                 fileList.addAll(loadAllFiles(it))
             } else {
-                fileList.add(folder)
+                fileList.add(it)
             }
         }
         return fileList
