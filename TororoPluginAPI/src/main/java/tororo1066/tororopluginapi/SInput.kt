@@ -16,6 +16,7 @@ import tororo1066.tororopluginapi.integer.PlusInt.Companion.toPlusInt
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.sEvent.BiSEventUnit
 import tororo1066.tororopluginapi.sEvent.SEvent
+import tororo1066.tororopluginapi.utils.toIntRangeOrNull
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.UUID
@@ -159,6 +160,9 @@ class SInput(private val plugin: JavaPlugin) {
                         }
                     })
                     return date as? T
+                }
+                IntRange::class.java->{
+                    return value.toIntRangeOrNull() as? T
                 }
 
             }
