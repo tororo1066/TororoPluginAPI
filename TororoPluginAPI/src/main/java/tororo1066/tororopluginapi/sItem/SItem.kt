@@ -269,6 +269,10 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
         return SInventoryItem(this)
     }
 
+    open fun asItemStack(): ItemStack {
+        return super.clone()
+    }
+
     override fun clone(): SItem {
         return super.clone() as SItem
     }
