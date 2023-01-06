@@ -2,15 +2,17 @@ package tororo1066.tororopluginapi
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
-import net.kyori.adventure.text.TranslatableComponent
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.md_5.bungee.api.chat.BaseComponent
+import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.ChatColor
 
-class SStr {
+class SStr: Cloneable {
     private val componentBuilder = Component.text("").toBuilder()
+    private val md5ComponentBuilder = ComponentBuilder()
     private val disableOptions = ArrayList<DisableOption>()
 
     constructor(text: String){
@@ -21,9 +23,11 @@ class SStr {
         this.disableOptions.addAll(disableOptions)
         if (disableOptions.contains(DisableOption.COLOR_CODE)){
             this.componentBuilder.append(Component.text(text))
+            this.md5ComponentBuilder.append(text)
             return
         }
         this.componentBuilder.append(Component.text(text.replace("&","§")))
+        this.md5ComponentBuilder.append(text.replace("&","§"))
     }
 
     constructor(vararg disableOptions: DisableOption){
@@ -32,6 +36,7 @@ class SStr {
 
     private constructor(component: Component){
         componentBuilder.append(component)
+        md5ComponentBuilder.append(PlainTextComponentSerializer.plainText().serialize(component))
     }
 
     fun append(any: Any): SStr {
@@ -50,7 +55,7 @@ class SStr {
 
 
     operator fun plus(any: Any): SStr {
-        return append(any)
+        return clone().append(any)
     }
 
     operator fun plusAssign(any: Any) {
@@ -65,16 +70,17 @@ class SStr {
         return PlainTextComponentSerializer.plainText().serialize(componentBuilder.build())
     }
 
-    fun toTextComponent(): TextComponent {
+    fun toPaperComponent(): TextComponent {
         return componentBuilder.build()
     }
 
-    fun toBaseComponent(): BaseComponent {
-        return net.md_5.bungee.api.chat.TextComponent(PlainTextComponentSerializer.plainText().serialize(componentBuilder.build()))
+    fun toBukkitComponent(): Array<out BaseComponent> {
+        return md5ComponentBuilder.create()
     }
 
     fun hoverText(text: String): SStr {
         componentBuilder.hoverEvent(HoverEvent.showText(Component.text(text)))
+        md5ComponentBuilder.event(net.md_5.bungee.api.chat.HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,Text(text)))
         return this
     }
 
@@ -88,11 +94,18 @@ class SStr {
 
     fun clickText(action: ClickEvent.Action, actionString: String): SStr {
         componentBuilder.clickEvent(ClickEvent.clickEvent(action,actionString))
+        md5ComponentBuilder.event(net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.valueOf(action.name),actionString))
         return this
     }
 
+
+
     enum class DisableOption {
         COLOR_CODE,
+    }
+
+    public override fun clone(): SStr {
+        return super.clone() as SStr
     }
 
     companion object{

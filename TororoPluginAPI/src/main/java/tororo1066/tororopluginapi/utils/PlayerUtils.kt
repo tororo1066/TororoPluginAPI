@@ -34,7 +34,7 @@ fun String.toPlayer(onFail: (String) -> Unit): Player? {
 }
 
 fun CommandSender.sendMessage(sStr: SStr){
-    this.sendMessage(sStr.toTextComponent())
+    this.sendMessage(sStr.toPaperComponent())
 }
 
 fun World.broadcast(sStr: SStr){

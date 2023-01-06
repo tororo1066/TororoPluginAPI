@@ -145,7 +145,7 @@ class SLang(private val plugin: JavaPlugin) {
             value.forEachIndexed { index, string ->
                 modifyString = modifyString.replace("{${index}}",string)
             }
-            return modifyString
+            return modifyString.replace("&","§")
         }
     }
 

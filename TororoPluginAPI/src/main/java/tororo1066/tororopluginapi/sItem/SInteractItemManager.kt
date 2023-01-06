@@ -44,9 +44,9 @@ class SInteractItemManager(val plugin: JavaPlugin) {
             val interactItem = items[item]!!
             if (interactItem.interactCoolDown != 0){
                 if (e.player.locale != "ja_jp"){
-                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,SStr("&c&lCool Time&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&ls").toBaseComponent())
+                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&lCool Time&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&ls").toBukkitComponent())
                 } else {
-                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBaseComponent())
+                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent())
                 }
 
                 return@register
