@@ -8,7 +8,10 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.hover.content.Text
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.Server
+import org.bukkit.command.CommandSender
 
 class SStr: Cloneable {
     private val componentBuilder = Component.text("").toBuilder()
@@ -17,6 +20,7 @@ class SStr: Cloneable {
 
     constructor(text: String){
         this.componentBuilder.append(Component.text(text.replace("&","§")))
+        this.md5ComponentBuilder.append(text.replace("&","§"))
     }
 
     constructor(text: String, vararg disableOptions: DisableOption){
@@ -96,6 +100,14 @@ class SStr: Cloneable {
         componentBuilder.clickEvent(ClickEvent.clickEvent(action,actionString))
         md5ComponentBuilder.event(net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.valueOf(action.name),actionString))
         return this
+    }
+
+    fun sendMessage(commandSender: CommandSender){
+        commandSender.sendMessage(toPaperComponent())
+    }
+
+    fun broadcast(){
+        Bukkit.broadcast(toPaperComponent(), Server.BROADCAST_CHANNEL_USERS)
     }
 
 
