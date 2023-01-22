@@ -73,26 +73,26 @@ class SMySQL(val plugin : JavaPlugin) {
         try {
             if (useSQLite){
                 if (db == null){
-                    throw NullPointerException("Database name is empty.")
+                    throw NullPointerException("[SQLite] Database name is empty.")
                 }
                 Class.forName("org.sqlite.JDBC")
                 conn = DriverManager.getConnection("jdbc:sqlite:${plugin.dataFolder.absolutePath}/${db}.db")
                 conn!!.metaData
             } else {
                 if (host == null){
-                    throw NullPointerException("Host name is empty.")
+                    throw NullPointerException("[MySQL] Host name is empty.")
                 }
                 if (port == null){
-                    throw NullPointerException("Port number is empty.")
+                    throw NullPointerException("[MySQL] Port number is empty.")
                 }
                 if (pass == null){
-                    throw NullPointerException("Password is empty.")
+                    throw NullPointerException("[MySQL] Password is empty.")
                 }
                 if (user == null){
-                    throw NullPointerException("User name is empty.")
+                    throw NullPointerException("[MySQL] User name is empty.")
                 }
                 if (db == null){
-                    throw NullPointerException("Database name is empty.")
+                    throw NullPointerException("[MySQL] Database name is empty.")
                 }
                 Class.forName("com.mysql.cj.jdbc.Driver")
                 conn = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.db + "?useSSL=false", this.user, this.pass)

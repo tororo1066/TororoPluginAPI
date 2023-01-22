@@ -44,14 +44,23 @@ class SStr: Cloneable {
     }
 
     fun append(any: Any): SStr {
+        if (any is SStr){
+            this.componentBuilder.append(any.componentBuilder)
+            this.md5ComponentBuilder
+        }
         if (disableOptions.contains(DisableOption.COLOR_CODE)) {
             this.componentBuilder.append(Component.text(any.toString()))
+            this.md5ComponentBuilder.append(any.toString())
             return this
         }
         this.componentBuilder.append(Component.text(any.toString().replace("&", "§")))
+        this.md5ComponentBuilder.append(any.toString().replace("&", "§"))
         return this
     }
 
+    /**
+     * Only Supported Paper
+     */
     fun appendTrans(key: String): SStr {
         this.componentBuilder.append(Component.translatable(key))
         return this

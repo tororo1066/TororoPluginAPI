@@ -36,11 +36,15 @@ class SInteractItemManager(val plugin: JavaPlugin) {
 
     init {
         SEvent(plugin).register(PlayerInteractEvent::class.java) { e ->
-            if (e.hand == EquipmentSlot.OFF_HAND)return@register
             if (!e.hasItem())return@register
             val item = e.item!!.clone()
             item.amount = 1
             if (!items.containsKey(item))return@register
+            if (e.player.inventory.itemInMainHand.isSimilar(item)){
+                if (e.hand == EquipmentSlot.OFF_HAND)return@register
+            } else {
+                if (e.hand == EquipmentSlot.HAND)return@register
+            }
             val interactItem = items[item]!!
             if (interactItem.interactCoolDown != 0){
                 if (e.player.locale != "ja_jp"){
