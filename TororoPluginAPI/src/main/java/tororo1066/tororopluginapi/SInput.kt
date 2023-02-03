@@ -7,19 +7,16 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
-import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitTask
 import tororo1066.tororopluginapi.integer.PlusInt
 import tororo1066.tororopluginapi.integer.PlusInt.Companion.toPlusInt
+import tororo1066.tororopluginapi.otherClass.StrExcludeFileIllegalCharacter
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
-import tororo1066.tororopluginapi.sEvent.BiSEventUnit
 import tororo1066.tororopluginapi.sEvent.SEvent
 import tororo1066.tororopluginapi.utils.toIntRangeOrNull
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.UUID
 import java.util.function.Consumer
 import kotlin.random.Random
 
@@ -163,6 +160,11 @@ class SInput(private val plugin: JavaPlugin) {
                 }
                 IntRange::class.java->{
                     return value.toIntRangeOrNull() as? T
+                }
+                StrExcludeFileIllegalCharacter::class.java->{
+                    if (value.matches(Regex("[(<|>:?\"/\\\\)*]")))return null
+                    return StrExcludeFileIllegalCharacter(value) as T
+
                 }
 
             }

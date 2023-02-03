@@ -46,7 +46,8 @@ class SStr: Cloneable {
     fun append(any: Any): SStr {
         if (any is SStr){
             this.componentBuilder.append(any.componentBuilder)
-            this.md5ComponentBuilder
+            this.md5ComponentBuilder.append(any.md5ComponentBuilder.create())
+            return this
         }
         if (disableOptions.contains(DisableOption.COLOR_CODE)) {
             this.componentBuilder.append(Component.text(any.toString()))
