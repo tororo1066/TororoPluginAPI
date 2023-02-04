@@ -25,6 +25,14 @@ class UsefulUtility(val plugin: JavaPlugin) {
             }
         }
 
+        fun<V> repeat(amount: Int, unit: ()->V): List<V> {
+            val values = ArrayList<V>()
+            (1..amount).forEach {
+                values.add(unit.invoke())
+            }
+            return values
+        }
+
     }
 
     fun runTask(consumer: Consumer<BukkitTask>){
@@ -37,6 +45,22 @@ class UsefulUtility(val plugin: JavaPlugin) {
 
     fun<V> sTry(unit: ()->V,onError: (Exception)->V) : V {
         return UsefulUtility.sTry(unit,onError)
+    }
+
+    fun<V> repeat(amount: Int, unit: ()->V): List<V> {
+        return UsefulUtility.repeat(amount,unit)
+    }
+
+    fun<V> repeatDelay(amount: Int, delayTick: Int, repeatTick: Int, unit: ()->V) {
+        var count = amount
+        Bukkit.getScheduler().runTaskTimer(plugin, Consumer {
+            unit.invoke()
+            count--
+            if (count <= 0){
+                it.cancel()
+                return@Consumer
+            }
+        },delayTick.toLong(), repeatTick.toLong())
     }
 
 }
