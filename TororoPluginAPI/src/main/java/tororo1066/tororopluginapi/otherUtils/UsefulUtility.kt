@@ -63,4 +63,8 @@ class UsefulUtility(val plugin: JavaPlugin) {
         },delayTick.toLong(), repeatTick.toLong())
     }
 
+    fun<V> repeatDelay(amount: Int, repeatTick: Int, unit: ()->V) {
+        repeatDelay(amount, 0, repeatTick, unit)
+    }
+
 }
