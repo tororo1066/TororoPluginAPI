@@ -51,20 +51,29 @@ class UsefulUtility(val plugin: JavaPlugin) {
         return UsefulUtility.repeat(amount,unit)
     }
 
-    fun<V> repeatDelay(amount: Int, delayTick: Int, repeatTick: Int, unit: ()->V) {
+    fun repeatDelay(amount: Int, delayTick: Int, repeatTick: Int, unit: ()->Unit, lastAction: (()->Unit)?) {
         var count = amount
         Bukkit.getScheduler().runTaskTimer(plugin, Consumer {
             unit.invoke()
             count--
             if (count <= 0){
+                lastAction?.invoke()
                 it.cancel()
                 return@Consumer
             }
         },delayTick.toLong(), repeatTick.toLong())
     }
 
-    fun<V> repeatDelay(amount: Int, repeatTick: Int, unit: ()->V) {
-        repeatDelay(amount, 0, repeatTick, unit)
+    fun repeatDelay(amount: Int, repeatTick: Int, unit: ()->Unit) {
+        repeatDelay(amount, 0, repeatTick, unit, null)
+    }
+
+    fun repeatDelay(amount: Int, repeatTick: Int, unit: ()->Unit, lastAction: (() -> Unit)?) {
+        repeatDelay(amount, 0, repeatTick, unit, lastAction)
+    }
+
+    fun repeatDelay(amount: Int, delayTick: Int,repeatTick: Int, unit: ()->Unit) {
+        repeatDelay(amount, delayTick, repeatTick, unit, null)
     }
 
 }
