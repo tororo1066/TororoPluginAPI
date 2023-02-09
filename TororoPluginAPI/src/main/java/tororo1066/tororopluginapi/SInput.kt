@@ -9,8 +9,8 @@ import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.plugin.java.JavaPlugin
-import tororo1066.tororopluginapi.integer.PlusInt
-import tororo1066.tororopluginapi.integer.PlusInt.Companion.toPlusInt
+import tororo1066.tororopluginapi.otherClass.PlusInt
+import tororo1066.tororopluginapi.otherClass.PlusInt.Companion.toPlusInt
 import tororo1066.tororopluginapi.otherClass.StrExcludeFileIllegalCharacter
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.sEvent.SEvent

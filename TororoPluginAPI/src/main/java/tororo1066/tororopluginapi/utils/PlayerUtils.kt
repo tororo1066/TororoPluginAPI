@@ -44,5 +44,7 @@ fun World.broadcast(sStr: SStr){
 }
 
 fun World.broadcast(str: String){
-    broadcast(SStr(str))
+    this.players.forEach {
+        it.sendMessage(str)
+    }
 }

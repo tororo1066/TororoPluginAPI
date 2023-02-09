@@ -31,7 +31,11 @@ class SInteractItemManager(val plugin: JavaPlugin) {
     }
 
     fun createSInteractItem(itemStack: ItemStack, noDump: Boolean): SInteractItem {
-        return SInteractItem(this,SItem(itemStack).setCustomData(plugin,"tororopluginapi", PersistentDataType.DOUBLE,Random.nextDouble()))
+        return if (noDump){
+            SInteractItem(this,SItem(itemStack).setCustomData(plugin,"tororopluginapi", PersistentDataType.DOUBLE,Random.nextDouble()))
+        } else {
+            createSInteractItem(itemStack)
+        }
     }
 
     init {
@@ -47,11 +51,7 @@ class SInteractItemManager(val plugin: JavaPlugin) {
             }
             val interactItem = items[item]!!
             if (interactItem.interactCoolDown != 0){
-                if (e.player.locale != "ja_jp"){
-                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&lCool Time&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&ls").toBukkitComponent())
-                } else {
-                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent())
-                }
+                e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent())
 
                 return@register
             }

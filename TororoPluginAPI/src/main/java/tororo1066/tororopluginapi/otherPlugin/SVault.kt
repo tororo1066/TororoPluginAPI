@@ -22,7 +22,7 @@ class SVault {
     }
 
     private fun setup(): Boolean {
-        if (Bukkit.getPluginManager().getPlugin("Vault") == null){
+        if (!Bukkit.getPluginManager().isPluginEnabled("Vault")){
             Bukkit.getLogger().warning("Vaultが入っていません")
             return false
         }

@@ -1,15 +1,13 @@
-package tororo1066.tororopluginapi.integer
+package tororo1066.tororopluginapi.otherClass
 
-import tororo1066.tororopluginapi.exception.PlusIntException
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
-import kotlin.Int
 
 class PlusInt() {
 
     private var int: Int = 0
 
     constructor(int: Int): this(){
-        if (int < 0) throw PlusIntException("failed cast $int to PlusInt")
+        if (int < 0) throw ClassCastException("failed cast $int to PlusInt")
         this.int = int
     }
 
@@ -29,11 +27,11 @@ class PlusInt() {
 
     companion object{
         fun Int.toPlusInt(): PlusInt?{
-            return UsefulUtility.sTry({PlusInt(this)}) { null }
+            return UsefulUtility.sTry({ PlusInt(this) }) { null }
         }
 
         fun String.toPlusInt(): PlusInt?{
-            return UsefulUtility.sTry({PlusInt(this.toIntOrNull()?:return@sTry null)}) { null }
+            return UsefulUtility.sTry({ PlusInt(this.toIntOrNull()?:return@sTry null) }) { null }
         }
     }
 }

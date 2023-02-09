@@ -13,7 +13,7 @@ class UsefulUtility(val plugin: JavaPlugin) {
             return String.format("%,.0f",double)
         }
 
-        fun Double.toFormatString(): String{
+        fun Double.toFormatString(): String {
             return doubleToFormatString(this)
         }
 
