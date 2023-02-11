@@ -121,11 +121,11 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
         ))
     }
 
-    var nowNum = 0
+    var nowNum = 0L
     var maxDigits = 9
-    var maxNum = -1
+    var maxNum = -1L
     var allowZero = false
-    var onConfirm: Consumer<Int>? = null
+    var onConfirm: Consumer<Long>? = null
     var onCancel: Consumer<InventoryClickEvent>? = null
     var infoItem: ItemStack? = null
 
@@ -169,7 +169,7 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
             val item = SInventoryItem(num.value).setCanClick(false).setClickEvent {
                 var str = index.toString()
 
-                if (nowNum == 0){
+                if (nowNum == 0L){
                     if (index == 0)return@setClickEvent
                     str = index.toString()
                 } else {
@@ -181,18 +181,18 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
                     for (i in 1..maxDigits){
                         builder.append("9")
                     }
-                    nowNum = builder.toInt()!!
+                    nowNum = builder.toString().toLong()
                     displayNumber()
                     return@setClickEvent
                 }
 
-                if (str.toInt() > maxNum && maxNum != -1){
-                    nowNum = str.toInt()
+                if (str.toInt() > maxNum && maxNum != -1L){
+                    nowNum = str.toLong()
                     displayNumber()
                     return@setClickEvent
                 }
 
-                nowNum = str.toInt()
+                nowNum = str.toLong()
                 displayNumber()
             }
 
@@ -208,7 +208,7 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
 
     fun renderButton(){
         if (!allowZero){
-            if (nowNum == 0){
+            if (nowNum == 0L){
                 setItem(41,SInventoryItem(Material.BLUE_STAINED_GLASS_PANE).setDisplayName(" ").setCanClick(false))
                 return
             }
