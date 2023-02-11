@@ -289,7 +289,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
             val outputStream = ByteArrayOutputStream()
             val dataOutput = BukkitObjectOutputStream(outputStream)
             dataOutput.writeInt(1)
-            dataOutput.writeObject(this as ItemStack)
+            dataOutput.writeObject(ItemStack(this))
             dataOutput.close()
             Base64Coder.encodeLines(outputStream.toByteArray())
 
