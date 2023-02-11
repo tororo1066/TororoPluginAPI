@@ -237,7 +237,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
      * @param item SInventoryItem
      */
     fun fillItem(item: SInventoryItem){
-        setItems(0 until row*9,item)
+        setItems(0 until row,item)
     }
 
 
@@ -328,7 +328,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
             }
             val saveItems = HashMap<Int,ItemStack>()
             if (savePlaceItems){
-                (0 until row*9).forEach {
+                (0 until row).forEach {
                     if (items.containsKey(it))return@forEach
                     saveItems[it] = inv.getItem(it)?:return@forEach
                 }
