@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 /**
  * sQuery、asyncQueryで取得できるResultSet
  */
-class SMySQLResultSet(val result : HashMap<String,Any>){
+class SMySQLResultSet(val result : HashMap<String,Any?>){
     fun getString(name: String): String {
         return result[name].toString()
     }

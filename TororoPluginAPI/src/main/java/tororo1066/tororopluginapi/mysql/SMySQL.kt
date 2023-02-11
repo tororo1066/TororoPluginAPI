@@ -202,7 +202,7 @@ class SMySQL(val plugin : JavaPlugin) {
         try {
             while (rs.next()){
                 val meta = rs.metaData
-                val data = HashMap<String,Any>()
+                val data = HashMap<String,Any?>()
                 for (i in 1 until meta.columnCount + 1) {
                     val name = meta.getColumnName(i)
                     data[name] = rs.getObject(name)
