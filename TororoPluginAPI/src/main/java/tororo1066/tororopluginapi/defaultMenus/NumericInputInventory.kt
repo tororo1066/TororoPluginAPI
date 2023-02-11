@@ -133,7 +133,7 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
         removeItems(0..maxDigits)
 
         for (i in 0 until nowNum.toString().length){
-            val char = nowNum.toString().substring(i,i)
+            val char = nowNum.toString()[i].toString()
             val item = SInventoryItem(numItems.values.toList()[char.toInt()]).setDisplayName(char)
                 .setCanClick(false)
             setItem(i,item)
