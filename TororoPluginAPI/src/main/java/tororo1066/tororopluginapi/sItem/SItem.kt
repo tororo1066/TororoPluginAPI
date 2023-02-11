@@ -44,10 +44,14 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
 
                 val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(data))
                 val dataInput = BukkitObjectInputStream(inputStream)
-                val item = dataInput.readObject() as ItemStack
+                val items = arrayOfNulls<ItemStack>(dataInput.readInt())
+
+                for (i in items.indices){
+                    items[i] = dataInput.readObject() as ItemStack
+                }
 
                 dataInput.close()
-                return SItem(item)
+                return SItem(items[0]!!)
             } catch (e: Exception) {
                 null
             }
