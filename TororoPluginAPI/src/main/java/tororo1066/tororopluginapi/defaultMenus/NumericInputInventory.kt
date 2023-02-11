@@ -1,11 +1,13 @@
 package tororo1066.tororopluginapi.defaultMenus
 
+import org.bukkit.Bukkit
 import org.bukkit.DyeColor
 import org.bukkit.Material
 import org.bukkit.block.banner.Pattern
 import org.bukkit.block.banner.PatternType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BannerMeta
 import org.bukkit.plugin.java.JavaPlugin
@@ -17,7 +19,7 @@ import java.util.function.Consumer
 
 class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin,name,6) {
 
-    val numItems = hashMapOf<Int,ItemStack>()
+    val numItems = LinkedHashMap<Int,ItemStack>()
 
     init {
         val zero = ItemStack(Material.WHITE_BANNER)
@@ -28,6 +30,7 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_LEFT))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_DOWNLEFT))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.BORDER))
+            it.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
         }
 
         val one = ItemStack(Material.WHITE_BANNER)
@@ -36,6 +39,7 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_CENTER))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_BOTTOM))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.BORDER))
+            it.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
         }
 
         val two = ItemStack(Material.WHITE_BANNER)
@@ -45,6 +49,7 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_DOWNLEFT))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_BOTTOM))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.BORDER))
+            it.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
         }
 
         val three = ItemStack(Material.WHITE_BANNER)
@@ -55,6 +60,7 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_RIGHT))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_TOP))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.BORDER))
+            it.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
         }
 
         val four = ItemStack(Material.WHITE_BANNER)
@@ -65,6 +71,7 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_RIGHT))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_MIDDLE))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.BORDER))
+            it.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
         }
 
         val five = ItemStack(Material.WHITE_BANNER)
@@ -75,6 +82,7 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.SQUARE_BOTTOM_LEFT))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_TOP))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.BORDER))
+            it.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
         }
 
         val six = ItemStack(Material.BLACK_BANNER)
@@ -85,15 +93,17 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_BOTTOM))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_LEFT))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.BORDER))
+            it.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
         }
 
         val seven = ItemStack(Material.WHITE_BANNER)
-        four.editMeta(BannerMeta::class.java) {
+        seven.editMeta(BannerMeta::class.java) {
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_TOP))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.DIAGONAL_RIGHT))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_DOWNLEFT))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.SQUARE_BOTTOM_LEFT))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.BORDER))
+            it.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
         }
 
         val eight = ItemStack(Material.WHITE_BANNER)
@@ -104,16 +114,18 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_MIDDLE))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_BOTTOM))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.BORDER))
+            it.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
         }
 
-        val nine = ItemStack(Material.WHITE_BANNER)
+        val nine = ItemStack(Material.BLACK_BANNER)
         nine.editMeta(BannerMeta::class.java) {
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.HALF_HORIZONTAL))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_LEFT))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.STRIPE_BOTTOM))
+            it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_TOP))
             it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_RIGHT))
-            it.addPattern(Pattern(DyeColor.BLACK,PatternType.STRIPE_MIDDLE))
             it.addPattern(Pattern(DyeColor.WHITE,PatternType.BORDER))
+            it.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
         }
 
         numItems.putAll(mapOf(Pair(46,zero),Pair(37,one),Pair(38,two),Pair(39,three)
@@ -129,14 +141,16 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
     var onCancel: Consumer<InventoryClickEvent>? = null
     var infoItem: ItemStack? = null
 
+    private val numDisplay = arrayListOf(8,7,6,5,4,3,2,1,0,17,16,15,14,13,12,11,10,9)
+
     fun displayNumber(){
-        removeItems(0..maxDigits)
+        removeItems(0 until maxDigits)
 
         for (i in 0 until nowNum.toString().length){
             val char = nowNum.toString()[i].toString()
             val item = SInventoryItem(numItems.values.toList()[char.toInt()]).setDisplayName(char)
                 .setCanClick(false)
-            setItem(i,item)
+            setItem(numDisplay[nowNum.toString().length-1-i],item)
         }
 
         renderButton()
@@ -163,11 +177,11 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
 
     fun renderNum(){
 
-        removeItems(0..maxDigits)
+        removeItems(0 until  maxDigits)
 
         for ((index, num) in numItems.entries.withIndex()){
-            val item = SInventoryItem(num.value).setCanClick(false).setClickEvent {
-                var str = index.toString()
+            val item = SInventoryItem(num.value).setDisplayName("$index").setCanClick(false).setClickEvent {
+                var str = nowNum.toString()
 
                 if (nowNum == 0L){
                     if (index == 0)return@setClickEvent
