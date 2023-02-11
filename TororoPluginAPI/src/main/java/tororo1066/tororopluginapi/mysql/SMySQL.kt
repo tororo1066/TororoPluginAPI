@@ -205,7 +205,12 @@ class SMySQL(val plugin : JavaPlugin) {
                 val data = HashMap<String,Any?>()
                 for (i in 1 until meta.columnCount + 1) {
                     val name = meta.getColumnName(i)
-                    data[name] = rs.getObject(name)
+                    val obj = rs.getObject(name)
+                    if (obj == "true" || obj == "false"){
+                        data[name] = obj.toString().toBoolean()
+                    } else {
+                        data[name] = obj
+                    }
                 }
                 result.add(SMySQLResultSet(data))
             }
