@@ -426,6 +426,12 @@ abstract class SInventory(val plugin: JavaPlugin) {
         afterRenderMenu()
     }
 
+    @Deprecated("")
+    fun allRenderMenu(){
+        if (!renderMenu())return
+        afterRenderMenu()
+    }
+
     fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: BiConsumer<T,Player>, errorMsg: (String) -> String, clickType: List<ClickType>, invOpenCancel: Boolean): SInventoryItem {
         return SInventoryItem(item).setCanClick(false).setClickEvent {
             if (clickType.isNotEmpty() && !clickType.contains(it.click))return@setClickEvent
