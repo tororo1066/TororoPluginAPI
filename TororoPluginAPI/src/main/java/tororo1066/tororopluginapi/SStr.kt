@@ -7,11 +7,13 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.hover.content.Item
 import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
+import org.bukkit.inventory.ItemStack
 
 class SStr: Cloneable {
     private val componentBuilder = Component.text("").toBuilder()
@@ -110,6 +112,10 @@ class SStr: Cloneable {
         componentBuilder.clickEvent(ClickEvent.clickEvent(action,actionString))
         md5ComponentBuilder.event(net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.valueOf(action.name),actionString))
         return this
+    }
+
+    fun showItem(item: ItemStack){
+        componentBuilder.hoverEvent(item)
     }
 
     fun sendMessage(commandSender: CommandSender){
