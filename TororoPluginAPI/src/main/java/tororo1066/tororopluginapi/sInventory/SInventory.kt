@@ -419,8 +419,10 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     }
 
-    fun allRenderMenu(){
+    fun allRenderMenu(p: Player){
+        if (!renderMenu(p))return
         if (!renderMenu())return
+        afterRenderMenu(p)
         afterRenderMenu()
     }
 
