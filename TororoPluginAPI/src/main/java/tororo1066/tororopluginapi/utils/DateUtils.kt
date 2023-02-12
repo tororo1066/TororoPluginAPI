@@ -26,7 +26,7 @@ enum class DateType {
     YEAR
 }
 
-fun Long.toJPNDateStr(longType: DateType, toDateType: DateType, vararg replaceDate: DateType): String? {
+fun Long.toJPNDateStr(longType: DateType, toDateType: DateType, includeDuration: Boolean, vararg replaceDate: DateType): String? {
     var second = 0L
     var minute = 0L
     var hours = 0L
@@ -108,16 +108,16 @@ fun Long.toJPNDateStr(longType: DateType, toDateType: DateType, vararg replaceDa
             ((((years * 12 + months) * 30 + days) * 24 + hours) * 60 + minute).isZero("分") + second.isZero("秒")
         }
         DateType.HOUR->{
-            (((years * 12 + months) * 30 + days) * 24 + hours).isZero("時") + minute.isZero("分") + second.isZero("秒")
+            (((years * 12 + months) * 30 + days) * 24 + hours).isZero("時${if (includeDuration) "間" else ""}") + minute.isZero("分") + second.isZero("秒")
         }
         DateType.DAY->{
-            ((years * 12 + months) * 30 + days).isZero("日") + hours.isZero("時") + minute.isZero("分") + second.isZero("秒")
+            ((years * 12 + months) * 30 + days).isZero("日") + hours.isZero("時${if (includeDuration) "間" else ""}") + minute.isZero("分") + second.isZero("秒")
         }
         DateType.MONTH->{
-            (years * 12 + months).isZero("月") + days.isZero("日") + hours.isZero("時") + minute.isZero("分") + second.isZero("秒")
+            (years * 12 + months).isZero("${if (includeDuration) "ヵ" else ""}月") + days.isZero("日") + hours.isZero("時${if (includeDuration) "間" else ""}") + minute.isZero("分") + second.isZero("秒")
         }
         DateType.YEAR->{
-            years.isZero("年") + months.isZero("月") + days.isZero("日") + hours.isZero("時") + minute.isZero("分") + second.isZero("秒")
+            years.isZero("年") + months.isZero("${if (includeDuration) "ヵ" else ""}月") + days.isZero("日") + hours.isZero("時${if (includeDuration) "間" else ""}") + minute.isZero("分") + second.isZero("秒")
         }
     }
 
