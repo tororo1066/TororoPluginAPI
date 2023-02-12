@@ -1,6 +1,7 @@
 package tororo1066.tororopluginapi.defaultMenus
 
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.sInventory.SInventory
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
@@ -50,7 +51,7 @@ open class LargeSInventory(plugin: JavaPlugin, title: String) : SInventory(plugi
     }
 
 
-    override fun afterRenderMenu() {
+    override fun afterRenderMenu(p: Player) {
         renderInventory(0)
     }
 }
