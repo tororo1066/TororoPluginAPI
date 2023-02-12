@@ -333,7 +333,9 @@ abstract class SInventory(val plugin: JavaPlugin) {
                     saveItems[it] = inv.getItem(it)?:return@forEach
                 }
             }
+            if (!renderMenu(p)) return@Runnable
             if (!renderMenu()) return@Runnable
+            afterRenderMenu(p)
             afterRenderMenu()
             if (savePlaceItems){
                 saveItems.forEach { (i, item) ->
@@ -389,6 +391,15 @@ abstract class SInventory(val plugin: JavaPlugin) {
      * 読み込み時に行う処理
      * @return falseでそのあとの処理を実行しない
      */
+    open fun renderMenu(p: Player) : Boolean{
+        return true
+    }
+
+    /**
+     * 読み込み時に行う処理
+     * @return falseでそのあとの処理を実行しない
+     */
+    @Deprecated("", ReplaceWith(""))
     open fun renderMenu() : Boolean{
         return true
     }
@@ -396,6 +407,14 @@ abstract class SInventory(val plugin: JavaPlugin) {
     /**
      * 読み込み後に行う処理
      */
+    open fun afterRenderMenu(p: Player){
+
+    }
+
+    /**
+     * 読み込み後に行う処理
+     */
+    @Deprecated("")
     open fun afterRenderMenu(){
 
     }
