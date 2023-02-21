@@ -94,8 +94,8 @@ abstract class SInventory(val plugin: JavaPlugin) {
     }
 
     fun moveChildInventory(inventory: SInventory, p: Player){
-        throughClose(p)
         inventory.setParent(this)
+        throughEvent.add(p.uniqueId)
         inventory.open(p)
     }
 
