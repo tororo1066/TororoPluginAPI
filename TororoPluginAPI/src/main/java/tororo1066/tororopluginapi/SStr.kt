@@ -45,6 +45,12 @@ class SStr: Cloneable {
         md5ComponentBuilder.append(PlainTextComponentSerializer.plainText().serialize(component))
     }
 
+    private constructor(sStr: SStr){
+        componentBuilder.append(sStr.componentBuilder)
+        md5ComponentBuilder.append(sStr.md5ComponentBuilder.create())
+        disableOptions.addAll(sStr.disableOptions)
+    }
+
     fun append(any: Any): SStr {
         if (any is SStr){
             this.componentBuilder.append(any.componentBuilder)
@@ -71,7 +77,7 @@ class SStr: Cloneable {
 
 
     operator fun plus(any: Any): SStr {
-        return clone().append(any)
+        return SStr(this).append(any)
     }
 
     operator fun plusAssign(any: Any) {

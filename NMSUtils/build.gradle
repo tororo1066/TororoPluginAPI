@@ -5,6 +5,7 @@ tasks {
         dependsOn("base:build")
         dependsOn("v1_17_1:build")
         dependsOn("v1_19_2:build")
+        dependsOn("v1_19_3:build")
     }
 }
 
@@ -32,5 +33,6 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     api files('v1_17_1/build/libs/v1_17_1-1.0-SNAPSHOT.jar')
     api files('v1_19_2/build/libs/v1_19_2-1.0-SNAPSHOT.jar')
+    api files('v1_19_3/build/libs/v1_19_3-1.0-SNAPSHOT.jar')
     api files('base/build/libs/base-1.0-SNAPSHOT.jar')
 }

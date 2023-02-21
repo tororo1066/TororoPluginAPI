@@ -3,8 +3,6 @@ package tororo1066.tororoplugin.command
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.event.ClickEvent
-import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -13,51 +11,37 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.Recipe
-import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.meta.Damageable
 import tororo1066.tororoplugin.TororoPlugin
-import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
-import tororo1066.tororopluginapi.defaultMenus.CategorySInventory
-import tororo1066.tororopluginapi.lang.LangEditor
+import tororo1066.tororopluginapi.config.ConfigEditor
+import tororo1066.tororopluginapi.defaultMenus.NumericInputInventory
 import tororo1066.tororopluginapi.sCommand.SCommand
 import tororo1066.tororopluginapi.sCommand.SCommandArg
 import tororo1066.tororopluginapi.sCommand.SCommandArgType
 import tororo1066.tororopluginapi.sCommand.SCommandObject
-import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import tororo1066.tororopluginapi.utils.toPlayer
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.floor
 
 @Suppress("UNUSED")
 class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
 
 
-    val iInfoCommand = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("info"))
 
     @SCommandBody
-    val test = command().addArg(SCommandArg("rererere")).setPlayerExecutor {
-        val testt = object : CategorySInventory(TororoPlugin.plugin,"test") {
-            override fun renderMenu(): Boolean {
-                val testa = linkedMapOf<String,ArrayList<SInventoryItem>>()
-                testa["aaa"] = arrayListOf()
-                for (i in 1..60){
-                    testa["aaa"]!!.add(SInventoryItem(Material.STONE).setDisplayName(i.toString()))
-                }
+    val test = command().addArg(SCommandArg("rere")).addArg(SCommandArg(listOf("aaa","eee"))).addArg(SCommandArg().addChangeableAllowString {
+        listOf(if (it[1] == "aaa") "eee" else "aaa")
+    }).setPlayerExecutor {
+        reloadSCommandBodies()
+        it.sender.sendMessage("aa")
+    }
 
-                testa["bbb"] = arrayListOf()
-                for (i in 1..60){
-                    testa["bbb"]!!.add(SInventoryItem(Material.STONE).setDisplayName(i.toString()))
-                }
-
-                setResourceItems(testa)
-                return true
-            }
-        }.open(it.sender)
+    @SCommandBody
+    val test2 = command().setPlayerExecutor {
+        NumericInputInventory(TororoPlugin.plugin,"test").open(it.sender)
     }
 
     @SCommandBody
@@ -293,7 +277,7 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
         }
 
     @SCommandBody
-    val itemInfo = iInfoCommand.setPlayerExecutor {
+    val itemInfo = getIInfoCommand().setPlayerExecutor {
         val item = it.sender.inventory.itemInMainHand
         it.sender.sendCopyableMsg("§7Type: ${item.type.name}",item.type.name)
         it.sender.sendCopyableMsg("§7DisplayName: §r${item.itemMeta.displayName}",item.itemMeta.displayName)
@@ -310,7 +294,7 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
         }
         it.sender.sendMessage("§7Enchantments: ${if (item.enchantments.isEmpty()) "Empty" else ""}")
         item.enchantments.forEach { (enchant, level) ->
-            it.sender.sendCopyableMsg(SStr("&7${enchant.key.key} Level $level").toTextComponent(),enchant.key.key)
+            it.sender.sendCopyableMsg(SStr("&7${enchant.key.key} Level $level").toPaperComponent(),enchant.key.key)
         }
         it.sender.sendMessage("§7ItemFlags: ${if (item.itemFlags.isEmpty()) "Empty" else ""}")
         item.itemFlags.forEach { flag ->
@@ -318,25 +302,25 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
         }
         it.sender.sendMessage("§7Attributes: ${if (item.itemMeta.attributeModifiers == null || item.itemMeta.attributeModifiers!!.isEmpty) "Empty" else ""}")
         item.itemMeta.attributeModifiers?.forEach { data, level ->
-            it.sender.sendCopyableMsg(SStr("&7${data.name} Level ${level.amount}").toTextComponent(),data.name)
+            it.sender.sendCopyableMsg(SStr("&7${data.name} Level ${level.amount}").toPaperComponent(),data.name)
         }
 
     }
 
     @SCommandBody
-    val itemTypeInfo = iInfoCommand.addArg(SCommandArg().addAllowString("type")).setPlayerExecutor {
+    val itemTypeInfo = getIInfoCommand().addArg(SCommandArg().addAllowString("type")).setPlayerExecutor {
         val item = it.sender.inventory.itemInMainHand
         it.sender.sendCopyableMsg("§7Type: ${item.type.name}",item.type.name)
     }
 
     @SCommandBody
-    val itemNameInfo = iInfoCommand.addArg(SCommandArg().addAllowString("name")).setPlayerExecutor {
+    val itemNameInfo = getIInfoCommand().addArg(SCommandArg().addAllowString("name")).setPlayerExecutor {
         val item = it.sender.inventory.itemInMainHand
         it.sender.sendCopyableMsg("§7DisplayName: §r${item.itemMeta.displayName}",item.itemMeta.displayName)
     }
 
     @SCommandBody
-    val itemLoreInfo = iInfoCommand.addArg(SCommandArg().addAllowString("lore")).setPlayerExecutor {
+    val itemLoreInfo = getIInfoCommand().addArg(SCommandArg().addAllowString("lore")).setPlayerExecutor {
         val item = it.sender.inventory.itemInMainHand
         it.sender.sendMessage("§7Lore: ${if (item.itemMeta.lore.isNullOrEmpty()) "Empty" else ""}")
         item.itemMeta.lore?.forEach { str ->
@@ -345,20 +329,20 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
     }
 
     @SCommandBody
-    val itemCmdInfo = iInfoCommand.addArg(SCommandArg().addAllowString("cmd")).setPlayerExecutor {
+    val itemCmdInfo = getIInfoCommand().addArg(SCommandArg().addAllowString("cmd")).setPlayerExecutor {
         val item = it.sender.inventory.itemInMainHand
         val cmd = if (item.itemMeta.hasCustomModelData()) item.itemMeta.customModelData.toString() else "None"
         it.sender.sendCopyableMsg("§7CustomModelData: $cmd",cmd)
     }
 
     @SCommandBody
-    val itemUnbreakableInfo = iInfoCommand.addArg(SCommandArg().addAllowString("unbreakable")).setPlayerExecutor {
+    val itemUnbreakableInfo = getIInfoCommand().addArg(SCommandArg().addAllowString("unbreakable")).setPlayerExecutor {
         val item = it.sender.inventory.itemInMainHand
         it.sender.sendCopyableMsg("§7isUnbreakable: ${item.itemMeta.isUnbreakable}",item.itemMeta.isUnbreakable.toString())
     }
 
     @SCommandBody
-    val itemDuraInfo = iInfoCommand.addArg(SCommandArg().addAllowString("durability")).setPlayerExecutor {
+    val itemDuraInfo = getIInfoCommand().addArg(SCommandArg().addAllowString("durability")).setPlayerExecutor {
         val item = it.sender.inventory.itemInMainHand
         if (item.itemMeta is Damageable){
             it.sender.sendCopyableMsg("§7Durability: ${item.type.maxDurability.toInt() - (item.itemMeta as Damageable).damage}/${item.type.maxDurability.toInt()}"
@@ -367,16 +351,16 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
     }
 
     @SCommandBody
-    val itemEnchantInfo = iInfoCommand.addArg(SCommandArg().addAllowString("enchant")).setPlayerExecutor {
+    val itemEnchantInfo = getIInfoCommand().addArg(SCommandArg().addAllowString("enchant")).setPlayerExecutor {
         val item = it.sender.inventory.itemInMainHand
         it.sender.sendMessage("§7Enchantments: ${if (item.enchantments.isEmpty()) "Empty" else ""}")
         item.enchantments.forEach { (enchant, level) ->
-            it.sender.sendCopyableMsg(SStr("&7${enchant.key.key} Level $level").toTextComponent(),enchant.key.key)
+            it.sender.sendCopyableMsg(SStr("&7${enchant.key.key} Level $level").toPaperComponent(),enchant.key.key)
         }
     }
 
     @SCommandBody
-    val itemFlagInfo = iInfoCommand.addArg(SCommandArg().addAllowString("flags")).setPlayerExecutor {
+    val itemFlagInfo = getIInfoCommand().addArg(SCommandArg().addAllowString("flags")).setPlayerExecutor {
         val item = it.sender.inventory.itemInMainHand
         it.sender.sendMessage("§7ItemFlags: ${if (item.itemFlags.isEmpty()) "Empty" else ""}")
         item.itemFlags.forEach { flag ->
@@ -385,11 +369,11 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
     }
 
     @SCommandBody
-    val itemAttributeInfo = iInfoCommand.addArg(SCommandArg().addAllowString("attributes")).setPlayerExecutor {
+    val itemAttributeInfo = getIInfoCommand().addArg(SCommandArg().addAllowString("attributes")).setPlayerExecutor {
         val item = it.sender.inventory.itemInMainHand
         it.sender.sendMessage("§7Attributes: ${if (item.itemMeta.attributeModifiers == null || item.itemMeta.attributeModifiers!!.isEmpty) "Empty" else ""}")
         item.itemMeta.attributeModifiers?.forEach { data, level ->
-            it.sender.sendCopyableMsg(SStr("&7${data.name} Level ${level.amount}").toTextComponent(),data.name)
+            it.sender.sendCopyableMsg(SStr("&7${data.name} Level ${level.amount}").toPaperComponent(),data.name)
         }
     }
 
@@ -407,6 +391,9 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
 
     private fun getPInfoCommand(): SCommandObject {
         return getPlayerCommand().addArg(SCommandArg().addAllowString("info"))
+    }
+    private fun getIInfoCommand(): SCommandObject {
+        return command().addArg(SCommandArg("item")).addArg(SCommandArg().addAllowString("info"))
     }
 
 

@@ -52,7 +52,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
 
     private var parent : Consumer<InventoryCloseEvent>? = null
 
-    private var throughEvent = ArrayList<UUID>()
+    var throughEvent = ArrayList<UUID>()
 
     private var savePlaceItems = false
 
