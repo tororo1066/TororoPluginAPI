@@ -7,6 +7,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.inventory.InventoryMoveItemEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.Inventory
@@ -332,7 +333,6 @@ abstract class SInventory(val plugin: JavaPlugin) {
                     saveItems[it] = inv.getItem(it)?:return@forEach
                 }
             }
-            clear()
             if (!renderMenu(p)) return@Runnable
             if (!renderMenu()) return@Runnable
             afterRenderMenu(p)

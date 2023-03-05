@@ -1,9 +1,11 @@
 package tororo1066.tororopluginapi.sItem
 
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitTask
 import java.util.function.BiConsumer
 import java.util.function.BiFunction
 
@@ -13,6 +15,8 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
     val dropEvents = ArrayList<BiConsumer<PlayerDropItemEvent,SInteractItem>>()
     var interactCoolDown = 0
     var initialCoolDown = 0
+
+    lateinit var task: BukkitTask
 
     constructor(manager: SInteractItemManager,material: Material): this(manager, ItemStack(material))
 
