@@ -50,6 +50,7 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
     }
 
     fun delete(){
+        task.cancel()
         manager.items.remove(itemStack)
     }
 

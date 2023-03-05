@@ -16,7 +16,7 @@ import tororo1066.tororopluginapi.sEvent.SEvent
 import kotlin.math.ceil
 import kotlin.random.Random
 
-class SInteractItemManager(val plugin: JavaPlugin) {
+class SInteractItemManager(val plugin: JavaPlugin, var disableCoolTimeView: Boolean = false) {
 
     val items = HashMap<ItemStack,SInteractItem>()
 
@@ -85,36 +85,38 @@ class SInteractItemManager(val plugin: JavaPlugin) {
             }
         }
 
-        SEvent(plugin).register(PlayerItemHeldEvent::class.java) { e ->
-            val previousItem = e.player.inventory.getItem(e.previousSlot)
-            val newItem = e.player.inventory.getItem(e.newSlot)
+        if (!disableCoolTimeView){
+            SEvent(plugin).register(PlayerItemHeldEvent::class.java) { e ->
+                val previousItem = e.player.inventory.getItem(e.previousSlot)
+                val newItem = e.player.inventory.getItem(e.newSlot)
 
-            if (previousItem == null && newItem == null)return@register
+                if (previousItem == null && newItem == null)return@register
 
-            if (previousItem != null){
-                val item = previousItem.clone()
-                item.amount = 1
-                if (items.containsKey(item)){
-                    val interactItem = items[item]!!
-                    interactItem.task.cancel()
+                if (previousItem != null){
+                    val item = previousItem.clone()
+                    item.amount = 1
+                    if (items.containsKey(item)){
+                        val interactItem = items[item]!!
+                        interactItem.task.cancel()
+                    }
                 }
-            }
 
-            if (newItem != null){
-                val item = newItem.clone()
-                item.amount = 1
-                if (items.containsKey(item)){
-                    val interactItem = items[item]!!
-                    interactItem.task = Bukkit.getScheduler().runTaskTimer(plugin, Runnable {
-                        if (interactItem.interactCoolDown <= 0){
-                            e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&a&l使用可能！").toBukkitComponent())
-                        } else {
-                            e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent())
-                        }
-                    },0,1)
+                if (newItem != null){
+                    val item = newItem.clone()
+                    item.amount = 1
+                    if (items.containsKey(item)){
+                        val interactItem = items[item]!!
+                        interactItem.task = Bukkit.getScheduler().runTaskTimer(plugin, Runnable {
+                            if (interactItem.interactCoolDown <= 0){
+                                e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&a&l使用可能！").toBukkitComponent())
+                            } else {
+                                e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent())
+                            }
+                        },0,1)
+                    }
                 }
-            }
 
+            }
         }
     }
 }
