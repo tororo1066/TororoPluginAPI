@@ -97,7 +97,7 @@ class SInteractItemManager(val plugin: JavaPlugin, var disableCoolTimeView: Bool
                     item.amount = 1
                     if (items.containsKey(item)){
                         val interactItem = items[item]!!
-                        interactItem.task.cancel()
+                        interactItem.task?.cancel()
                         e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("").toBukkitComponent())
                     }
                 }
