@@ -77,7 +77,6 @@ class SMySQL(val plugin : JavaPlugin) {
                 }
                 Class.forName("org.sqlite.JDBC")
                 conn = DriverManager.getConnection("jdbc:sqlite:${plugin.dataFolder.absolutePath}/${db}.db")
-                conn!!.metaData
             } else {
                 if (host == null){
                     throw NullPointerException("[MySQL] Host name is empty.")
@@ -98,7 +97,7 @@ class SMySQL(val plugin : JavaPlugin) {
                 conn = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.db + "?useSSL=false", this.user, this.pass)
             }
         }catch (e : SQLException){
-            Bukkit.getLogger().warning(e.stackTraceToString())
+            throw e
         }
     }
 
@@ -140,6 +139,7 @@ class SMySQL(val plugin : JavaPlugin) {
 
         return try {
             stmt = conn!!.createStatement()
+            stmt!!.setEscapeProcessing(true)
             stmt!!.execute(query)
             true
         } catch (e : SQLException){
@@ -175,6 +175,7 @@ class SMySQL(val plugin : JavaPlugin) {
 
         return try {
             stmt = conn!!.createStatement()
+            stmt!!.setEscapeProcessing(true)
             stmt!!.executeQuery(query)
         } catch (e : SQLException) {
             Bukkit.getLogger().warning("QueryError：Error Code(${e.errorCode})\nError Message\n${e.message}")

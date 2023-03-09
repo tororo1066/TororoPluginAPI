@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.utils
 
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
+import kotlin.math.roundToInt
 
 fun Location.toLocString(type: LocType): String {
     return when(type){
@@ -86,5 +87,12 @@ fun Location.setYawL(yaw: Float): Location {
 
 fun Location.setPitchL(pitch: Float): Location {
     this.pitch = pitch
+    return this
+}
+
+fun Location.roundXYZ(): Location {
+    this.x = this.x.roundToInt().toDouble()
+    this.y = this.y.roundToInt().toDouble()
+    this.z = this.z.roundToInt().toDouble()
     return this
 }

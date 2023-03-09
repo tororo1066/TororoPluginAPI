@@ -3,6 +3,7 @@ package tororo1066.tororoplugin.command
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.event.ClickEvent
+import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -12,6 +13,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.Damageable
+import tororo1066.tororoplugin.TestTable
 import tororo1066.tororoplugin.TororoPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
@@ -29,15 +31,6 @@ import kotlin.math.floor
 @Suppress("UNUSED")
 class TororoCommand: SCommand("tororo",TororoPlugin.prefix,"tororo.op") {
 
-
-
-    @SCommandBody
-    val test = command().addArg(SCommandArg("rere")).addArg(SCommandArg(listOf("aaa","eee"))).addArg(SCommandArg().addChangeableAllowString {
-        listOf(if (it[1] == "aaa") "eee" else "aaa")
-    }).setPlayerExecutor {
-        reloadSCommandBodies()
-        it.sender.sendMessage("aa")
-    }
 
     @SCommandBody
     val test2 = command().setPlayerExecutor {

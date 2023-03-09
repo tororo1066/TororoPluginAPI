@@ -10,10 +10,12 @@ class TororoPlugin: SJavaPlugin() {
         val commandLogPlayers = ArrayList<UUID>()
         val prefix = SStr("&6[&aTororo&5Plugin&cAPI&6]").toString()
         lateinit var plugin: TororoPlugin
+        lateinit var testTable: TestTable
     }
 
     override fun onStart() {
         plugin = this
+        testTable = TestTable()
     }
 
 }
