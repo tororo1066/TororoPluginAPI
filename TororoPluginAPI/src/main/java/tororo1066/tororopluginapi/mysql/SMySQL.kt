@@ -184,6 +184,18 @@ class SMySQL(val plugin : JavaPlugin) {
         }
     }
 
+    fun asyncCount(query: String): Int {
+        return thread.submit(Callable {
+            val rs = query(query)?:return@Callable 0
+            try {
+                rs.next()
+                rs.getInt(1)
+            } catch (e: SQLException){
+                0
+            }
+        }).get()
+    }
+
     /**
      * queryを実行して結果を取る
      * ```java

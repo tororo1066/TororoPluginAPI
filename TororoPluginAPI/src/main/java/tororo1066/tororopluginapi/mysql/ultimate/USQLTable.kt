@@ -42,6 +42,14 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
         return sMySQL.asyncQuery(query)
     }
 
+    fun count(condition: USQLCondition = USQLCondition.empty()): Int {
+        val query = "select count(*) from $table ${condition.build()}"
+        if (debug){
+            sMySQL.plugin.logger.info(query)
+        }
+        return sMySQL.asyncCount(query)
+    }
+
     fun insert(values: ArrayList<Any>): Boolean {
         var query = "insert into $table (${variables.values.filterNot { it.autoIncrement }.joinToString(",") { it.type.columnName }})" +
                 " values("
@@ -86,6 +94,27 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
 
     fun update(condition: USQLCondition, vararg values: Pair<USQLVariable<*>,Any>): Boolean {
         return update(hashMapOf(*values),condition)
+    }
+
+    /**
+     * 出来ないことがあったとき用
+     */
+    fun execute(query: String): Boolean {
+        if (debug){
+            sMySQL.plugin.logger.info(query)
+        }
+        return sMySQL.asyncExecute(query)
+    }
+
+
+    /**
+     * 出来ないことがあったとき用
+     */
+    fun query(query: String): ArrayList<SMySQLResultSet> {
+        if (debug){
+            sMySQL.plugin.logger.info(query)
+        }
+        return sMySQL.asyncQuery(query)
     }
 
 
