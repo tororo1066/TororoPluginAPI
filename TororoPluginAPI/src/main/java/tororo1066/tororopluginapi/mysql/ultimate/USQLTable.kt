@@ -8,6 +8,11 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
     private var variables = LinkedHashMap<String,USQLVariable<*>>()
 
     var debug = false
+    var disableAutoCreateTable = false
+
+    constructor(clazz: Class<out USQLTable>, table: String, sMySQL: SMySQL, disableAutoCreateTable: Boolean): this(clazz,table,sMySQL){
+        this.disableAutoCreateTable = disableAutoCreateTable
+    }
 
     init {
         clazz.declaredFields.forEach { field ->
@@ -18,6 +23,9 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
                 variable.type.columnName = field.name
                 variables[field.name] = variable
             }
+        }
+        if (!disableAutoCreateTable){
+            createTable()
         }
     }
 
