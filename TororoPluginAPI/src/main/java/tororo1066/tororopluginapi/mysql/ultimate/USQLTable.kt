@@ -33,7 +33,7 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
         queryBuilder.append(variables.values.joinToString(",") { it.name + " " + it.type.name.lowercase() + (if (it.length != -1) "(${it.length})" else "") +
                 (if (!it.nullable) " not null" else " null") +
                 (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
-                if (it.autoIncrement) "auto_increment" else "" })
+                if (it.autoIncrement) " auto_increment" else "" })
         queryBuilder.append(if (variables.values.find { it.index != null } != null) ", " + variables.values.filter { it.index != null }.joinToString(",")
         { (if (it.index == USQLVariable.Index.PRIMARY) "${it.index!!.tableString} (${it.name})" else "${it.index!!.tableString} ${it.name} (${it.name})") + if (it.index!!.usingBTREE) " using btree" else "" } else "")
         queryBuilder.append(")")
