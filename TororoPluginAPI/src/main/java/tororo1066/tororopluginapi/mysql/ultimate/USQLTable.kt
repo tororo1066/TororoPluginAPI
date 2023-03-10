@@ -82,6 +82,10 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
         return sMySQL.asyncExecute(query)
     }
 
+    fun insert(vararg values: Any): Boolean {
+        return insert(arrayListOf(*values))
+    }
+
     fun insert(values: HashMap<USQLVariable<*>,Any>): Boolean {
         val query = "insert into $table (${values.keys.joinToString(",") { it.name }})" +
                 " values(${values.values.joinToString(",") { USQLCondition.modifySQLString(variables[it]!!.type,it) }})"
