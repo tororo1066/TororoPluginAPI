@@ -5,7 +5,7 @@ import java.util.Date
 class USQLVariable<V: USQLVariable.Type>(val type: V) {
 
     constructor(type: V,length: Int): this(type){
-        this.type.setLength(length)
+        this.length = length
     }
 
     constructor(type: V,nullable: Boolean,index: Index? = null): this(type){
@@ -19,19 +19,19 @@ class USQLVariable<V: USQLVariable.Type>(val type: V) {
     }
 
     constructor(type: V,length: Int,default: Any,index: Index? = null): this(type){
-        this.type.setLength(length)
+        this.length = length
         this.default = default
         this.index = index
     }
 
     constructor(type: V,length: Int,nullable: Boolean,index: Index? = null): this(type){
-        this.type.setLength(length)
+        this.length = length
         this.nullable = nullable
         this.index = index
     }
 
     constructor(type: V,length: Int,autoIncrement: Boolean): this(type){
-        this.type.setLength(length)
+        this.length = length
         this.autoIncrement = autoIncrement
         this.index = Index.PRIMARY
     }
@@ -47,7 +47,7 @@ class USQLVariable<V: USQLVariable.Type>(val type: V) {
     }
 
     constructor(type: V,length: Int,index: Index,autoIncrement: Boolean): this(type){
-        this.type.setLength(length)
+        this.length = length
         this.autoIncrement = autoIncrement
         this.index = index
     }
@@ -58,6 +58,8 @@ class USQLVariable<V: USQLVariable.Type>(val type: V) {
     var index: Index? = null
 
     var autoIncrement = false
+
+    var length = -1
 
     enum class Index(val tableString: String,val usingBTREE: Boolean){
         PRIMARY("primary key",true),
@@ -117,13 +119,6 @@ class USQLVariable<V: USQLVariable.Type>(val type: V) {
         BLOB,
         LONGBLOB;
 
-        var columnName = ""
 
-        var length = -1
-
-        fun setLength(length: Int): Type{
-            this.length = length
-            return this
-        }
     }
 }

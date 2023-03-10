@@ -20,7 +20,6 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
                 field.isAccessible = true
                 val variable = field.get(null) as USQLVariable<*>
                 variable.name = field.name
-                variable.type.columnName = field.name
                 variables[field.name] = variable
             }
         }
@@ -31,9 +30,9 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
 
     fun createTable(): Boolean{
         val queryBuilder = StringBuilder("create table if not exists $table (")
-        queryBuilder.append(variables.values.joinToString(",") { it.type.columnName + " " + it.type.name.lowercase() + (if (it.type.length != -1) "(${it.type.length})" else "") +
-                (if (!it.nullable) " not null " else " null ") +
-                (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) "default null" else "default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
+        queryBuilder.append(variables.values.joinToString(",") { it.name + " " + it.type.name.lowercase() + (if (it.length != -1) "(${it.length})" else "") +
+                (if (!it.nullable) " not null" else " null") +
+                (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
                 if (it.autoIncrement) "auto_increment" else "" })
         queryBuilder.append(if (variables.values.find { it.index != null } != null) ", " + variables.values.filter { it.index != null }.joinToString(",")
         { (if (it.index == USQLVariable.Index.PRIMARY) "${it.index!!.tableString} (${it.name})" else "${it.index!!.tableString} ${it.name} (${it.name})") + if (it.index!!.usingBTREE) " using btree" else "" } else "")
@@ -67,7 +66,7 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
     }
 
     fun insert(values: ArrayList<Any>): Boolean {
-        var query = "insert into $table (${variables.values.filterNot { it.autoIncrement }.joinToString(",") { it.type.columnName }})" +
+        var query = "insert into $table (${variables.values.filterNot { it.autoIncrement }.joinToString(",") { it.name }})" +
                 " values("
         var count = 0
         for (variable in variables.values){

@@ -8,27 +8,27 @@ class USQLCondition {
     private val builder = StringBuilder("where ")
 
     fun equal(variable: USQLVariable<*>, value: Any): USQLCondition{
-        builder.append("${variable.type.columnName} = ${modifySQLString(variable.type,value)}")
+        builder.append("${variable.name} = ${modifySQLString(variable.type,value)}")
         return this
     }
 
     fun orHigher(variable: USQLVariable<*>, value: Any): USQLCondition{
-        builder.append("${variable.type.columnName} >= ${modifySQLString(variable.type,value)}")
+        builder.append("${variable.name} >= ${modifySQLString(variable.type,value)}")
         return this
     }
 
     fun orLower(variable: USQLVariable<*>, value: Any): USQLCondition{
-        builder.append("${variable.type.columnName} <= ${modifySQLString(variable.type,value)}")
+        builder.append("${variable.name} <= ${modifySQLString(variable.type,value)}")
         return this
     }
 
     fun moreThan(variable: USQLVariable<*>, value: Any): USQLCondition{
-        builder.append("${variable.type.columnName} > ${modifySQLString(variable.type,value)}")
+        builder.append("${variable.name} > ${modifySQLString(variable.type,value)}")
         return this
     }
 
     fun lessThan(variable: USQLVariable<*>, value: Any): USQLCondition{
-        builder.append("${variable.type.columnName} < ${modifySQLString(variable.type,value)}")
+        builder.append("${variable.name} < ${modifySQLString(variable.type,value)}")
         return this
     }
 
