@@ -96,6 +96,14 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
         return update(hashMapOf(*values),condition)
     }
 
+    fun delete(condition: USQLCondition): Boolean {
+        val query = "delete from $table ${condition.build()}"
+        if (debug){
+            sMySQL.plugin.logger.info(query)
+        }
+        return sMySQL.asyncExecute(query)
+    }
+
     /**
      * 出来ないことがあったとき用
      */
