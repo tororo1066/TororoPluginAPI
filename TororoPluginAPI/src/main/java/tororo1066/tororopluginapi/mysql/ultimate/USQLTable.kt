@@ -18,7 +18,7 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
         clazz.declaredFields.forEach { field ->
             if (field.type == USQLVariable::class.java){
                 field.isAccessible = true
-                val variable = field.get(null) as USQLVariable<*>
+                val variable = field.get(null) as? USQLVariable<*>?:return@forEach
                 variable.name = field.name
                 variables[field.name] = variable
             }
@@ -37,11 +37,6 @@ abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String,
         queryBuilder.append(if (variables.values.find { it.index != null } != null) ", " + variables.values.filter { it.index != null }.joinToString(",")
         { (if (it.index == USQLVariable.Index.PRIMARY) "${it.index!!.tableString} (${it.name})" else "${it.index!!.tableString} ${it.name} (${it.name})") + if (it.index!!.usingBTREE) " using btree" else "" } else "")
         queryBuilder.append(")")
-//        val query = ("create table if not exists $table" +
-//                " (${variables.values.joinToString(",") { it.type.columnName + " " + it.type.name.lowercase() + (if (it.type.length != -1) "(${it.type.length})" else "") + "${if (!it.nullable) " not null " else " null "}${if (it.autoIncrement) "" else "default ${if (it.default == null) "null" else USQLCondition.modifySQLString(it.type,it.default!!)}"}" +
-//                        if (it.autoIncrement) "auto_increment" else "" }}" +
-//                if (variables.values.find { it.index != null } != null) ", " + variables.values.filter { it.index != null }.joinToString(",")
-//                { (if (it.index == USQLVariable.Index.PRIMARY) "${it.index!!.tableString} (${it.name})" else "${it.index!!.tableString} ${it.name} (${it.name})") + if (it.index!!.usingBTREE) " using btree" else "" } else "") + ")"
         if (debug){
             sMySQL.plugin.logger.info(queryBuilder.toString())
         }
