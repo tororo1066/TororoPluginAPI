@@ -10,7 +10,7 @@ import tororo1066.tororopluginapi.lang.LangEditor
 import tororo1066.tororopluginapi.lang.SLang
 import java.util.function.Consumer
 
-open class SCommand(private val command : String) : CommandExecutor, TabCompleter {
+open class SCommand(private val command: String) : CommandExecutor, TabCompleter {
 
 
     private var perm : String? = null
@@ -20,12 +20,12 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
 
     private var commandNoFoundEvent : Consumer<SCommandData>? = null
 
-    constructor(command : String, prefix : String) : this(command){
+    constructor(command: String, prefix: String) : this(command){
         this.prefix = prefix
     }
 
 
-    constructor(command : String, prefix : String, perm : String) : this(command){
+    constructor(command: String, prefix: String, perm: String) : this(command){
         this.prefix = prefix
         this.perm = perm
     }
@@ -56,7 +56,9 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
 
     fun reloadSCommandBodies(){
         clearCommands()
+
         javaClass.declaredFields.forEach {
+            Bukkit.broadcastMessage(it.toString())
             if (it.isAnnotationPresent(SCommandBody::class.java) && it.type == SCommandObject::class.java){
                 it.isAccessible = true
                 val data = it.get(this) as SCommandObject
@@ -70,6 +72,20 @@ open class SCommand(private val command : String) : CommandExecutor, TabComplete
         }
     }
 
+    fun reloadAllCommands(){
+        clearCommands()
+        javaClass.declaredFields.forEach {
+            if (it.isAnnotationPresent(SCommandBody::class.java) && it.type == SCommandObject::class.java){
+                it.isAccessible = true
+                val data = it.get(this) as SCommandObject
+                val sCommand = it.getAnnotation(SCommandBody::class.java)
+                if (sCommand.permission.isNotBlank()){
+                    data.addNeedPermission(sCommand.permission)
+                }
+                addCommand(data)
+            }
+        }
+    }
 
     init {
         val register = register() ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")

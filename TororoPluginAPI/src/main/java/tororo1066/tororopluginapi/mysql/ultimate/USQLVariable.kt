@@ -89,7 +89,7 @@ class USQLVariable<V: USQLVariable.Type>(val type: V) {
         return USQLCondition().lessThan(this,value)
     }
 
-    enum class Type(){
+    enum class Type{
         BOOLEAN,
         TINYINT,
         SMALLINT,

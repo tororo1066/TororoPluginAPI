@@ -7,7 +7,7 @@ import tororo1066.tororopluginapi.mysql.ultimate.USQLTable
 import tororo1066.tororopluginapi.mysql.ultimate.USQLVariable
 import java.util.UUID
 
-class TestTable: USQLTable(TestTable::class.java,"test", SMySQL(SJavaPlugin.plugin)){
+class TestTable: USQLTable("test", SMySQL(SJavaPlugin.plugin)){
 
     companion object{
         val id = USQLVariable(USQLVariable.Type.INT,autoIncrement = true)

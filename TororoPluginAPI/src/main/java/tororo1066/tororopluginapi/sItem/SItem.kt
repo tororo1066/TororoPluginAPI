@@ -3,8 +3,10 @@ package tororo1066.tororopluginapi.sItem
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.block.banner.Pattern
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.BannerMeta
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
@@ -262,6 +264,13 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     open fun setSkullOwner(uuid: UUID): SItem {
         val meta = itemMeta as SkullMeta
         meta.owningPlayer = Bukkit.getOfflinePlayer(uuid)
+        itemMeta = meta
+        return this
+    }
+
+    open fun addPattern(pattern: Pattern): SItem {
+        val meta = itemMeta as BannerMeta
+        meta.addPattern(pattern)
         itemMeta = meta
         return this
     }

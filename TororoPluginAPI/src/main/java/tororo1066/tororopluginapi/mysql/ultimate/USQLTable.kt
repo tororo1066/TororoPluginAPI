@@ -3,19 +3,19 @@ package tororo1066.tororopluginapi.mysql.ultimate
 import tororo1066.tororopluginapi.mysql.SMySQL
 import tororo1066.tororopluginapi.mysql.SMySQLResultSet
 
-abstract class USQLTable(clazz: Class<out USQLTable>, private val table: String, private val sMySQL: SMySQL) {
+abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) {
 
     private var variables = LinkedHashMap<String,USQLVariable<*>>()
 
     var debug = false
     var disableAutoCreateTable = false
 
-    constructor(clazz: Class<out USQLTable>, table: String, sMySQL: SMySQL, disableAutoCreateTable: Boolean): this(clazz,table,sMySQL){
+    constructor(table: String, sMySQL: SMySQL, disableAutoCreateTable: Boolean): this(table,sMySQL){
         this.disableAutoCreateTable = disableAutoCreateTable
     }
 
     init {
-        clazz.declaredFields.forEach { field ->
+        javaClass.declaredFields.forEach { field ->
             if (field.type == USQLVariable::class.java){
                 field.isAccessible = true
                 val variable = field.get(null) as? USQLVariable<*>?:return@forEach
