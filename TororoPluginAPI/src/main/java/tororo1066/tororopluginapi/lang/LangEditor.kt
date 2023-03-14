@@ -14,7 +14,7 @@ import java.io.File
 
 class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
 
-    override fun renderMenu(): Boolean {
+    override fun renderMenu(p: Player): Boolean {
         val langFolder = File(plugin.dataFolder.path + "/LangFolder/")
         if (!langFolder.exists()) return false
         val languages = HashMap<String,YamlConfiguration>()
@@ -25,7 +25,7 @@ class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
         languages.forEach { (str, yaml) ->
             langItems.add(SInventoryItem(Material.WRITABLE_BOOK).setDisplayName(str).setCanClick(false).setClickEvent { e ->
                 val childInv = object : LargeSInventory(plugin,str) {
-                    override fun renderMenu(): Boolean {
+                    override fun renderMenu(p: Player): Boolean {
                         val items = ArrayList<SInventoryItem>()
                         yaml.getKeys(false).forEach {
                             val section = yaml.getConfigurationSection(it)
@@ -35,7 +35,7 @@ class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
                                 items.add(createGotoNextMenuItem(this,yaml,it,yaml,str))
                             }
                         }
-                        items.add(this.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aNew Insert"),String::class.java,"Please enter path.",true){ include, p ->
+                        items.add(this.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aNew Insert"),String::class.java,"Please enter path.",true){ include, _ ->
                             SInput(plugin).sendInputCUI(p,String::class.java,"Please enter translated message.") { message ->
                                 yaml.set(include,message)
                                 yaml.save(File(plugin.dataFolder.path + "/LangFolder/${str}.yml"))
@@ -66,7 +66,7 @@ class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
     fun createGotoNextMenuItem(inv: SInventory, section: ConfigurationSection, path: String, yaml: YamlConfiguration, fileName: String): SInventoryItem {
         return SInventoryItem(Material.WRITABLE_BOOK).setDisplayName(path).setCanClick(false).setClickEvent { e ->
             val newInv = object : LargeSInventory(plugin,path){
-                override fun renderMenu(): Boolean {
+                override fun renderMenu(p: Player): Boolean {
                     val newSection = section.getConfigurationSection(path)!!
                     val items = ArrayList<SInventoryItem>()
                     newSection.getKeys(false).forEach {
@@ -78,7 +78,7 @@ class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
                         }
                     }
 
-                    items.add(this.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aNew Insert"),String::class.java,"Please enter path.",true){ str, p ->
+                    items.add(this.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aNew Insert"),String::class.java,"Please enter path.",true){ str, _ ->
                         SInput(plugin).sendInputCUI(p,String::class.java,"Please enter translated message.") {
                             section.set("$path.$str",it)
                             yaml.save(File(plugin.dataFolder.path + "/LangFolder/${fileName}.yml"))
