@@ -1,8 +1,10 @@
 package tororo1066.tororopluginapi.mysql.ultimate
 
-import java.util.Date
+import tororo1066.tororopluginapi.mysql.SMySQLResultSet
+import java.time.LocalDateTime
 
-class USQLVariable<V: USQLVariable.Type>(val type: V) {
+@Suppress("UNUSED")
+class USQLVariable<V: USQLVariable.VariableType<*>>(val type: V) {
 
     constructor(type: V,length: Int): this(type){
         this.length = length
@@ -89,36 +91,192 @@ class USQLVariable<V: USQLVariable.Type>(val type: V) {
         return USQLCondition().lessThan(this,value)
     }
 
-    enum class Type{
-        BOOLEAN,
-        TINYINT,
-        SMALLINT,
-        MEDIUMINT,
-        INT,
-        BIGINT,
-        BIT,
-        FLOAT,
-        DOUBLE,
-        DECIMAL,
-        DATE,
-        DATETIME,
-        TIMESTAMP,
-        TIME,
-        YEAR,
-        CHAR,
-        VARCHAR,
-        TINYTEXT,
-        TEXT,
-        MEDIUMTEXT,
-        LONGTEXT,
-        JSON,
-        BINARY,
-        VARBINARY,
-        TINYBLOB,
-        MEDIUMBLOB,
-        BLOB,
-        LONGBLOB;
+    @Suppress("UNCHECKED_CAST")
+    fun getVal(sqlResultSet: SMySQLResultSet): V {
+        return type.getVal(sqlResultSet) as V
+    }
 
+    @Suppress("UNCHECKED_CAST")
+    fun getNullableVal(sqlResultSet: SMySQLResultSet): V? {
+        return type.getNullableVal(sqlResultSet) as V?
+    }
 
+    abstract class VariableType<V>{
+
+        var name = ""
+        abstract fun getNullableVal(sqlResultSet: SMySQLResultSet): V?
+
+        fun getVal(sqlResultSet: SMySQLResultSet): V {
+            return getNullableVal(sqlResultSet)!!
+        }
+
+    }
+
+    object BOOLEAN: VariableType<Boolean>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Boolean? {
+            return sqlResultSet.getNullableBoolean(name)
+        }
+    }
+
+    object TINYINT: VariableType<Int>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
+            return sqlResultSet.getNullableInt(name)
+        }
+    }
+
+    object SMALLINT: VariableType<Int>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
+            return sqlResultSet.getNullableInt(name)
+        }
+    }
+
+    object MEDIUMINT: VariableType<Int>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
+            return sqlResultSet.getNullableInt(name)
+        }
+    }
+
+    object INT: VariableType<Int>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
+            return sqlResultSet.getNullableInt(name)
+        }
+    }
+
+    object BIGINT: VariableType<Long>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Long? {
+            return sqlResultSet.getNullableLong(name)
+        }
+    }
+
+    object BIT: VariableType<Int>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
+            return sqlResultSet.getNullableInt(name)
+        }
+    }
+
+    object FLOAT: VariableType<Float>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Float? {
+            return sqlResultSet.getNullableFloat(name)
+        }
+    }
+
+    object DOUBLE: VariableType<Double>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Double? {
+            return sqlResultSet.getNullableDouble(name)
+        }
+    }
+
+    object DECIMAL: VariableType<Double>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Double? {
+            return sqlResultSet.getNullableDouble(name)
+        }
+    }
+
+    object DATE: VariableType<LocalDateTime>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): LocalDateTime? {
+            return sqlResultSet.getNullableDate(name)
+        }
+    }
+
+    object DATETIME: VariableType<LocalDateTime>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): LocalDateTime? {
+            return sqlResultSet.getNullableDate(name)
+        }
+    }
+
+    object TIMESTAMP: VariableType<LocalDateTime>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): LocalDateTime? {
+            return sqlResultSet.getNullableDate(name)
+        }
+    }
+
+    object TIME: VariableType<LocalDateTime>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): LocalDateTime? {
+            return sqlResultSet.getNullableDate(name)
+        }
+    }
+
+    object YEAR: VariableType<LocalDateTime>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): LocalDateTime? {
+            return sqlResultSet.getNullableDate(name)
+        }
+    }
+
+    object CHAR: VariableType<String>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
+            return sqlResultSet.getNullableString(name)
+        }
+    }
+
+    object VARCHAR: VariableType<String>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
+            return sqlResultSet.getNullableString(name)
+        }
+    }
+
+    object TINYTEXT: VariableType<String>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
+            return sqlResultSet.getNullableString(name)
+        }
+    }
+
+    object TEXT: VariableType<String>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
+            return sqlResultSet.getNullableString(name)
+        }
+    }
+
+    object MEDIUMTEXT: VariableType<String>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
+            return sqlResultSet.getNullableString(name)
+        }
+    }
+
+    object LONGTEXT: VariableType<String>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
+            return sqlResultSet.getNullableString(name)
+        }
+    }
+
+    object JSON: VariableType<String>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
+            return sqlResultSet.getNullableString(name)
+        }
+    }
+
+    object BINARY: VariableType<ByteArray>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
+            return sqlResultSet.getNullableBytes(name)
+        }
+    }
+
+    object VARBINARY: VariableType<ByteArray>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
+            return sqlResultSet.getNullableBytes(name)
+        }
+    }
+
+    object TINYBLOB: VariableType<ByteArray>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
+            return sqlResultSet.getNullableBytes(name)
+        }
+    }
+
+    object MEDIUMBLOB: VariableType<ByteArray>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
+            return sqlResultSet.getNullableBytes(name)
+        }
+    }
+
+    object BLOB: VariableType<ByteArray>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
+            return sqlResultSet.getNullableBytes(name)
+        }
+    }
+
+    object LONGBLOB: VariableType<ByteArray>(){
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
+            return sqlResultSet.getNullableBytes(name)
+        }
     }
 }

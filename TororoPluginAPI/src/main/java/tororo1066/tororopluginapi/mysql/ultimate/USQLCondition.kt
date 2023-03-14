@@ -58,27 +58,26 @@ class USQLCondition {
     }
 
     companion object{
-        fun modifySQLString(variable: USQLVariable.Type, value: Any): String{
+        fun modifySQLString(variable: USQLVariable.VariableType<*>, value: Any): String{
             return when(variable){
-                USQLVariable.Type.BOOLEAN -> if (value as Boolean) "1" else "0"
-                USQLVariable.Type.DATE,USQLVariable.Type.DATETIME,USQLVariable.Type.TIME,USQLVariable.Type.YEAR -> dateModify(value,variable)
-                USQLVariable.Type.CHAR,USQLVariable.Type.TINYTEXT,USQLVariable.Type.TEXT,USQLVariable.Type.MEDIUMTEXT,USQLVariable.Type.LONGTEXT,USQLVariable.Type.JSON,USQLVariable.Type.VARCHAR ->{
-                    if (value.toString() == "now()") value.toString() else "'$value'"
+                USQLVariable.BOOLEAN -> if (value as Boolean) "1" else "0"
+                USQLVariable.DATE,USQLVariable.DATETIME,USQLVariable.TIME,USQLVariable.YEAR -> {
+                    if (value.toString() == "now()") value.toString() else dateModify(value,variable)
                 }
-                else -> value.toString()
+                else -> "'$value'"
             }
         }
 
-        private fun dateModify(value: Any, type: USQLVariable.Type): String{
+        private fun dateModify(value: Any, type: USQLVariable.VariableType<*>): String{
             if (value is String){
                 if (value == "now()") return value
             }
             if (value !is Date) return value.toString()
             return when(type){
-                USQLVariable.Type.DATE -> SimpleDateFormat("yyyy-MM-dd").format(value)
-                USQLVariable.Type.DATETIME -> SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value)
-                USQLVariable.Type.TIME -> SimpleDateFormat("HH:mm:ss").format(value)
-                USQLVariable.Type.YEAR -> SimpleDateFormat("yyyy").format(value)
+                USQLVariable.DATE -> SimpleDateFormat("yyyy-MM-dd").format(value)
+                USQLVariable.DATETIME -> SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value)
+                USQLVariable.TIME -> SimpleDateFormat("HH:mm:ss").format(value)
+                USQLVariable.YEAR -> SimpleDateFormat("yyyy").format(value)
                 else -> value.toString()
             }
         }

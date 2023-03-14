@@ -10,9 +10,9 @@ import java.util.UUID
 class TestTable: USQLTable("test", SMySQL(SJavaPlugin.plugin)){
 
     companion object{
-        val id = USQLVariable(USQLVariable.Type.INT,autoIncrement = true)
-        val uuid = USQLVariable(USQLVariable.Type.VARCHAR,36,nullable = true)
-        val name = USQLVariable(USQLVariable.Type.VARCHAR,16,nullable = true)
+        val id = USQLVariable(USQLVariable.BOOLEAN,autoIncrement = true)
+        val uuid = USQLVariable(USQLVariable.VARCHAR,36,nullable = true)
+        val name = USQLVariable(USQLVariable.VARCHAR,16,nullable = true)
     }
 
     init {
@@ -23,6 +23,7 @@ class TestTable: USQLTable("test", SMySQL(SJavaPlugin.plugin)){
     fun queryTest(searchUUID: UUID){
         select(uuid.equal(searchUUID).and().orHigher(id,5)).forEach {
             Bukkit.broadcastMessage(it.getString("uuid"))
+            id.getVal(it)
         }
     }
 

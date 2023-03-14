@@ -14,6 +14,11 @@ class SMySQLResultSet(val result : HashMap<String,Any?>){
         return result[name] as Int
     }
 
+    fun getFloat(name: String): Float {
+        if (result[name] is Double) return (result[name] as Double).toFloat()
+        return result[name] as Float
+    }
+
     fun getDouble(name: String): Double {
         return result[name] as Double
     }
@@ -38,12 +43,21 @@ class SMySQLResultSet(val result : HashMap<String,Any?>){
         return result[name]!!
     }
 
+    fun getBytes(name: String): ByteArray {
+        return result[name] as ByteArray
+    }
+
     fun getNullableString(name: String): String? {
         return result[name]?.toString()
     }
 
     fun getNullableInt(name: String): Int? {
         return result[name] as? Int
+    }
+
+    fun getNullableFloat(name: String): Float? {
+        if (result[name] is Double) return (result[name] as Double).toFloat()
+        return result[name] as? Float
     }
 
     fun getNullableDouble(name: String): Double? {
@@ -68,6 +82,10 @@ class SMySQLResultSet(val result : HashMap<String,Any?>){
 
     fun getNullableObject(name: String): Any? {
         return result[name]
+    }
+
+    fun getNullableBytes(name: String): ByteArray? {
+        return result[name] as? ByteArray
     }
 
 }
