@@ -23,7 +23,7 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
                 variable.name = field.name
                 println(variable.name)
                 variable.type.name = field.name
-                println(variable.name)
+                println(variable.type.name)
                 variables[field.name] = variable
             }
         }
