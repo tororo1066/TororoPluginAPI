@@ -46,6 +46,7 @@ abstract class SJavaPlugin() : JavaPlugin() {
 
     private val useOptions = ArrayList<UseOption>()
     private var folder = ""
+    var deprecatedMode = false
 
     /**
      * SConfig、SMySQL、Vaultなどをオプションとして指定する
@@ -65,7 +66,13 @@ abstract class SJavaPlugin() : JavaPlugin() {
         this.useOptions.addAll(options)
     }
 
-    constructor(pluginFolder: String, vararg options: UseOption): this(){
+    constructor(deprecatedMode: Boolean, vararg options: UseOption) : this(){
+        this.deprecatedMode = deprecatedMode
+        this.useOptions.addAll(options)
+    }
+
+    constructor(pluginFolder: String, deprecatedMode: Boolean, vararg options: UseOption): this(){
+        this.deprecatedMode = deprecatedMode
         this.useOptions.addAll(options)
         this.folder = pluginFolder
     }
@@ -102,7 +109,7 @@ abstract class SJavaPlugin() : JavaPlugin() {
             if (UsefulUtility.sTry({clazz.getConstructor()}) { null } == null){
                 return@forEach
             }
-            if (clazz.superclass == SCommand::class.java){
+            if (deprecatedMode && clazz.superclass == SCommand::class.java){
                 val instance = clazz.getConstructor().newInstance() as SCommand
                 clazz.declaredFields.forEach second@ {
                     if (!it.isAnnotationPresent(SCommandBody::class.java))return@second

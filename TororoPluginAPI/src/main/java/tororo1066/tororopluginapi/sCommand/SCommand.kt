@@ -5,6 +5,7 @@ import org.bukkit.command.*
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SDebug
+import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.lang.LangEditor
 import tororo1066.tororopluginapi.lang.SLang
@@ -58,7 +59,6 @@ open class SCommand(private val command: String) : CommandExecutor, TabCompleter
         clearCommands()
 
         javaClass.declaredFields.forEach {
-            Bukkit.broadcastMessage(it.toString())
             if (it.isAnnotationPresent(SCommandBody::class.java) && it.type == SCommandObject::class.java){
                 it.isAccessible = true
                 val data = it.get(this) as SCommandObject
@@ -72,8 +72,8 @@ open class SCommand(private val command: String) : CommandExecutor, TabCompleter
         }
     }
 
-    fun reloadAllCommands(){
-        clearCommands()
+
+    fun loadAllCommands(){
         javaClass.declaredFields.forEach {
             if (it.isAnnotationPresent(SCommandBody::class.java) && it.type == SCommandObject::class.java){
                 it.isAccessible = true
@@ -89,8 +89,13 @@ open class SCommand(private val command: String) : CommandExecutor, TabCompleter
 
     init {
         val register = register() ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")
+        register.unregister(Bukkit.getCommandMap())
         register.setExecutor(this)
         register.tabCompleter = this
+
+        if (!SJavaPlugin.plugin.deprecatedMode){
+            loadAllCommands()
+        }
     }
 
 

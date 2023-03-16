@@ -91,16 +91,6 @@ class USQLVariable<V: USQLVariable.VariableType<*>>(val type: V) {
         return USQLCondition().lessThan(this,value)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun getVal(sqlResultSet: SMySQLResultSet): V {
-        return type.getVal(sqlResultSet) as V
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun getNullableVal(sqlResultSet: SMySQLResultSet): V? {
-        return type.getNullableVal(sqlResultSet) as V?
-    }
-
     abstract class VariableType<V>{
 
         var name = ""

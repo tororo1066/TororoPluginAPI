@@ -5,12 +5,12 @@ import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.mysql.SMySQL
 import tororo1066.tororopluginapi.mysql.ultimate.USQLTable
 import tororo1066.tororopluginapi.mysql.ultimate.USQLVariable
-import java.util.UUID
+import java.util.*
 
 class TestTable: USQLTable("test", SMySQL(SJavaPlugin.plugin)){
 
     companion object{
-        val id = USQLVariable(USQLVariable.BOOLEAN,autoIncrement = true)
+        val id = USQLVariable(USQLVariable.INT,autoIncrement = true)
         val uuid = USQLVariable(USQLVariable.VARCHAR,36,nullable = true)
         val name = USQLVariable(USQLVariable.VARCHAR,16,nullable = true)
     }
@@ -23,7 +23,7 @@ class TestTable: USQLTable("test", SMySQL(SJavaPlugin.plugin)){
     fun queryTest(searchUUID: UUID){
         select(uuid.equal(searchUUID).and().orHigher(id,5)).forEach {
             Bukkit.broadcastMessage(it.getString("uuid"))
-            id.getVal(it)
+            uuid.type.getVal(it)
         }
     }
 
