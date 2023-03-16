@@ -20,6 +20,7 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
                 field.isAccessible = true
                 val variable = field.get(null) as? USQLVariable<*>?:return@forEach
                 variable.name = field.name
+                variable.type.name = field.name
                 variables[field.name] = variable
             }
         }
@@ -30,7 +31,7 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
 
     fun createTable(): Boolean{
         val queryBuilder = StringBuilder("create table if not exists $table (")
-        queryBuilder.append(variables.values.joinToString(",") { it.name + " " + it.type.name.lowercase() + (if (it.length != -1) "(${it.length})" else "") +
+        queryBuilder.append(variables.values.joinToString(",") { it.name + " " + it.type.variableName.lowercase() + (if (it.length != -1) "(${it.length})" else "") +
                 (if (!it.nullable) " not null" else " null") +
                 (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
                 if (it.autoIncrement) " auto_increment" else "" })
