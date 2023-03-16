@@ -1,5 +1,6 @@
 package tororo1066.tororoplugin
 
+import tororo1066.tororoplugin.command.TororoCommand
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
 import java.util.*
@@ -14,6 +15,7 @@ class TororoPlugin: SJavaPlugin() {
     }
 
     override fun onStart() {
+        TororoCommand()
         plugin = this
         testTable = TestTable()
     }

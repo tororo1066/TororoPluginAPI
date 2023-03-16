@@ -11,7 +11,7 @@ import tororo1066.tororopluginapi.lang.LangEditor
 import tororo1066.tororopluginapi.lang.SLang
 import java.util.function.Consumer
 
-open class SCommand(private val command: String) : CommandExecutor, TabCompleter {
+abstract class SCommand(private val command: String) : CommandExecutor, TabCompleter {
 
 
     private var perm : String? = null
@@ -89,12 +89,13 @@ open class SCommand(private val command: String) : CommandExecutor, TabCompleter
 
     init {
         val register = register() ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")
-        register.unregister(Bukkit.getCommandMap())
         register.setExecutor(this)
         register.tabCompleter = this
 
         if (!SJavaPlugin.plugin.deprecatedMode){
-            loadAllCommands()
+            Bukkit.getScheduler().runTaskLater(SJavaPlugin.plugin, Runnable {
+                loadAllCommands()
+            }, 1)
         }
     }
 

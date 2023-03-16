@@ -20,7 +20,6 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
                 field.isAccessible = true
                 val variable = field.get(null) as? USQLVariable<*>?:return@forEach
                 variable.name = field.name
-                variable.type.name = field.name
                 variables[field.name] = variable
             }
         }

@@ -28,7 +28,6 @@ import kotlin.math.floor
 @Suppress("UNUSED")
 class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
 
-
     @SCommandBody
     val test2 = command().setNormalExecutor {
         reloadSCommandBodies()

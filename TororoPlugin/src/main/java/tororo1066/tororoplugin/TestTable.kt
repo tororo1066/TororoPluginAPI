@@ -17,7 +17,6 @@ class TestTable: USQLTable("test", SMySQL(SJavaPlugin.plugin)){
 
     init {
         debug = true
-        createTable()
     }
 
     fun queryTest(searchUUID: UUID){
