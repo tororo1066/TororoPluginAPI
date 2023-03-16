@@ -19,11 +19,6 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
             if (field.type == USQLVariable::class.java){
                 field.isAccessible = true
                 val variable = field.get(null) as? USQLVariable<*>?:return@forEach
-                println("field: ${field.name}")
-                variables.forEach {
-                    println("variable: ${it.value.name}")
-                    println("type: ${it.value.type.name}")
-                }
                 variable.name = field.name
                 variable.type.name = field.name
                 variables[field.name] = variable
