@@ -28,7 +28,7 @@ class SBukkit {
          *
          * [autoRegister][SEventHandler.autoRegister]がfalseの時だけ有効
          */
-        fun registerSEvent(clazz: Any, plugin: JavaPlugin): Boolean{
+        fun registerSEvent(clazz: Any, plugin: JavaPlugin): Boolean {
             clazz.javaClass.methods.forEach { method ->
                 if (!method.isAnnotationPresent(SEventHandler::class.java))return@forEach
                 if (method.parameterTypes.size != 1)return@forEach
