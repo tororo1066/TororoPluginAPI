@@ -16,7 +16,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.inventory.ItemStack
 
 class SStr: Cloneable {
-    private val componentBuilder = Component.text("").toBuilder()
+    private val componentBuilder = Component.text()
     private val md5ComponentBuilder = ComponentBuilder()
     private val disableOptions = ArrayList<DisableOption>()
 
@@ -85,7 +85,7 @@ class SStr: Cloneable {
     }
 
     fun toInt(): Int?{
-        return ChatColor.stripColor(PlainTextComponentSerializer.plainText().serialize(componentBuilder.build()))!!.replace(",","").toIntOrNull()
+        return ChatColor.stripColor(PlainTextComponentSerializer.plainText().serialize(componentBuilder.build()))?.replace(",","")?.toIntOrNull()
     }
 
     override fun toString(): String {

@@ -21,6 +21,7 @@ import tororo1066.tororopluginapi.sCommand.SCommand
 import tororo1066.tororopluginapi.sCommand.SCommandArg
 import tororo1066.tororopluginapi.sCommand.SCommandArgType
 import tororo1066.tororopluginapi.sCommand.SCommandObject
+import tororo1066.tororopluginapi.utils.sendMessage
 import tororo1066.tororopluginapi.utils.toPlayer
 import java.util.*
 import kotlin.math.floor
@@ -28,9 +29,10 @@ import kotlin.math.floor
 @Suppress("UNUSED")
 class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
 
+    val test = SStr("&aaaa.")
     @SCommandBody
     val test2 = command().setNormalExecutor {
-        reloadSCommandBodies()
+        it.sender.sendMessage(test + SStr("test").commandText("/dt").hoverText("aaa"))
     }
 
     @SCommandBody

@@ -5,6 +5,7 @@ import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.mysql.SMySQL
 import tororo1066.tororopluginapi.mysql.ultimate.USQLTable
 import tororo1066.tororopluginapi.mysql.ultimate.USQLVariable
+import tororo1066.tororopluginapi.otherClass.Dict
 import java.util.*
 
 class TestTable: USQLTable("test", SMySQL(SJavaPlugin.plugin)){
