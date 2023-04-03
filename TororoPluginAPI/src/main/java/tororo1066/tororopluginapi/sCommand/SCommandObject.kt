@@ -84,21 +84,23 @@ class SCommandObject {
         return true
     }
 
-    fun matches(args : Array<out String>): Boolean {
+    fun matches(data: SCommandData): Boolean {
+        val args = data.args
         if (args.size < this.args.size) return false
         if (args.size > this.args.size && !noLimit) return false
         for (i in args.indices){
             if (this.args.size-1 <= i && noLimit)continue
 
-            if (!this.args[i].matches(args[i],args))return false
+            if (!this.args[i].matches(args[i],data))return false
         }
         return true
     }
 
-    fun validOption(args: Array<out String>): Boolean {
+    fun validOption(data: SCommandData): Boolean {
+        val args = data.args
         if (args.size > this.args.size) return false
         for (i in 0 until args.size - 1) {
-            if (!this.args[i].matches(args[i],args)) {
+            if (!this.args[i].matches(args[i],data)) {
                 return false
             }
         }
@@ -114,7 +116,7 @@ class SCommandObject {
             }
 
             for (executor in this.onlyPlayerConsumerExecutors){
-                executor.accept(SCommandOnlyPlayerData(data.sender,data.command,data.label,data.args))
+                executor.accept(SCommandOnlyPlayerData(data.sender as Player,data.command,data.label,data.args))
             }
         }
         for (executor in this.executors){

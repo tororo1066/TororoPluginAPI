@@ -9,7 +9,8 @@ class SCommandArg() {
 
     val allowType = ArrayList<SCommandArgType>()
 
-    val changeableAllowString = ArrayList<Function<List<String>,List<String>>>()
+    val changeableAllowString = ArrayList<Function<in SCommandData,List<String>>>()
+    val changeableAlias = ArrayList<Function<in SCommandData,List<String>>>()
 
     constructor(allowString: String) : this() {
         addAllowString(allowString)
@@ -78,8 +79,13 @@ class SCommandArg() {
         return this
     }
 
-    fun addChangeableAllowString(function: Function<List<String>,List<String>>): SCommandArg {
+    fun addChangeableAllowString(function: Function<SCommandData,List<String>>): SCommandArg {
         this.changeableAllowString.add(function)
+        return this
+    }
+
+    fun addChangeableAlias(function: Function<SCommandData,List<String>>): SCommandArg {
+        this.changeableAlias.add(function)
         return this
     }
 
@@ -94,14 +100,14 @@ class SCommandArg() {
         return true
     }
 
-    fun matches(arg : String, args: Array<out String>): Boolean {
+    fun matches(arg : String, data: SCommandData): Boolean {
         if (!allMatch(arg))return false
         if (allowString.isEmpty() && changeableAllowString.isEmpty())return true
         for (string in allowString){
             if (string.equals(arg,true))return true
         }
         for (changeable in changeableAllowString){
-            if (changeable.apply(args.toList()).contains(arg))return true
+            if (changeable.apply(data).contains(arg))return true
         }
         return false
     }

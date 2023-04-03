@@ -58,18 +58,7 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
     fun reloadSCommandBodies(){
         clearCommands()
 
-        javaClass.declaredFields.forEach {
-            if (it.isAnnotationPresent(SCommandBody::class.java) && it.type == SCommandObject::class.java){
-                it.isAccessible = true
-                val data = it.get(this) as SCommandObject
-                val sCommand = it.getAnnotation(SCommandBody::class.java)
-                if (sCommand.permission.isBlank()){
-                    addCommand(data)
-                } else {
-                    addCommand(data.addNeedPermission(sCommand.permission))
-                }
-            }
-        }
+        loadAllCommands()
     }
 
 
@@ -94,7 +83,9 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
 
         if (!SJavaPlugin.plugin.deprecatedMode){
             Bukkit.getScheduler().runTaskLater(SJavaPlugin.plugin, Runnable {
-                loadAllCommands()
+                Bukkit.getScheduler().runTask(SJavaPlugin.plugin, Runnable {
+                    loadAllCommands()
+                })
             }, 1)
         }
     }
@@ -106,9 +97,13 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
             sendPrefixMessage(sender,"§4権限がありません")
             return true
         }
-        val commandData = SCommandData(sender, command, label, args)
+        val commandData = if (sender is Player){
+            SCommandOnlyPlayerData(sender, command, label, args)
+        } else {
+            SCommandData(sender, command, label, args)
+        }
         for (commandObject in commands){
-            if (!commandObject.matches(args)) continue
+            if (!commandObject.matches(commandData)) continue
             if (!commandObject.hasPermission(sender)){
                 sendPrefixMessage(sender,"§4権限がありません")
                 return true
@@ -131,7 +126,13 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
         for (commandObject in this.commands){
             if (!commandObject.hasPermission(sender)) continue
 
-            if (!commandObject.validOption(args)) continue
+            val data = if (sender is Player){
+                SCommandOnlyPlayerData(sender, command, alias, args)
+            } else {
+                SCommandData(sender, command, alias, args)
+            }
+
+            if (!commandObject.validOption(data)) continue
 
             val arg = commandObject.args[args.size-1]
 
@@ -152,8 +153,12 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
                 result.add("false")
             }
             result.addAll(arg.alias)
+
             arg.changeableAllowString.forEach {
-                result.addAll(it.apply(args.toList()))
+                result.addAll(it.apply(data))
+            }
+            arg.changeableAlias.forEach {
+                result.addAll(it.apply(data))
             }
         }
         return result
@@ -168,7 +173,7 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
             .addNeedPermission(perm)
             .setNormalExecutor {
                 if (it.sender is Player){
-                    SDebug.debugLevel[it.sender.uniqueId] = it.args[1].toInt()
+                    SDebug.debugLevel[(it.sender as Player).uniqueId] = it.args[1].toInt()
                 } else {
                     SDebug.consoleSenderLevel = it.args[1].toInt()
                 }
