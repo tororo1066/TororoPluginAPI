@@ -137,6 +137,13 @@ class SLang(private val plugin: JavaPlugin) {
             return modifyValue(defaultLang.getString(msg,msg)!!,value)
         }
 
+        fun translate(msg: String, p: Player, vararg value: String): String {
+            val lang = langFile[p.locale]
+                ?: return translate(msg,*value)
+
+            return modifyValue(lang.getString(msg,msg)!!,value)
+        }
+
         private fun modifyValue(msg: String, value: Array<out String>): String {
             var modifyString = msg
             value.forEachIndexed { index, string ->

@@ -29,12 +29,6 @@ import kotlin.math.floor
 @Suppress("UNUSED")
 class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
 
-    val test = SStr("&aaaa.")
-    @SCommandBody
-    val test2 = command().setNormalExecutor {
-        it.sender.sendMessage(test + SStr("test").commandText("/dt").hoverText("aaa"))
-    }
-
     @SCommandBody
     val sendToCommandLog = command().addArg(SCommandArg().addAllowString("commandLog")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))
         .setPlayerExecutor {
