@@ -135,30 +135,42 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
             if (!commandObject.validOption(data)) continue
 
             val arg = commandObject.args[args.size-1]
+            val argString = args[args.size-1]
 
             if (arg.hasType(SCommandArgType.ONLINE_PLAYER)){
                 for (p in Bukkit.getOnlinePlayers()){
-                    result.add(p.name)
+                    if (p.name.startsWith(argString) || argString.isBlank()) result.add(p.name)
                 }
             }
 
             if (arg.hasType(SCommandArgType.WORLD)){
                 for (world in Bukkit.getWorlds()){
-                    result.add(world.name)
+                    if (world.name.startsWith(argString) || argString.isBlank()) result.add(world.name)
                 }
             }
 
             if (arg.hasType(SCommandArgType.BOOLEAN)){
-                result.add("true")
-                result.add("false")
+                if ("true".startsWith(argString) || argString.isBlank()) result.add("true")
+                if ("false".startsWith(argString) || argString.isBlank()) result.add("false")
             }
-            result.addAll(arg.alias)
+
+            arg.alias.forEach {
+                if (it.startsWith(argString) || argString.isBlank()) result.add(it)
+            }
 
             arg.changeableAllowString.forEach {
-                result.addAll(it.apply(data))
+                it.apply(data).forEach { s ->
+                    if (s.startsWith(argString) || argString.isBlank()){
+                        result.add(s)
+                    }
+                }
             }
             arg.changeableAlias.forEach {
-                result.addAll(it.apply(data))
+                it.apply(data).forEach { s ->
+                    if (s.startsWith(argString) || argString.isBlank()){
+                        result.add(s)
+                    }
+                }
             }
         }
         return result

@@ -48,7 +48,7 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
                 return@setPlayerExecutor
             }
             val meta = it.sender.inventory.itemInMainHand.itemMeta!!
-            meta.lore = it.args[2].replace("&","§").split("\n")
+            meta.lore = it.args[2].replace("&","§").split("\\n")
             it.sender.inventory.itemInMainHand.itemMeta = meta
             it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
         }
