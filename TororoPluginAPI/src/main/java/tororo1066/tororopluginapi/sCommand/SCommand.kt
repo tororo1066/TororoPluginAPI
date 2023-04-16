@@ -159,14 +159,14 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
             }
 
             arg.changeableAllowString.forEach {
-                it.apply(data).forEach { s ->
+                it.getAllowString(data).forEach { s ->
                     if (s.startsWith(argString) || argString.isBlank()){
                         result.add(s)
                     }
                 }
             }
             arg.changeableAlias.forEach {
-                it.apply(data).forEach { s ->
+                it.getAlias(data).forEach { s ->
                     if (s.startsWith(argString) || argString.isBlank()){
                         result.add(s)
                     }

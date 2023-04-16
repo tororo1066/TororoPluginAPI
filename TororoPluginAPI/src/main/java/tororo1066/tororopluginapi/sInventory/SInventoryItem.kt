@@ -13,6 +13,7 @@ import org.bukkit.inventory.meta.BannerMeta
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitTask
 import tororo1066.tororopluginapi.sItem.SItem
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -32,6 +33,8 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
     private val biAsyncClickEvent = ArrayList<BiConsumer<SInventoryItem,InventoryClickEvent>>()
     private var canClick = true
     private val thread: ExecutorService = Executors.newCachedThreadPool()
+    val timerSchedules = ArrayList<Triple<(SInventoryItem, SInventory, Int)->Unit,Long,Long>>()
+    val timerScheduleTasks = ArrayList<BukkitTask>()
 
     constructor(material: Material) : this(ItemStack(material))
 
@@ -107,6 +110,21 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
         }
     }
 
+    fun scheduleTimer(func: (SInventoryItem, SInventory, Int)->Unit, delay: Long, period: Long): SInventoryItem {
+        timerSchedules.add(Triple(func,delay,period))
+        return this
+    }
+
+    fun scheduleTimer(func: (SInventoryItem, SInventory, Int)->Unit, period: Long): SInventoryItem {
+        timerSchedules.add(Triple(func,0,period))
+        return this
+    }
+
+    fun scheduleTimer(func: (SInventoryItem, SInventory, Int)->Unit): SInventoryItem {
+        timerSchedules.add(Triple(func,0,1))
+        return this
+    }
+
     override fun setItemAmount(amount: Int): SInventoryItem {
         this.amount = amount
         return this
@@ -171,6 +189,8 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
         return this
     }
 
-
+    override fun clone(): SInventoryItem {
+        return super.clone() as SInventoryItem
+    }
 
 }

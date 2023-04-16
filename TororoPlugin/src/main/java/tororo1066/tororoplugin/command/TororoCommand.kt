@@ -3,6 +3,8 @@ package tororo1066.tororoplugin.command
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.event.ClickEvent
+import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -17,10 +19,9 @@ import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
 import tororo1066.tororopluginapi.defaultMenus.NumericInputInventory
-import tororo1066.tororopluginapi.sCommand.SCommand
-import tororo1066.tororopluginapi.sCommand.SCommandArg
-import tororo1066.tororopluginapi.sCommand.SCommandArgType
-import tororo1066.tororopluginapi.sCommand.SCommandObject
+import tororo1066.tororopluginapi.defaultMenus.StrSInventory
+import tororo1066.tororopluginapi.sCommand.*
+import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import tororo1066.tororopluginapi.utils.sendMessage
 import tororo1066.tororopluginapi.utils.toPlayer
 import java.util.*
@@ -28,6 +29,33 @@ import kotlin.math.floor
 
 @Suppress("UNUSED")
 class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
+
+    @SCommandBody
+    val test = command().addArg(SCommandArg().addChangeableAllowString(object : ChangeableAllowString() {
+        override fun getAllowString(data: SCommandData): Collection<String> {
+            return listOf("test1","test2")
+        }
+    }))
+
+    @SCommandBody
+    val testGUI = command().addArg(SCommandArg("testGUI")).setPlayerExecutor {
+        StrSInventory.Builder().setName("test")
+            .setItems(
+                ". . . . P . . . .",
+                ". . . P P P . . .",
+                ". . P P P P P . .",
+                ". P P P P P P P .",
+                "P P P P P P P P P")
+            .addButton('P', SInventoryItem(Material.BROWN_STAINED_GLASS_PANE)
+                .setDisplayName("pu-pu!")
+                .setCanClick(false)
+                .scheduleTimer { item, inv, slot ->
+                    item.setDisplayName(slot.toString())
+                    inv.renderMenu(it.sender)
+                })
+            .build().open(it.sender)
+
+    }
 
     @SCommandBody
     val sendToCommandLog = command().addArg(SCommandArg().addAllowString("commandLog")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))

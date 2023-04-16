@@ -25,6 +25,8 @@ import kotlin.collections.HashMap
 
 /**
  * 拡張機能を持たせたInventory
+ *
+ * inv共有厳禁！
  */
 abstract class SInventory(val plugin: JavaPlugin) {
 
@@ -118,6 +120,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
      * @param item SInventoryItem
      */
     fun setItem(slot : Int, item : SInventoryItem){
+        removeItem(slot)
         items[slot] = item
         inv.setItem(slot,item)
     }
@@ -217,6 +220,11 @@ abstract class SInventory(val plugin: JavaPlugin) {
      * @param slot 位置
      */
     fun removeItem(slot : Int){
+        val item = items[slot]
+        if (item != null){
+            item.timerScheduleTasks.forEach { it.cancel() }
+            item.timerScheduleTasks.clear()
+        }
         items.remove(slot)
         inv.clear(slot)
     }
@@ -321,7 +329,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
      * @param p Player
      */
     fun open(p : Player){
-        plugin.server.scheduler.runTask(plugin, Runnable {
+        Bukkit.getScheduler().runTask(plugin, Runnable {
             if (inputNow.contains(p.uniqueId)){
                 p.sendMessage("§4何かしらの情報を入力中です")
                 return@Runnable
@@ -351,10 +359,23 @@ abstract class SInventory(val plugin: JavaPlugin) {
                 thread.execute { open.accept(p) }
             }
 
+            items.forEach { (i, it) ->
+                it.timerSchedules.forEach { triple ->
+                    it.timerScheduleTasks.add(Bukkit.getScheduler()
+                        .runTaskTimer(plugin, Runnable { triple.first.invoke(it,this,i) },triple.second,triple.third))
+                }
+            }
+
             sEvent.register(InventoryCloseEvent::class.java) {
                 if (!openingPlayer.contains(it.player.uniqueId))return@register
                 openingPlayer.remove(it.player.uniqueId)
                 sEvent.unregisterAll()
+                items.values.forEach { item ->
+                    item.timerScheduleTasks.forEach { task ->
+                        task.cancel()
+                    }
+                    item.timerScheduleTasks.clear()
+                }
                 if (throughEvent.remove(it.player.uniqueId)){
                     return@register
                 }
