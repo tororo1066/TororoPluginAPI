@@ -6,8 +6,11 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.SJavaPlugin
 
 abstract class SEventInterface<T : Event>(val plugin : JavaPlugin, val event : Class<T>) : Listener, EventExecutor {
+
+    constructor(event: Class<T>): this(SJavaPlugin.plugin,event)
 
     private var priority = EventPriority.NORMAL
 
@@ -23,10 +26,6 @@ abstract class SEventInterface<T : Event>(val plugin : JavaPlugin, val event : C
         Bukkit.getServer().pluginManager.registerEvent(event,this,priority,this,plugin)
     }
 
-    /**
-     * @sample
-     *
-     */
     abstract fun executeEvent(e : T)
 
     override fun execute(p0: Listener, p1: Event) {

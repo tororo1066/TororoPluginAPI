@@ -1,24 +1,24 @@
 package tororo1066.tororopluginapi.defaultMenus
 
-import org.bukkit.Bukkit
 import org.bukkit.DyeColor
 import org.bukkit.Material
 import org.bukkit.block.banner.Pattern
 import org.bukkit.block.banner.PatternType
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BannerMeta
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.sInventory.SInventory
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
-import tororo1066.tororopluginapi.sItem.SItem
 import java.util.function.Consumer
 
 class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin,name,6) {
+
+    constructor(name: String): this(SJavaPlugin.plugin,name)
 
     val numItems = LinkedHashMap<Int,ItemStack>()
 

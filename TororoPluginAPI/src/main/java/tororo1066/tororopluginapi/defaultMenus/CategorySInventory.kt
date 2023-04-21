@@ -3,6 +3,7 @@ package tororo1066.tororopluginapi.defaultMenus
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.sInventory.SInventory
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import tororo1066.tororopluginapi.sItem.SItem
@@ -12,6 +13,10 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
     constructor(plugin: JavaPlugin,category: String,title: String) : this(plugin,title){
         setCategoryName(category)
     }
+
+    constructor(title: String): this(SJavaPlugin.plugin,title)
+
+    constructor(category: String,title: String): this(SJavaPlugin.plugin,category,title)
 
     var items = LinkedHashMap<String,ArrayList<SInventoryItem>>()
     var nowPage = 0

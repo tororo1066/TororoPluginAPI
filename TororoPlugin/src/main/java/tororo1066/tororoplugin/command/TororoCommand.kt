@@ -48,11 +48,7 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
                 "P P P P P P P P P")
             .addButton('P', SInventoryItem(Material.BROWN_STAINED_GLASS_PANE)
                 .setDisplayName("pu-pu!")
-                .setCanClick(false)
-                .scheduleTimer { item, inv, slot ->
-                    item.setDisplayName(slot.toString())
-                    inv.renderMenu(it.sender)
-                })
+                .setCanClick(false))
             .build().open(it.sender)
 
     }

@@ -3,6 +3,7 @@ package tororo1066.tororopluginapi.defaultMenus
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.sInventory.SInventory
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import tororo1066.tororopluginapi.sItem.SItem
@@ -12,6 +13,8 @@ open class LargeSInventory(plugin: JavaPlugin, title: String) : SInventory(plugi
 
     var items = ArrayList<SInventoryItem>()
     var nowPage = 0
+
+    constructor(title: String): this(SJavaPlugin.plugin,title)
 
     fun setResourceItems(items: ArrayList<SInventoryItem>) {
         this.items = items

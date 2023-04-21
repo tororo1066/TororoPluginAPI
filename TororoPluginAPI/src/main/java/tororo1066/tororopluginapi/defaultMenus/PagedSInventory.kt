@@ -3,6 +3,7 @@ package tororo1066.tororopluginapi.defaultMenus
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.sInventory.SInventory
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import tororo1066.tororopluginapi.sItem.SItem
@@ -15,6 +16,8 @@ open class PagedSInventory(plugin: JavaPlugin,name: String,val row: Int): SInven
 
     private var leftSlots = arrayListOf<Int>()
     private var rightSlots = arrayListOf<Int>()
+
+    constructor(name: String,row: Int): this(SJavaPlugin.plugin,name,row)
 
     fun setResourceItems(items: ArrayList<HashMap<Int,SInventoryItem>>) {
         this.items = items

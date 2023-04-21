@@ -5,6 +5,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.SJavaPlugin
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 
@@ -12,6 +13,8 @@ import java.util.function.Consumer
  * イベント関連のAPI
  */
 class SEvent(private val plugin : JavaPlugin) {
+
+    constructor() : this(SJavaPlugin.plugin)
 
     val sEventUnits = ArrayList<SEventUnit<*>>()
     val biSEventUnits = ArrayList<BiSEventUnit<*>>()

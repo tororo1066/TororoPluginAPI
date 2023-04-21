@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 import java.util.Date
+import java.util.concurrent.FutureTask
 import java.util.function.Consumer
 
 class UsefulUtility(val plugin: JavaPlugin) {
@@ -37,6 +38,18 @@ class UsefulUtility(val plugin: JavaPlugin) {
 
     fun runTask(consumer: Consumer<BukkitTask>){
         Bukkit.getScheduler().runTask(plugin,consumer)
+    }
+
+    fun threadRunTask(consumer: Consumer<BukkitTask>){
+        var lock = true
+        Bukkit.getScheduler().runTask(plugin,Consumer {
+            consumer.accept(it)
+            lock = false
+        })
+
+        while (lock){
+            Thread.sleep(1)
+        }
     }
 
     fun doubleToFormatString(double: Double): String {

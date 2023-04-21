@@ -6,7 +6,7 @@ import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.sInventory.SInventory
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 
-class StrSInventory(plugin: JavaPlugin,name: String, val itemsString: List<String>, val buttons: HashMap<Char,SInventoryItem>): SInventory(plugin,name,itemsString.size) {
+class StrSInventory(plugin: JavaPlugin, name: String, val itemsString: List<String>, val buttons: HashMap<Char,SInventoryItem>): SInventory(plugin,name,itemsString.size) {
 
     constructor(name: String, itemsString: List<String>, buttons: HashMap<Char,SInventoryItem>): this(SJavaPlugin.plugin,name,itemsString,buttons)
 
@@ -18,7 +18,7 @@ class StrSInventory(plugin: JavaPlugin,name: String, val itemsString: List<Strin
                 if (trueIndex % 2 == 1)return@second
                 if (c == ' ')return@second
                 if (buttons.containsKey(c)){
-                    setItem(trueIndex / 2,buttons[c]!!.clone())
+                    setItem(trueIndex / 2,buttons[c]!!)
                 }
             }
         }
