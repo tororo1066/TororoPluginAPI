@@ -108,20 +108,28 @@ class SInteractItemManager(val plugin: JavaPlugin, var disableCoolTimeView: Bool
                     item.amount = 1
                     if (items.containsKey(item)){
                         val interactItem = items[item]!!
-                        interactItem.task = Bukkit.getScheduler().runTaskTimer(plugin, object : BukkitRunnable(){
+                        interactItem.task = object : BukkitRunnable() {
                             override fun run() {
                                 val mainHandItem = e.player.inventory.itemInMainHand.clone()
                                 val offHandItem = e.player.inventory.itemInOffHand.clone()
-                                if (!item.isSimilar(mainHandItem) && !item.isSimilar(offHandItem)){
+                                if (!item.isSimilar(mainHandItem) && !item.isSimilar(offHandItem)) {
                                     cancel()
                                     return
                                 }
-                                if (interactItem.interactCoolDown <= 0){
-                                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&a&l使用可能！").toBukkitComponent())
+                                if (interactItem.interactCoolDown <= 0) {
+                                    e.player.spigot().sendMessage(
+                                        ChatMessageType.ACTION_BAR,
+                                        *SStr("&a&l使用可能！").toBukkitComponent()
+                                    )
                                 } else {
-                                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent())
+                                    e.player.spigot().sendMessage(
+                                        ChatMessageType.ACTION_BAR,
+                                        *SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent()
+                                    )
                                 }
-                            } },0,1)
+
+                            }
+                        }.runTaskTimer(plugin,1, 1)
                     }
                 }
 
