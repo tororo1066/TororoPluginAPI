@@ -10,7 +10,7 @@ import tororo1066.tororopluginapi.sItem.SItem
 
 open class PagedSInventory(plugin: JavaPlugin,name: String,row: Int): SInventory(plugin,name,row) {
 
-    private var resourceItems = ArrayList<HashMap<Int,SInventoryItem>>()
+    private var resourceList = ArrayList<HashMap<Int,SInventoryItem>>()
 
     var nowPage = 0
 
@@ -20,16 +20,16 @@ open class PagedSInventory(plugin: JavaPlugin,name: String,row: Int): SInventory
     constructor(name: String,row: Int): this(SJavaPlugin.plugin,name,row)
 
     fun setResourceItems(items: ArrayList<HashMap<Int,SInventoryItem>>) {
-        this.resourceItems = items
+        this.resourceList = items
     }
 
 
     fun addPage(inv: SInventory){
-        resourceItems.add(inv.getSInvItems())
+        resourceList.add(inv.getSInvItems())
     }
 
     fun addPage(items: HashMap<Int,SInventoryItem>){
-        this.resourceItems.add(items)
+        this.resourceList.add(items)
     }
 
     fun setLeftSlots(slots: List<Int>){
@@ -67,7 +67,7 @@ open class PagedSInventory(plugin: JavaPlugin,name: String,row: Int): SInventory
             }
         }
 
-        if (nowPage+1 < resourceItems.size){
+        if (nowPage+1 < resourceList.size){
             rightSlots.forEach {
                 setItem(it,right)
             }
@@ -79,7 +79,7 @@ open class PagedSInventory(plugin: JavaPlugin,name: String,row: Int): SInventory
         clear()
 
         for (i in 0 until row*9) {
-            setItem(i, this.resourceItems[page][i]?:continue)
+            setItem(i, this.resourceList[page][i]?:continue)
         }
         renderBar()
     }
