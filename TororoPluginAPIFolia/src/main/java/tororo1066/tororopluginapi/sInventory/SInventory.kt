@@ -35,8 +35,8 @@ abstract class SInventory(val plugin: JavaPlugin) {
         val inputNow = ArrayList<UUID>()
     }
 
-    private var name = "Inventory"
-    private var row = 9
+    var name = "Inventory"
+    var row = 9
     var inv : Inventory
 
     protected val thread: ExecutorService = Executors.newCachedThreadPool()
