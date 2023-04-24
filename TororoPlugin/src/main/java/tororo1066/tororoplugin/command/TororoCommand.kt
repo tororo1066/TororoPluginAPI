@@ -22,6 +22,7 @@ import tororo1066.tororopluginapi.defaultMenus.NumericInputInventory
 import tororo1066.tororopluginapi.defaultMenus.StrSInventory
 import tororo1066.tororopluginapi.sCommand.*
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
+import tororo1066.tororopluginapi.sItem.SInteractItemManager
 import tororo1066.tororopluginapi.utils.sendMessage
 import tororo1066.tororopluginapi.utils.toPlayer
 import java.util.*
@@ -51,6 +52,14 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
                 .setCanClick(false))
             .build().open(it.sender)
 
+    }
+
+    @SCommandBody
+    val test_test = command().addArg(SCommandArg("test_test")).setPlayerExecutor {
+        it.sender.inventory.addItem(SInteractItemManager(TororoPlugin.plugin).createSInteractItem(Material.DIAMOND).setInteractEvent { _, _ ->
+            Bukkit.broadcastMessage("aaa")
+            return@setInteractEvent true
+        }.setInitialCoolDown(100))
     }
 
     @SCommandBody
