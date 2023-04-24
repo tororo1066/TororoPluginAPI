@@ -14,6 +14,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SInput
+import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.sEvent.SEvent
 import tororo1066.tororopluginapi.sItem.SItem
 import java.util.*
@@ -323,10 +324,10 @@ abstract class SInventory(val plugin: JavaPlugin) {
      * @param p Player
      */
     open fun open(p : Player){
-        Bukkit.getScheduler().runTask(plugin, Runnable {
+        fun func(){
             if (inputNow.contains(p.uniqueId)){
                 p.sendMessage("§4You are entering some information.")
-                return@Runnable
+                return
             }
             val saveItems = HashMap<Int,ItemStack>()
             if (savePlaceItems){
@@ -335,8 +336,8 @@ abstract class SInventory(val plugin: JavaPlugin) {
                     saveItems[it] = inv.getItem(it)?:return@forEach
                 }
             }
-            if (!renderMenu(p)) return@Runnable
-            if (!renderMenu()) return@Runnable
+            if (!renderMenu(p)) return
+            if (!renderMenu()) return
             afterRenderMenu(p)
             afterRenderMenu()
             if (savePlaceItems){
@@ -385,8 +386,13 @@ abstract class SInventory(val plugin: JavaPlugin) {
             }
 
             openingPlayer.add(p.uniqueId)
+        }
 
-        })
+        if (SJavaPlugin.isFolia){
+            Bukkit.getGlobalRegionScheduler().run(plugin) { func() }
+        } else {
+            Bukkit.getScheduler().runTask(plugin, Runnable { func() })
+        }
     }
 
     /**

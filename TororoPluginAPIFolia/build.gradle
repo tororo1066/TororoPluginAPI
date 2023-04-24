@@ -27,7 +27,7 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly fileTree(dir: 'libs', include: '*.jar')
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
-    compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT'
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens

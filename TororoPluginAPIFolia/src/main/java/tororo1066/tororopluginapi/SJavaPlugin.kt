@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi
 
+import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
@@ -87,6 +88,12 @@ abstract class SJavaPlugin() : JavaPlugin() {
 
     @Suppress("UNCHECKED_CAST")
     override fun onEnable() {
+        isFolia = try {
+            Bukkit.getGlobalRegionScheduler()
+            true
+        } catch (e: Exception){
+            false
+        }
         plugin = this
         if (useOptions.contains(UseOption.SConfig)){
             saveDefaultConfig()
@@ -100,13 +107,6 @@ abstract class SJavaPlugin() : JavaPlugin() {
         }
 
         onStart()
-
-        isFolia = try {
-            Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler")
-            true
-        } catch (e: ClassNotFoundException){
-            false
-        }
 
         if (folder.isBlank()){
             val split = description.main.split(".").dropLast(1).joinToString(".")

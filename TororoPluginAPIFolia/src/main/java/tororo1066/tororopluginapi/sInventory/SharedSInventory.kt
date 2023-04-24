@@ -6,6 +6,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.SJavaPlugin
 
 
 abstract class SharedSInventory(plugin : JavaPlugin, name : String, row : Int): SInventory(plugin, name, row) {
@@ -64,10 +65,10 @@ abstract class SharedSInventory(plugin : JavaPlugin, name : String, row : Int): 
     }
 
     override fun open(p: Player) {
-        Bukkit.getScheduler().runTask(plugin, Runnable {
+        fun func(){
             if (inputNow.contains(p.uniqueId)){
                 p.sendMessage("§4You are entering some information.")
-                return@Runnable
+                return
             }
             val saveItems = HashMap<Int, ItemStack>()
             if (savePlaceItems){
@@ -77,7 +78,7 @@ abstract class SharedSInventory(plugin : JavaPlugin, name : String, row : Int): 
                 }
             }
             if (inv.viewers.isEmpty()){
-                if (!renderMenu()) return@Runnable
+                if (!renderMenu()) return
                 afterRenderMenu()
             }
 
@@ -91,7 +92,12 @@ abstract class SharedSInventory(plugin : JavaPlugin, name : String, row : Int): 
             }
 
             openingPlayer.add(p.uniqueId)
+        }
 
-        })
+        if (SJavaPlugin.isFolia){
+            Bukkit.getGlobalRegionScheduler().run(plugin) { func() }
+        } else {
+            Bukkit.getScheduler().runTask(plugin, Runnable { func() })
+        }
     }
 }
