@@ -18,13 +18,13 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
 
     constructor(category: String,title: String): this(SJavaPlugin.plugin,category,title)
 
-    var resourceItems = LinkedHashMap<String,ArrayList<SInventoryItem>>()
+    var resourceList = LinkedHashMap<String,ArrayList<SInventoryItem>>()
     var nowPage = 0
     var nowCategory = ""
     var categoryIndex = 0
 
     fun setResourceItems(items: LinkedHashMap<String,ArrayList<SInventoryItem>>) {
-        this.resourceItems = items
+        this.resourceList = items
     }
 
     fun renderBar(){
@@ -44,28 +44,28 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
         }
 
         if (nowPage != 0) setItem(slots.first,left)
-        if ((nowPage + 1) * 45 <= resourceItems[nowCategory]!!.size - 1) setItem(slots.last,right)
+        if ((nowPage + 1) * 45 <= resourceList[nowCategory]!!.size - 1) setItem(slots.last,right)
 
-        if (resourceItems.size == 1)return
+        if (resourceList.size == 1)return
 
         setItem(slots.toList()[4],SItem(Material.PAPER).setDisplayName("§b§l${nowCategory}").setItemAmount(nowPage+1).toSInventoryItem().setCanClick(false))
 
         val categoryLeft = SItem(Material.RED_STAINED_GLASS_PANE).setDisplayName("§c§l前のカテゴリへ").toSInventoryItem().setCanClick(false).setClickEvent {
             categoryIndex--
-            nowCategory = resourceItems.keys.toList()[categoryIndex]
+            nowCategory = resourceList.keys.toList()[categoryIndex]
             nowPage = 0
             renderInventory(nowCategory,nowPage)
         }
 
         val categoryRight = SItem(Material.LIME_STAINED_GLASS_PANE).setDisplayName("§a§l次のカテゴリへ").toSInventoryItem().setCanClick(false).setClickEvent {
             categoryIndex++
-            nowCategory = resourceItems.keys.toList()[categoryIndex]
+            nowCategory = resourceList.keys.toList()[categoryIndex]
             nowPage = 0
             renderInventory(nowCategory,nowPage)
         }
 
         if (categoryIndex != 0) setItem(slots.toList()[3],categoryLeft)
-        if (categoryIndex+2 <= resourceItems.keys.size) setItem(slots.toList()[5],categoryRight)
+        if (categoryIndex+2 <= resourceList.keys.size) setItem(slots.toList()[5],categoryRight)
 
     }
 
@@ -73,11 +73,11 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
         clear()
         renderBar()
         setCategoryName(category)
-        if (!resourceItems.containsKey(category)){
-            if (resourceItems.size == 0)return
-            setCategoryName(resourceItems.entries.first().key)
+        if (!resourceList.containsKey(category)){
+            if (resourceList.size == 0)return
+            setCategoryName(resourceList.entries.first().key)
         }
-        val categoryItems = resourceItems[nowCategory]!!
+        val categoryItems = resourceList[nowCategory]!!
 
         val startingIndex = page * 45
         var ending = categoryItems.size - startingIndex
@@ -94,7 +94,7 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
 
     fun setCategoryName(category: String){
         nowCategory = category
-        val index = resourceItems.entries.indexOfFirst { it.key == category }
+        val index = resourceList.entries.indexOfFirst { it.key == category }
         if (index != -1){
             categoryIndex = index
         }

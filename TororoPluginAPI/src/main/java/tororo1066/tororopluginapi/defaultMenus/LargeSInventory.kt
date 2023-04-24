@@ -11,13 +11,13 @@ import tororo1066.tororopluginapi.sItem.SItem
 
 open class LargeSInventory(plugin: JavaPlugin, title: String) : SInventory(plugin,title,6) {
 
-    var resourceItems = ArrayList<SInventoryItem>()
+    var resourceList = ArrayList<SInventoryItem>()
     var nowPage = 0
 
     constructor(title: String): this(SJavaPlugin.plugin,title)
 
     fun setResourceItems(items: ArrayList<SInventoryItem>) {
-        this.resourceItems = items
+        this.resourceList = items
     }
 
     fun renderBar(){
@@ -37,7 +37,7 @@ open class LargeSInventory(plugin: JavaPlugin, title: String) : SInventory(plugi
         }
 
         if (nowPage != 0) setItem(slots.first,left)
-        if ((nowPage + 1) * 45 <= resourceItems.size - 1) setItem(slots.last,right)
+        if ((nowPage + 1) * 45 <= resourceList.size - 1) setItem(slots.last,right)
 
 
     }
@@ -46,10 +46,10 @@ open class LargeSInventory(plugin: JavaPlugin, title: String) : SInventory(plugi
         clear()
         renderBar()
         val startingIndex = page * 45
-        var ending = this.resourceItems.size - startingIndex
+        var ending = this.resourceList.size - startingIndex
         if (ending > 45) ending = 45
         for (i in 0 until ending) {
-            setItem(i, this.resourceItems[startingIndex + i])
+            setItem(i, this.resourceList[startingIndex + i])
         }
     }
 
