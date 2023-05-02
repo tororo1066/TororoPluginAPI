@@ -12,6 +12,7 @@ class USQLVariable<V: USQLVariable.VariableType<*>>(val type: V) {
         val SMALLINT get() = SMALLINT()
         val MEDIUMINT get() = MEDIUMINT()
         val INT get() = INT()
+        val INTEGER get() = INTEGER()
         val BIGINT get() = BIGINT()
         val FLOAT get() = FLOAT()
         val DOUBLE get() = DOUBLE()
@@ -167,6 +168,14 @@ class USQLVariable<V: USQLVariable.VariableType<*>>(val type: V) {
     class INT: VariableType<Int>(){
 
         override val variableName = "int"
+        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
+            return sqlResultSet.getNullableInt(name)
+        }
+    }
+
+    class INTEGER: VariableType<Int>(){
+
+        override val variableName = "integer"
         override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
             return sqlResultSet.getNullableInt(name)
         }

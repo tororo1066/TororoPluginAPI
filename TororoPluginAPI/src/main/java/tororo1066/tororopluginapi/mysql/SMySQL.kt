@@ -76,7 +76,7 @@ class SMySQL(val plugin : JavaPlugin) {
                     throw NullPointerException("[SQLite] Database name is empty.")
                 }
                 Class.forName("org.sqlite.JDBC")
-                conn = DriverManager.getConnection("jdbc:sqlite:${plugin.dataFolder.absolutePath}/${db}.db")
+                conn = DriverManager.getConnection("jdbc:sqlite:${plugin.dataFolder.absolutePath}\\${db}.db")
             } else {
                 if (host == null){
                     throw NullPointerException("[MySQL] Host name is empty.")
