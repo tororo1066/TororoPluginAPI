@@ -7,7 +7,6 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
-import net.md_5.bungee.api.chat.hover.content.Item
 import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -85,7 +84,7 @@ class SStr: Cloneable {
     }
 
     fun toInt(): Int?{
-        return ChatColor.stripColor(PlainTextComponentSerializer.plainText().serialize(componentBuilder.build()))?.replace(",","")?.toIntOrNull()
+        return toString().replace(",","").toIntOrNull()
     }
 
     override fun toString(): String {
@@ -93,6 +92,7 @@ class SStr: Cloneable {
     }
 
     fun toPaperComponent(): TextComponent {
+        checkPaperAnd1171()
         return componentBuilder.build()
     }
 
@@ -114,22 +114,48 @@ class SStr: Cloneable {
         return clickText(ClickEvent.Action.SUGGEST_COMMAND,command)
     }
 
+    /**
+     * Only Supported Paper
+     * @since 1.17.1
+     */
     fun clickText(action: ClickEvent.Action, actionString: String): SStr {
         componentBuilder.clickEvent(ClickEvent.clickEvent(action,actionString))
         md5ComponentBuilder.event(net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.valueOf(action.name),actionString))
         return this
     }
 
+    fun clickText(action: net.md_5.bungee.api.chat.ClickEvent.Action, actionString: String): SStr {
+        md5ComponentBuilder.event(net.md_5.bungee.api.chat.ClickEvent(action,actionString))
+        return this
+    }
+
+    /**
+     * Only Supported Paper
+     * @since 1.17.1
+     */
     fun showItem(item: ItemStack){
+        checkPaperAnd1171()
         componentBuilder.hoverEvent(item)
     }
 
+    /**
+     * Only Supported Paper
+     * @since 1.17.1
+     */
     fun sendMessage(commandSender: CommandSender){
-        commandSender.sendMessage(toPaperComponent())
+        if (isPaperAnd1171()){
+            commandSender.sendMessage(toPaperComponent())
+        } else {
+            commandSender.sendMessage(*toBukkitComponent())
+        }
     }
 
     fun broadcast(){
-        Bukkit.broadcast(toPaperComponent(), Server.BROADCAST_CHANNEL_USERS)
+        if (isPaperAnd1171()){
+            Bukkit.broadcast(toPaperComponent(), Server.BROADCAST_CHANNEL_USERS)
+        } else {
+            Bukkit.broadcast(*toBukkitComponent())
+        }
     }
 
 
@@ -140,6 +166,21 @@ class SStr: Cloneable {
 
     public override fun clone(): SStr {
         return super.clone() as SStr
+    }
+
+    private fun isPaperAnd1171(): Boolean {
+        var isPaper = false
+        try {
+            Class.forName("io.papermc.paper.text.PaperComponents")
+            isPaper = true
+        } catch (_: ClassNotFoundException) {
+        }
+
+        return isPaper
+    }
+
+    private fun checkPaperAnd1171() {
+        if (!isPaperAnd1171()) throw UnsupportedOperationException("This function is available in 1.17.1 and above.")
     }
 
     companion object{

@@ -6,11 +6,11 @@ open class HashMapPlus<K: Any, V: Any>: HashMap<K, V>() {
         return super.get(key)!!
     }
 
-    fun getNullableValue(key: K): V? {
+    open fun getNullableValue(key: K): V? {
         return super.get(key)
     }
 
-    fun allClone(): HashMapPlus<K, V> {
+    open fun deepClone(): HashMapPlus<K, V> {
         val map = HashMapPlus<K, V>()
         forEach {
             var copyKey = it.key
