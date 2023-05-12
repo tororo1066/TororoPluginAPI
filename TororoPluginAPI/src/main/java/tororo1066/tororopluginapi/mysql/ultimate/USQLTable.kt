@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi.mysql.ultimate
 
+import org.bukkit.Bukkit
 import tororo1066.tororopluginapi.mysql.SMySQL
 import tororo1066.tororopluginapi.mysql.SMySQLResultSet
 
@@ -30,14 +31,26 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
     }
 
     fun createTable(): Boolean{
-        val queryBuilder = StringBuilder("create table if not exists $table (")
-        queryBuilder.append(variables.values.joinToString(",") { it.name + " " + it.type.variableName.lowercase() + (if (it.length != -1) "(${it.length})" else "") +
-                (if (!it.nullable) " not null" else " null") +
-                (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
-                if (it.autoIncrement) " auto_increment" else "" })
-        queryBuilder.append(if (variables.values.find { it.index != null } != null) ", " + variables.values.filter { it.index != null }.joinToString(",")
-        { (if (it.index == USQLVariable.Index.PRIMARY) "${it.index!!.tableString} (${it.name})" else "${it.index!!.tableString} ${it.name} (${it.name})") + if (it.index!!.usingBTREE) " using btree" else "" } else "")
-        queryBuilder.append(")")
+        val queryBuilder = StringBuilder()
+        if (sMySQL.useSQLite){
+            queryBuilder.append("create table if not exists $table (")
+            queryBuilder.append(variables.values.joinToString(",") { it.name + " " + (if (it.type is USQLVariable.INT) "integer" else it.type.variableName.lowercase()) +
+                    (if (it.index != null) " ${it.index!!.tableString}" else "") +
+                    (if (!it.nullable && !it.autoIncrement) " not null" else "") +
+                    (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
+                    if (it.autoIncrement) " autoincrement" else "" })
+            queryBuilder.append(")")
+        } else {
+            queryBuilder.append("create table if not exists $table (")
+            queryBuilder.append(variables.values.joinToString(",") { it.name + " " + it.type.variableName.lowercase() + (if (it.length != -1) "(${it.length})" else "") +
+                    (if (!it.nullable) " not null" else " null") +
+                    (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
+                    if (it.autoIncrement) " auto_increment" else "" })
+            queryBuilder.append(if (variables.values.find { it.index != null } != null) ", " + variables.values.filter { it.index != null }.joinToString(",")
+            { (if (it.index == USQLVariable.Index.PRIMARY) "${it.index!!.tableString} (${it.name})" else "${it.index!!.tableString} ${it.name} (${it.name})") + if (it.index!!.usingBTREE) " using btree" else "" } else "")
+            queryBuilder.append(")")
+        }
+
         if (debug){
             sMySQL.plugin.logger.info(queryBuilder.toString())
         }

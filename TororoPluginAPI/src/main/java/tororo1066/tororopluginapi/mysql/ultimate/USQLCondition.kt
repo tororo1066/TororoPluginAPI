@@ -47,8 +47,6 @@ class USQLCondition {
         return this
     }
 
-
-
     fun build(): String{
         return builder.toString().replace("  "," ")
     }
