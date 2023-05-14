@@ -74,7 +74,7 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
         return sMySQL.asyncCount(query)
     }
 
-    fun insert(values: ArrayList<Any>): Boolean {
+    fun insert(values: List<Any>): Boolean {
         var query = "insert into $table (${variables.values.filterNot { it.autoIncrement }.joinToString(",") { it.name }})" +
                 " values("
         var count = 0
@@ -106,6 +106,15 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
 
     fun insert(vararg values: Pair<USQLVariable<*>,Any>): Boolean {
         return insert(hashMapOf(*values))
+    }
+
+    fun insert(values: HashMap<String,Any>): Boolean {
+        val query = "insert into $table (${values.keys.joinToString(",") { it }})" +
+                " values(${values.values.joinToString(",") { USQLCondition.modifySQLString(variables[it]!!.type,it) }})"
+        if (debug){
+            sMySQL.plugin.logger.info(query)
+        }
+        return sMySQL.asyncExecute(query)
     }
 
     fun update(values: HashMap<USQLVariable<*>,Any>, condition: USQLCondition): Boolean {
