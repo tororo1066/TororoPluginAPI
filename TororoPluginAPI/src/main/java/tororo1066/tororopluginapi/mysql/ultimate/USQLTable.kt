@@ -108,6 +108,7 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
         return insert(hashMapOf(*values))
     }
 
+    @JvmName("insert1")
     fun insert(values: HashMap<String,Any>): Boolean {
         val query = "insert into $table (${values.keys.joinToString(",") { it }})" +
                 " values(${values.values.joinToString(",") { USQLCondition.modifySQLString(variables[it]!!.type,it) }})"
@@ -131,6 +132,17 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
 
     fun update(condition: USQLCondition, vararg values: Pair<USQLVariable<*>,Any>): Boolean {
         return update(hashMapOf(*values),condition)
+    }
+
+    @JvmName("update1")
+    fun update(values: HashMap<String,Any>, condition: USQLCondition): Boolean {
+        val query = "update $table set ${values.entries.joinToString(",") 
+        { "${it.key} = ${USQLCondition.modifySQLString(variables[it.key]!!.type,it.value)}" }}" +
+                " ${condition.build()}"
+        if (debug){
+            sMySQL.plugin.logger.info(query)
+        }
+        return sMySQL.asyncExecute(query)
     }
 
     fun delete(condition: USQLCondition): Boolean {
