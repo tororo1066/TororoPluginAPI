@@ -96,8 +96,13 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
     }
 
     fun insert(values: HashMap<USQLVariable<*>,Any>): Boolean {
-        val query = "insert into $table (${values.keys.joinToString(",") { it.name }})" +
-                " values(${values.values.joinToString(",") { USQLCondition.modifySQLString(variables[it]!!.type,it) }})"
+        var query = "insert into $table (${values.keys.joinToString(",") { it.name }})" +
+                " values("
+        for (variable in values){
+            query += "${USQLCondition.modifySQLString(variable.key.type,variable.value)},"
+        }
+        query = query.dropLast(1)
+        query += ")"
         if (debug){
             sMySQL.plugin.logger.info(query)
         }
@@ -110,8 +115,13 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
 
     @JvmName("insert1")
     fun insert(values: HashMap<String,Any>): Boolean {
-        val query = "insert into $table (${values.keys.joinToString(",") { it }})" +
-                " values(${values.values.joinToString(",") { USQLCondition.modifySQLString(variables[it]!!.type,it) }})"
+        var query = "insert into $table (${values.keys.joinToString(",") { it }})" +
+                " values("
+        for (variable in values){
+            query += "${USQLCondition.modifySQLString(variables[variable.key]!!.type,variable.value)},"
+        }
+        query = query.dropLast(1)
+        query += ")"
         if (debug){
             sMySQL.plugin.logger.info(query)
         }
