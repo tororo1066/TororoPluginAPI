@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi.mysql.ultimate
 
+import org.bukkit.Bukkit
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -57,9 +58,10 @@ class USQLCondition {
 
     companion object{
         fun modifySQLString(variable: USQLVariable.VariableType<*>, value: Any): String{
-            return when(variable){
-                USQLVariable.BOOLEAN -> if (value as Boolean) "1" else "0"
-                USQLVariable.DATE,USQLVariable.DATETIME,USQLVariable.TIME,USQLVariable.YEAR -> {
+            return when(variable.javaClass){
+                USQLVariable.BOOLEAN::class.java -> if (value as Boolean) "1" else "0"
+                USQLVariable.DATE::class.java,USQLVariable.DATETIME::class.java,
+                USQLVariable.TIME::class.java,USQLVariable.YEAR::class.java -> {
                     if (value.toString() == "now()") value.toString() else dateModify(value,variable)
                 }
                 else -> "'$value'"
@@ -71,11 +73,11 @@ class USQLCondition {
                 if (value == "now()") return value
             }
             if (value !is Date) return value.toString()
-            return when(type){
-                USQLVariable.DATE -> SimpleDateFormat("yyyy-MM-dd").format(value)
-                USQLVariable.DATETIME -> SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value)
-                USQLVariable.TIME -> SimpleDateFormat("HH:mm:ss").format(value)
-                USQLVariable.YEAR -> SimpleDateFormat("yyyy").format(value)
+            return when(type.javaClass){
+                USQLVariable.DATE::class.java -> SimpleDateFormat("yyyy-MM-dd").format(value)
+                USQLVariable.DATETIME::class.java -> SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value)
+                USQLVariable.TIME::class.java -> SimpleDateFormat("HH:mm:ss").format(value)
+                USQLVariable.YEAR::class.java -> SimpleDateFormat("yyyy").format(value)
                 else -> value.toString()
             }
         }
