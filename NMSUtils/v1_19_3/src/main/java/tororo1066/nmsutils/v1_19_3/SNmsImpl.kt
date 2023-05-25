@@ -1,6 +1,5 @@
 package tororo1066.nmsutils.v1_19_3
 
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundEntityEventPacket
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
@@ -10,11 +9,9 @@ import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket
 import net.minecraft.world.inventory.MenuType
 import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
-import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.ItemStack
 import tororo1066.nmsutils.SNms
 
 class SNmsImpl: SNms {
@@ -44,7 +41,7 @@ class SNmsImpl: SNms {
     }
 
     override fun moveRotation(p: Player, yaw: Float, pitch: Float) {
-        val packet = ClientboundPlayerPositionPacket(0.0,0.0,0.0,yaw,pitch,RelativeArgument.values().toSet(),0,true)
+        val packet = ClientboundPlayerPositionPacket(0.0,0.0,0.0,yaw,pitch,RelativeArgument.ALL,0,true)
         (p as CraftPlayer).handle.connection.send(packet)
     }
 

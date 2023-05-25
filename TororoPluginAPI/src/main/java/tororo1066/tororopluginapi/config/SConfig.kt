@@ -78,13 +78,13 @@ class SConfig(val plugin: JavaPlugin) {
      * //例 Java
      * YamlConfiguration testConfig = sConfig.getConfig("testfolder/test");
      * testConfig.set("test","test");
-     * sConfig.saveConfig(testConfig,"testfolder\test");
+     * sConfig.saveConfig(testConfig,"testfolder/test");
      * ```
      * ```kotlin
      * //例 Kotlin
      * val testConfig = sConfig.getConfig("testfolder/test")
      * testConfig.set("test","test")
-     * sConfig.saveConfig(testConfig,"testfolder\test")
+     * sConfig.saveConfig(testConfig,"testfolder/test")
      * ```
      * @param configuration [YamlConfiguration]
      * @param path ファイルのパス(.ymlは必要ない)
@@ -143,8 +143,7 @@ class SConfig(val plugin: JavaPlugin) {
      * val testConfig = sConfig.getConfig("testfolder/test")
      * val file = testConfig.toFile()
      * ```
-     * @param path ファイルのパス(.ymlは必要ない)
-     * @return configファイルが存在するかどうか
+     * @return [File]
      */
     fun YamlConfiguration.toFile(): File {
         return File(currentPath)
