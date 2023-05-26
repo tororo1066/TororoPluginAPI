@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.config
 
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import java.io.File
 
 /**
@@ -129,6 +130,11 @@ class SConfig(val plugin: JavaPlugin) {
     fun exists(path: String): Boolean {
         val file = File(plugin.dataFolder.path + File.separator + alwaysPath + File.separator + "${path}.yml")
         return file.exists()
+    }
+
+    fun mkdirs(path: String): Boolean {
+        val file = File(plugin.dataFolder.path + File.separator + alwaysPath + File.separator + path)
+        return UsefulUtility.sTry({file.mkdirs()},{false})
     }
 
     /**
