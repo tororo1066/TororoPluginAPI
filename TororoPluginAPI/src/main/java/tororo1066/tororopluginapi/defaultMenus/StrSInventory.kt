@@ -6,23 +6,23 @@ import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.sInventory.SInventory
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 
-class StrSInventory(plugin: JavaPlugin, name: String, private val itemsString: List<String>, private val buttons: HashMap<Char,SInventoryItem>): SInventory(plugin,name,itemsString.size) {
+open class StrSInventory(plugin: JavaPlugin, name: String, val itemsString: List<String>, val itemMap: HashMap<Char,SInventoryItem>): SInventory(plugin,name,itemsString.size) {
 
     constructor(name: String, itemsString: List<String>, buttons: HashMap<Char,SInventoryItem>): this(SJavaPlugin.plugin,name,itemsString,buttons)
 
 
-    override fun renderMenu(p: Player): Boolean {
+    override fun afterRenderMenu(p: Player) {
         itemsString.forEachIndexed { listIndex, str ->
             str.forEachIndexed second@ { i, c ->
                 val trueIndex = i + listIndex * 18
                 if (trueIndex % 2 == 1)return@second
                 if (c == ' ')return@second
-                if (buttons.containsKey(c)){
-                    setItem(trueIndex / 2,buttons[c]!!)
+                if (itemMap.containsKey(c)){
+                    setItem(trueIndex / 2,itemMap[c]!!)
                 }
             }
         }
-        return true
+        return
     }
 
     class Builder(){
