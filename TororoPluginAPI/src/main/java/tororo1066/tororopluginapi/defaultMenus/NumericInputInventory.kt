@@ -157,7 +157,7 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
         renderButton()
     }
 
-    override fun afterRenderMenu(p: Player) {
+    override fun afterRenderMenu() {
         fillItem(SInventoryItem(Material.BLUE_STAINED_GLASS_PANE).setDisplayName(" ").setCanClick(false))
 
         val cancel = SInventoryItem(Material.RED_STAINED_GLASS_PANE).setDisplayName("§4§lキャンセル").setCanClick(false).setClickEvent {

@@ -85,7 +85,7 @@ open class PagedSInventory(plugin: JavaPlugin,name: String,row: Int): SInventory
     }
 
 
-    override fun afterRenderMenu(p: Player) {
+    override fun afterRenderMenu() {
         renderInventory(0)
     }
 

@@ -11,7 +11,7 @@ open class StrSInventory(plugin: JavaPlugin, name: String, val itemsString: List
     constructor(name: String, itemsString: List<String>, buttons: HashMap<Char,SInventoryItem>): this(SJavaPlugin.plugin,name,itemsString,buttons)
 
 
-    override fun afterRenderMenu(p: Player) {
+    override fun afterRenderMenu() {
         itemsString.forEachIndexed { listIndex, str ->
             str.forEachIndexed second@ { i, c ->
                 val trueIndex = i + listIndex * 18
@@ -22,7 +22,6 @@ open class StrSInventory(plugin: JavaPlugin, name: String, val itemsString: List
                 }
             }
         }
-        return
     }
 
     class Builder(){
