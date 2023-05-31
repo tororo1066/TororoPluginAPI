@@ -9,7 +9,6 @@ import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.inventory.ItemStack
@@ -92,7 +91,7 @@ class SStr: Cloneable {
     }
 
     fun toPaperComponent(): TextComponent {
-        checkPaperAnd1171()
+        checkPaper()
         return componentBuilder.build()
     }
 
@@ -134,7 +133,7 @@ class SStr: Cloneable {
      * @since 1.17.1
      */
     fun showItem(item: ItemStack){
-        checkPaperAnd1171()
+        checkPaper()
         componentBuilder.hoverEvent(item)
     }
 
@@ -143,7 +142,7 @@ class SStr: Cloneable {
      * @since 1.17.1
      */
     fun sendMessage(commandSender: CommandSender){
-        if (isPaperAnd1171()){
+        if (isPaper()){
             commandSender.sendMessage(toPaperComponent())
         } else {
             commandSender.sendMessage(*toBukkitComponent())
@@ -151,7 +150,7 @@ class SStr: Cloneable {
     }
 
     fun broadcast(){
-        if (isPaperAnd1171()){
+        if (isPaper()){
             Bukkit.broadcast(toPaperComponent(), Server.BROADCAST_CHANNEL_USERS)
         } else {
             Bukkit.broadcast(*toBukkitComponent())
@@ -168,7 +167,7 @@ class SStr: Cloneable {
         return super.clone() as SStr
     }
 
-    private fun isPaperAnd1171(): Boolean {
+    private fun isPaper(): Boolean {
         var isPaper = false
         try {
             Class.forName("io.papermc.paper.text.PaperComponents")
@@ -179,8 +178,8 @@ class SStr: Cloneable {
         return isPaper
     }
 
-    private fun checkPaperAnd1171() {
-        if (!isPaperAnd1171()) throw UnsupportedOperationException("This function is available in 1.17.1 and above.")
+    private fun checkPaper() {
+        if (!isPaper()) throw UnsupportedOperationException("This function is available only Paper.")
     }
 
     companion object{

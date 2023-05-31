@@ -8,13 +8,14 @@ import tororo1066.tororopluginapi.sItem.SItem
 import java.util.function.Consumer
 
 open class SingleItemInventory(plugin: JavaPlugin, name: String): StrSInventory(plugin,name, listOf(
-    "s s s c c c s s s",
-    "s s s c . c s s s",
-    "s s s c c c s s s",
+    "s s s s c s s s s",
+    "s s s c . s s s s",
+    "s s s s c s s s s",
     "s s s s e s s s s"), hashMapOf()) {
-    open val sideBackground: ItemStack = SItem(Material.LIGHT_BLUE_STAINED_GLASS_PANE).setDisplayName(" ")
-    open val centerBackground : ItemStack = SItem(Material.LIME_STAINED_GLASS_PANE).setDisplayName(" ")
-    open val selectItem: ItemStack = SItem(Material.RED_STAINED_GLASS_PANE).setDisplayName("§c選択")
+    open var sideBackground: ItemStack = SItem(Material.LIGHT_BLUE_STAINED_GLASS_PANE).setDisplayName(" ")
+    open var centerBackground : ItemStack = SItem(Material.LIME_STAINED_GLASS_PANE).setDisplayName(" ")
+    open var selectItem: ItemStack = SItem(Material.RED_STAINED_GLASS_PANE).setDisplayName("§c選択")
+    open var nowItem: ItemStack = SItem(Material.AIR)
     var onConfirm: Consumer<ItemStack>? = null
 
     override fun afterRenderMenu() {
@@ -25,5 +26,6 @@ open class SingleItemInventory(plugin: JavaPlugin, name: String): StrSInventory(
             getItem(13)?.let { onConfirm?.accept(it) }
         }
         super.afterRenderMenu()
+        setItem(13,nowItem)
     }
 }
