@@ -59,9 +59,6 @@ class SMySQL(val plugin : JavaPlugin) {
 
     var useSQLite = false
 
-    private var conn : Connection? = null
-    private var stmt : Statement? = null
-
     private val thread: ExecutorService = Executors.newCachedThreadPool()
 
     /**
@@ -69,7 +66,8 @@ class SMySQL(val plugin : JavaPlugin) {
      *
      * 基本的に使わない
      */
-    fun open(){
+    fun open(): Connection {
+        val conn: Connection
         try {
             if (useSQLite){
                 if (db == null){
@@ -99,15 +97,8 @@ class SMySQL(val plugin : JavaPlugin) {
         }catch (e : SQLException){
             throw e
         }
-    }
 
-    /**
-     * データベースを閉じる
-     *
-     * [query]のみで使う
-     */
-    fun close(){
-        conn?.close()
+        return conn
     }
 
     /**
@@ -132,13 +123,11 @@ class SMySQL(val plugin : JavaPlugin) {
      * @return [Boolean]
      */
     fun execute(query : String): Boolean {
-        open()
-        if (conn == null){
-            return false
-        }
+        val conn = open()
+        var stmt: Statement? = null
 
         return try {
-            stmt = conn!!.createStatement()
+            stmt = conn.createStatement()
             if (!useSQLite) stmt!!.setEscapeProcessing(true)
             stmt!!.execute(query)
             true
@@ -148,7 +137,7 @@ class SMySQL(val plugin : JavaPlugin) {
             false
         } finally {
             stmt?.close()
-            conn?.close()
+            conn.close()
         }
     }
 
@@ -167,31 +156,34 @@ class SMySQL(val plugin : JavaPlugin) {
      * @param query クエリ文
      * @return [ResultSet(取得に失敗した場合null)][ResultSet]
      */
-    fun query(query : String): ResultSet? {
-        open()
-        if (conn == null){
-            return null
-        }
+    fun query(query : String): Triple<Connection,Statement?,ResultSet?> {
+        val conn = open()
+        var stmt: Statement? = null
 
         return try {
-            stmt = conn!!.createStatement()
-            if (!useSQLite) stmt!!.setEscapeProcessing(true)
-            stmt!!.executeQuery(query)
+            stmt = conn.createStatement()
+            if (!useSQLite) stmt.setEscapeProcessing(true)
+            Triple(conn,stmt,stmt.executeQuery(query))
         } catch (e : SQLException) {
             Bukkit.getLogger().warning("QueryError：Error Code(${e.errorCode})\nError Message\n${e.message}")
             Bukkit.getLogger().warning(query)
-            null
+            Triple(conn,stmt,null)
         }
     }
 
     fun asyncCount(query: String): Int {
         return thread.submit(Callable {
-            val rs = query(query)?:return@Callable 0
+            val rs = query(query)
+            val resultSet = rs.third?:return@Callable 0
             try {
-                rs.next()
-                rs.getInt(1)
+                resultSet.next()
+                resultSet.getInt(1)
             } catch (e: SQLException){
                 0
+            } finally {
+                resultSet.close()
+                rs.second?.close()
+                rs.first.close()
             }
         }).get()
     }
@@ -210,15 +202,16 @@ class SMySQL(val plugin : JavaPlugin) {
      * @return [SMySQLResultSetのlist(取得に失敗した場合空)][SMySQLResultSet]
      */
     fun sQuery(query: String): ArrayList<SMySQLResultSet>{
-        val rs = query(query)?:return arrayListOf()
+        val rs = query(query)
+        val resultSet = rs.third?:return arrayListOf()
         val result = ArrayList<SMySQLResultSet>()
         try {
-            while (rs.next()){
-                val meta = rs.metaData
+            while (resultSet.next()){
+                val meta = resultSet.metaData
                 val data = HashMap<String,Any?>()
                 for (i in 1 until meta.columnCount + 1) {
                     val name = meta.getColumnName(i)
-                    val obj = rs.getObject(name)
+                    val obj = resultSet.getObject(name)
                     if (obj == "true" || obj == "false"){
                         data[name] = obj.toString().toBoolean()
                     } else {
@@ -227,13 +220,14 @@ class SMySQL(val plugin : JavaPlugin) {
                 }
                 result.add(SMySQLResultSet(data))
             }
-            rs.close()
-            stmt?.close()
-            conn?.close()
             return result
-        }catch (e : Exception){
+        } catch (e : Exception){
             e.printStackTrace()
             return arrayListOf()
+        } finally {
+            resultSet.close()
+            rs.second?.close()
+            rs.first.close()
         }
     }
 

@@ -59,7 +59,6 @@ class USQLCondition {
     companion object{
         fun modifySQLString(variable: USQLVariable.VariableType<*>, value: Any): String{
             return when(variable.javaClass){
-                USQLVariable.BOOLEAN::class.java -> if (value as Boolean) "1" else "0"
                 USQLVariable.DATE::class.java,USQLVariable.DATETIME::class.java,
                 USQLVariable.TIME::class.java,USQLVariable.YEAR::class.java -> {
                     if (value.toString() == "now()") value.toString() else dateModify(value,variable)

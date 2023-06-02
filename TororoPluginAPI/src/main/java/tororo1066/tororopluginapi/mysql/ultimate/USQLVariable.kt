@@ -134,7 +134,7 @@ class USQLVariable<V: USQLVariable.VariableType<*>>(val type: V) {
 
     class BOOLEAN: VariableType<Boolean>(){
 
-        override val variableName = "boolean"
+        override val variableName = "tinytext"
         override fun getNullableVal(sqlResultSet: SMySQLResultSet): Boolean? {
             return sqlResultSet.getNullableBoolean(name)
         }
