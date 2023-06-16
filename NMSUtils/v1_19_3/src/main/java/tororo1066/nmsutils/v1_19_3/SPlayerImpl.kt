@@ -117,8 +117,4 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
         }
     }
 
-    override fun sendChunkChange(loc: Location, sx: Int, sy: Int, sz: Int, data: ByteArray?): Boolean {
-        throw NoSuchMethodError()
-    }
-
 }
