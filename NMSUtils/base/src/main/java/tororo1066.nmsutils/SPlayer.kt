@@ -49,5 +49,7 @@ interface SPlayer: Player {
             return fromPlayer(Bukkit.getPlayer(name))
         }
 
+
+        val hiddenEntities = HashMap<UUID,ArrayList<UUID>>()
     }
 }

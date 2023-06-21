@@ -3,7 +3,6 @@ package tororo1066.nmsutils.v1_17_1
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.*
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.inventory.MenuType
 import org.bukkit.Bukkit
@@ -16,11 +15,9 @@ import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import tororo1066.nmsutils.SPlayer
-import java.util.*
+import tororo1066.nmsutils.SPlayer.Companion.hiddenEntities
 
 class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.level.craftServer, p.handle){
-
-    val hiddenEntities = ArrayList<UUID>()
 
     override fun updateInventoryTitle(inv: Inventory, title: String) {
         val con = when(inv.size){
@@ -65,9 +62,14 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
     }
 
     override fun hideEntity(entity: Entity, hiddenPlayerList: Boolean) {
-        if (this == entity) return
-        if (hiddenEntities.contains(entity.uniqueId))return
-        hiddenEntities.add(entity.uniqueId)
+        if (this == entity)return
+        if (!hiddenEntities.containsKey(uniqueId)){
+            hiddenEntities[uniqueId] = arrayListOf()
+        }
+        if (hiddenEntities[uniqueId]!!.contains(entity.uniqueId)){
+            return
+        }
+        hiddenEntities[uniqueId]!!.add(entity.uniqueId)
 
         val other: net.minecraft.world.entity.Entity =
             (entity as CraftEntity).handle
@@ -75,9 +77,7 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
     }
 
     private fun unregisterEntity(other: net.minecraft.world.entity.Entity, hiddenPlayerList: Boolean) {
-        val tracker = (handle.level as ServerLevel).getChunkSource().chunkMap
-        val entry = tracker.entityMap[other.id]
-        entry.removePlayer(handle)
+        handle.connection.send(ClientboundRemoveEntitiesPacket(other.id))
 
         if (other is ServerPlayer) {
             if (hiddenPlayerList && other.sentListPacket) {
@@ -85,15 +85,16 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
                     ClientboundPlayerInfoPacket(
                         ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER,
                         other
-                    ))
+                ))
             }
         }
     }
 
     override fun showEntity(entity: Entity) {
         if (this == entity)return
-        if (!hiddenEntities.contains(entity.uniqueId))return
-        hiddenEntities.remove(entity.uniqueId)
+        if (!hiddenEntities.containsKey(uniqueId))return
+        if (!hiddenEntities[uniqueId]!!.contains(entity.uniqueId))return
+        hiddenEntities[uniqueId]!!.remove(entity.uniqueId)
 
         val other: net.minecraft.world.entity.Entity =
             (entity as CraftEntity).handle
@@ -101,7 +102,6 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
     }
 
     private fun registerEntity(other: net.minecraft.world.entity.Entity) {
-        val tracker = (handle.level as ServerLevel).getChunkSource().chunkMap
 
         if (other is ServerPlayer) {
             handle.connection.send(
@@ -111,9 +111,6 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
                 ))
         }
 
-        val entry = tracker.entityMap[other.id]
-        if (entry != null && !entry.seenBy.contains(handle.connection)) {
-            entry.updatePlayer(handle)
-        }
+        handle.connection.send(ClientboundAddEntityPacket(other))
     }
 }
