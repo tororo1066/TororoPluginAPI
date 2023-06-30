@@ -153,6 +153,7 @@ class SLang(private val plugin: JavaPlugin) {
          * @param msg configのパス
          * @param value {<数字>}の文字を置き換える
          */
+        @JvmName("translate1")
         fun translate(msg: String, vararg value: String): String {
             return translate(msg, value)
         }
@@ -161,6 +162,7 @@ class SLang(private val plugin: JavaPlugin) {
             return translate(msg, p, values)
         }
 
+        @JvmName("translate1")
         fun translate(msg: String, p: Player, vararg value: String): String {
             val lang = langFile[p.locale]
                 ?: return translate(msg,*value)
