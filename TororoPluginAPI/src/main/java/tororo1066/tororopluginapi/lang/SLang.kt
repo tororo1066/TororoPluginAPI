@@ -128,13 +128,37 @@ class SLang(private val plugin: JavaPlugin) {
          * ```
          *
          * @param msg configのパス
-         * @param value {<数字>}の文字を置き換える
+         * @param values {<数字>}の文字を置き換える
          */
-        fun translate(msg: String, vararg value: String): String {
+        fun translate(msg: String, values: Array<out String>): String {
             val defaultLang = langFile[defaultLanguage]
                 ?: return "§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File."
 
-            return modifyValue(defaultLang.getString(msg,msg)!!,value)
+            return modifyValue(defaultLang.getString(msg,msg)!!,values)
+        }
+
+        /**
+         * 言語によってメッセージを変更する
+         *
+         * ```java
+         * //例 Java
+         * String translate = SLang.translate("test_message");
+         * ```
+         *
+         * ```kotlin
+         * //例 Kotlin
+         * val translate = translate("test_message")
+         * ```
+         *
+         * @param msg configのパス
+         * @param value {<数字>}の文字を置き換える
+         */
+        fun translate(msg: String, vararg value: String): String {
+            return translate(msg, value)
+        }
+
+        fun translate(msg: String, p: Player, values: Array<out String>): String {
+            return translate(msg, p, values)
         }
 
         fun translate(msg: String, p: Player, vararg value: String): String {
