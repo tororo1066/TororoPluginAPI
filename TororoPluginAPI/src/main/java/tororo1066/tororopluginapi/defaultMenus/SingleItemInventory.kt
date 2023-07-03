@@ -9,7 +9,7 @@ import java.util.function.Consumer
 
 open class SingleItemInventory(plugin: JavaPlugin, name: String): StrSInventory(plugin,name, listOf(
     "s s s s c s s s s",
-    "s s s c . s s s s",
+    "s s s c . c s s s",
     "s s s s c s s s s",
     "s s s s e s s s s"), hashMapOf()) {
     open var sideBackground: ItemStack = SItem(Material.LIGHT_BLUE_STAINED_GLASS_PANE).setDisplayName(" ")

@@ -2,10 +2,13 @@ package tororo1066.nmsutils
 
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
+import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import java.util.UUID
 
 interface SPlayer: Player {
@@ -23,6 +26,10 @@ interface SPlayer: Player {
     fun hideEntity(entity: Entity, hiddenPlayerList: Boolean)
 
     fun showEntity(entity: Entity)
+
+    fun spawnFakeInvisibleArmorStand(location: Location, slot: EquipmentSlot, item: ItemStack): Int
+
+    fun removeFakeInvisibleArmorStand(entityId: Int)
 
     companion object{
         fun getSPlayer(p: Player): SPlayer {

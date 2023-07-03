@@ -5,16 +5,21 @@ import net.minecraft.network.protocol.game.*
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.inventory.MenuType
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
+import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_19_R2.CraftServer
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import tororo1066.nmsutils.SPlayer
 import tororo1066.nmsutils.SPlayer.Companion.hiddenEntities
 import java.util.*
@@ -117,6 +122,26 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
         }
 
         handle.connection.send(ClientboundAddEntityPacket(other))
+    }
+
+    override fun spawnFakeInvisibleArmorStand(location: Location, slot: EquipmentSlot, item: ItemStack): Int {
+        val armorStand = ArmorStand((location.world as CraftWorld).handle, location.x, location.y, location.z)
+        val bukkitArmorStand = armorStand.bukkitEntity as org.bukkit.entity.ArmorStand
+        bukkitArmorStand.isInvisible = true
+        bukkitArmorStand.isInvulnerable = true
+        EquipmentSlot.values().forEach {
+            bukkitArmorStand.addDisabledSlots(it)
+            bukkitArmorStand.addEquipmentLock(it, org.bukkit.entity.ArmorStand.LockType.REMOVING_OR_CHANGING)
+            bukkitArmorStand.addEquipmentLock(it, org.bukkit.entity.ArmorStand.LockType.ADDING_OR_CHANGING)
+        }
+        val spawnPacket = ClientboundAddEntityPacket(armorStand)
+        handle.connection.send(spawnPacket)
+        return armorStand.id
+    }
+
+    override fun removeFakeInvisibleArmorStand(entityId: Int) {
+        val packet = ClientboundRemoveEntitiesPacket(entityId)
+        handle.connection.send(packet)
     }
 
 }
