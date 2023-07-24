@@ -6,6 +6,8 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.BlockFace
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.plugin.java.JavaPlugin
@@ -164,7 +166,6 @@ class SInput(private val plugin: JavaPlugin) {
                 StrExcludeFileIllegalCharacter::class.java->{
                     if (value.matches(Regex("[(<|>:?\"/\\\\)*]")))return null
                     return StrExcludeFileIllegalCharacter(value) as T
-
                 }
 
             }

@@ -6,7 +6,7 @@ open class HashMapPlus<K: Any, V: Any>: HashMap<K, V>() {
         return super.get(key)!!
     }
 
-    open fun getNullableValue(key: K): V? {
+    open fun getNullable(key: K): V? {
         return super.get(key)
     }
 

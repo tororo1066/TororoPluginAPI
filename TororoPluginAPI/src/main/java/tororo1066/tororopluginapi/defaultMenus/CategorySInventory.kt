@@ -23,7 +23,7 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
     var nowCategory = ""
     var categoryIndex = 0
 
-    fun setResourceItems(items: LinkedHashMap<String,ArrayList<SInventoryItem>>) {
+    open fun setResourceItems(items: LinkedHashMap<String,ArrayList<SInventoryItem>>) {
         this.resourceList = items
     }
 

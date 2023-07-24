@@ -439,28 +439,28 @@ abstract class SInventory(val plugin: JavaPlugin) {
             throughClose(p)
             inputNow.add(p.uniqueId)
             SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
-                if (cEvent.player != p)return@biRegister
+                if (cEvent.player.uniqueId != p.uniqueId)return@biRegister
                 cEvent.isCancelled = true
 
                 if (cEvent.message == "/cancel"){
-                    p.sendMessage("§a入力をキャンセルしました")
+                    cEvent.player.sendMessage("§a入力をキャンセルしました")
                     unit.unregister()
-                    inputNow.remove(p.uniqueId)
-                    if (!invOpenCancel) open(p)
+                    inputNow.remove(cEvent.player.uniqueId)
+                    if (!invOpenCancel) open(cEvent.player)
                     return@biRegister
                 }
                 val msg = cEvent.message.replaceFirst("/","")
                 val modifyValue = SInput.modifyClassValue(type,msg)
                 if (modifyValue == null){
-                    p.sendMessage(errorMsg.invoke(msg))
+                    cEvent.player.sendMessage(errorMsg.invoke(msg))
                     return@biRegister
                 }
 
-                action.accept(modifyValue,p)
+                action.accept(modifyValue,cEvent.player)
 
                 unit.unregister()
-                inputNow.remove(p.uniqueId)
-                if (!invOpenCancel) open(p)
+                inputNow.remove(cEvent.player.uniqueId)
+                if (!invOpenCancel) open(cEvent.player)
             }
         }
     }

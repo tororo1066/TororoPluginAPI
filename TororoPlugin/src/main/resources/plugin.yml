@@ -6,3 +6,7 @@ softdepend:
   - Essentials
 commands:
   tororo:
+
+permissions:
+  tororo.op:
+    default: op

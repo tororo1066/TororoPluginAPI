@@ -1,12 +1,16 @@
 package tororo1066.tororopluginapi.otherClass
 
-open class Dict<V: Any>: HashMapPlus<String,V>() {
+open class Dict: HashMapPlus<String,AnyObject>() {
+
+    operator fun set(key: String, value: Any): AnyObject? {
+        return put(key, AnyObject(value))
+    }
 
     companion object{
-        fun<V: Any> dictOf(vararg pairs: Pair<String, V>): Dict<V> {
-            val dict = Dict<V>()
+        fun dictOf(vararg pairs: Pair<String, Any>): Dict {
+            val dict = Dict()
             pairs.forEach {
-                dict[it.first] = it.second
+                dict[it.first] = AnyObject(it.second)
             }
             return dict
         }

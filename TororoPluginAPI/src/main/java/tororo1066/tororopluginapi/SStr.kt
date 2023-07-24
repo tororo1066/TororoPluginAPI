@@ -136,11 +136,6 @@ class SStr: Cloneable {
         checkPaper()
         componentBuilder.hoverEvent(item)
     }
-
-    /**
-     * Only Supported Paper
-     * @since 1.17.1
-     */
     fun sendMessage(commandSender: CommandSender){
         if (isPaper()){
             commandSender.sendMessage(toPaperComponent())

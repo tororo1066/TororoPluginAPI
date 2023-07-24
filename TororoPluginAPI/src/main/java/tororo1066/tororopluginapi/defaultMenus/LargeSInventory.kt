@@ -16,7 +16,7 @@ open class LargeSInventory(plugin: JavaPlugin, title: String) : SInventory(plugi
 
     constructor(title: String): this(SJavaPlugin.plugin,title)
 
-    fun setResourceItems(items: ArrayList<SInventoryItem>) {
+    open fun setResourceItems(items: ArrayList<SInventoryItem>) {
         this.resourceList = items
     }
 

@@ -1,5 +1,6 @@
 package tororo1066.tororoplugin.command
 
+import com.destroystokyo.paper.profile.ProfileProperty
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.event.ClickEvent
@@ -11,6 +12,7 @@ import org.bukkit.attribute.AttributeModifier
 import org.bukkit.command.CommandSender
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.Damageable
@@ -26,49 +28,51 @@ import tororo1066.tororopluginapi.sItem.SInteractItemManager
 import tororo1066.tororopluginapi.utils.sendMessage
 import tororo1066.tororopluginapi.utils.toPlayer
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.floor
 
 @Suppress("UNUSED")
 class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
 
     @SCommandBody
-    val test = command().addArg(SCommandArg().addChangeableAllowString(object : ChangeableAllowString() {
-        override fun getAllowString(data: SCommandData): Collection<String> {
-            return listOf("test1","test2")
-        }
-    }))
-
-    @SCommandBody
-    val testGUI = command().addArg(SCommandArg("testGUI")).setPlayerExecutor {
-        StrSInventory.Builder().setName("test")
-            .setItems(
-                ". . . . P . . . .",
-                ". . . P P P . . .",
-                ". . P P P P P . .",
-                ". P P P P P P P .",
-                "P P P P P P P P P")
-            .addButton('P', SInventoryItem(Material.BROWN_STAINED_GLASS_PANE)
-                .setDisplayName("pu-pu!")
-                .setCanClick(false))
-            .build().open(it.sender)
-
-    }
-
-    @SCommandBody
-    val test_test = command().addArg(SCommandArg("test_test")).setPlayerExecutor {
-        it.sender.inventory.addItem(SInteractItemManager(TororoPlugin.plugin).createSInteractItem(Material.DIAMOND).setInteractEvent { _, _ ->
-            Bukkit.broadcastMessage("aaa")
-            return@setInteractEvent true
-        }.setInitialCoolDown(100))
-    }
-
-    @SCommandBody
     val sendToCommandLog = command().addArg(SCommandArg().addAllowString("commandLog")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))
         .setPlayerExecutor {
             if (it.args[1].toBoolean()){
-                TororoPlugin.commandLogPlayers.add(it.sender.uniqueId)
+                TororoPlugin.commandLogPlayers[it.sender.uniqueId] = true
             } else {
                 TororoPlugin.commandLogPlayers.remove(it.sender.uniqueId)
+            }
+            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+        }
+
+    @SCommandBody
+    val sendToCommandLogAddPlayer = command()
+        .addArg(SCommandArg("commandLog"))
+        .addArg(SCommandArg("add"))
+        .addArg(SCommandArg(SCommandArgType.ONLINE_PLAYER).addAlias("プレイヤー名"))
+        .setPlayerExecutor {
+            val p = it.args[2].toPlayer()!!
+            val data = TororoPlugin.commandLogPlayers.getNullable(it.sender.uniqueId)
+            if (data == null){
+                TororoPlugin.commandLogPlayers[it.sender.uniqueId] = arrayListOf(p.uniqueId)
+            } else {
+                data.asArrayList<UUID>().add(p.uniqueId)
+            }
+            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+        }
+
+    @SCommandBody
+    val sendToCommandLogRemovePlayer = command()
+        .addArg(SCommandArg("commandLog"))
+        .addArg(SCommandArg("remove"))
+        .addArg(SCommandArg(SCommandArgType.ONLINE_PLAYER).addAlias("プレイヤー名"))
+        .setPlayerExecutor {
+            val p = it.args[2].toPlayer()!!
+            val data = TororoPlugin.commandLogPlayers.getNullable(it.sender.uniqueId)
+            if (data == null || data.instanceOf<Boolean>()){
+                TororoPlugin.commandLogPlayers[it.sender.uniqueId] = arrayListOf(p.uniqueId)
+            } else {
+                data.asArrayList<UUID>().add(p.uniqueId)
             }
             it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
         }
@@ -399,7 +403,20 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
     fun onCommandProcess(e: PlayerCommandPreprocessEvent){
         if (e.isCancelled)return
         TororoPlugin.commandLogPlayers.forEach {
-            it.toPlayer()?.sendMessage(SStr("&b[Command] &e${e.player.name}-> &b${e.message}").toString())
+            if ((it.value.instanceOf<Boolean>() && it.value.asBoolean())
+                || it.value.asArrayList<UUID>().contains(e.player.uniqueId)){
+                it.key.toPlayer()?.sendMessage(SStr("&b[Command] &e${e.player.name}-> &b${e.message}").toString())
+            }
+
+        }
+    }
+
+    @SEventHandler
+    fun onQuit(e: PlayerQuitEvent){
+        TororoPlugin.commandLogPlayers.values.forEach {
+            if (it.instanceOf<Boolean>())return@forEach
+            val list = it.asArrayList<UUID>()
+            list.remove(e.player.uniqueId)
         }
     }
 
