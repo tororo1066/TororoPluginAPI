@@ -17,6 +17,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.Damageable
 import tororo1066.tororoplugin.TororoPlugin
+import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
@@ -25,8 +26,10 @@ import tororo1066.tororopluginapi.defaultMenus.StrSInventory
 import tororo1066.tororopluginapi.sCommand.*
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import tororo1066.tororopluginapi.sItem.SInteractItemManager
+import tororo1066.tororopluginapi.script.ScriptFile
 import tororo1066.tororopluginapi.utils.sendMessage
 import tororo1066.tororopluginapi.utils.toPlayer
+import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.floor
@@ -75,6 +78,13 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
                 data.asArrayList<UUID>().add(p.uniqueId)
             }
             it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+        }
+
+    @SCommandBody
+    val testScript = command()
+        .addArg(SCommandArg("script"))
+        .setNormalExecutor {
+            ScriptFile(File(SJavaPlugin.plugin.dataFolder, "script/tororo.txt")).start()
         }
 
     @SCommandBody

@@ -4,8 +4,8 @@ apply plugin: 'maven-publish'
 group = 'tororo1066'
 version = '1.0-SNAPSHOT'
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
+sourceCompatibility = '16'
+targetCompatibility = '16'
 
 repositories {
     mavenCentral()
@@ -27,6 +27,7 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
+    api 'com.ezylang:EvalEx:3.0.5'
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens

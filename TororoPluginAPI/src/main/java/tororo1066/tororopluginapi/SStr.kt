@@ -87,7 +87,11 @@ class SStr: Cloneable {
     }
 
     override fun toString(): String {
-        return PlainTextComponentSerializer.plainText().serialize(componentBuilder.build())
+        return if (isPaper()){
+            PlainTextComponentSerializer.plainText().serialize(componentBuilder.build())
+        } else {
+            md5ComponentBuilder.create().first().toPlainText()
+        }
     }
 
     fun toPaperComponent(): TextComponent {
@@ -115,7 +119,6 @@ class SStr: Cloneable {
 
     /**
      * Only Supported Paper
-     * @since 1.17.1
      */
     fun clickText(action: ClickEvent.Action, actionString: String): SStr {
         componentBuilder.clickEvent(ClickEvent.clickEvent(action,actionString))
