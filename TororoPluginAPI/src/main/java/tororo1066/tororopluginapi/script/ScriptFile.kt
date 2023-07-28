@@ -1,11 +1,13 @@
 package tororo1066.tororopluginapi.script
 
-import org.bukkit.Bukkit
-import tororo1066.tororopluginapi.script.action.AbstractAction
-import tororo1066.tororopluginapi.script.action.ForAction
-import tororo1066.tororopluginapi.script.action.PrintAction
+import com.ezylang.evalex.config.ExpressionConfiguration
+import tororo1066.tororopluginapi.otherClass.MultipleKeyMap
+import tororo1066.tororopluginapi.script.action.*
+import tororo1066.tororopluginapi.script.action.hidden.ElseAction
 import tororo1066.tororopluginapi.script.action.inline.MathAction
+import tororo1066.tororopluginapi.script.expressionFunc.DateFunc
 import java.io.File
+import java.util.UUID
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -13,6 +15,8 @@ import java.util.concurrent.Future
 class ScriptFile(val file: File) {
     val lines = ArrayList<ActionData>()
     val publicVariables = HashMap<String, Any>()
+    val breakFunction = HashMap<String, Boolean>()
+    val configuration = ExpressionConfiguration.defaultConfiguration()
 
     init {
         var index = 0
@@ -53,13 +57,16 @@ class ScriptFile(val file: File) {
         }
         val actionString = lineString.split(" ")[0]
         val action = actions[actionString.lowercase()]
-//            ?: throw NullPointerException("Not found script action $actionString in ${file.name}(Line: ${line})")
         if (action == null){
             if (!lineString.contains("="))
                 throw NullPointerException("Not found script action or variable function $actionString in ${file.name}(Line: ${line})")
             return ActionData(MathAction(), this, lineString, line, space/2)
         }
-        return ActionData(action, this, lineString.replace("$actionString ", ""), line, space/2)
+        var formatLine = lineStr.replaceFirst("$actionString ", "")
+        if (formatLine == lineStr){
+            formatLine = lineStr.replaceFirst(actionString, "")
+        }
+        return ActionData(action, this, formatLine, line, space/2)
     }
 
     companion object {
@@ -69,7 +76,10 @@ class ScriptFile(val file: File) {
         }
         val actions = HashMap(actionPair(
             PrintAction(),
-            ForAction()
+            ForAction(),
+            IfAction(),
+            ElseAction(),
+            BreakAction()
         ))
     }
 

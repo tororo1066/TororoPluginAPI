@@ -1,6 +1,5 @@
 package tororo1066.tororopluginapi.mysql.ultimate
 
-import org.bukkit.Bukkit
 import tororo1066.tororopluginapi.mysql.SMySQL
 import tororo1066.tororopluginapi.mysql.SMySQLResultSet
 

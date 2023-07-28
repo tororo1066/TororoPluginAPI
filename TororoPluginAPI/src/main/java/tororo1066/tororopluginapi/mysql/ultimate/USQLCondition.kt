@@ -1,6 +1,5 @@
 package tororo1066.tororopluginapi.mysql.ultimate
 
-import org.bukkit.Bukkit
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -57,7 +56,7 @@ class USQLCondition {
     }
 
     companion object{
-        fun modifySQLString(variable: USQLVariable.VariableType<*>, value: Any): String{
+        fun modifySQLString(variable: USQLVariable.VariableType<*>, value: Any): String {
             return when(variable.javaClass){
                 USQLVariable.DATE::class.java,USQLVariable.DATETIME::class.java,
                 USQLVariable.TIME::class.java,USQLVariable.YEAR::class.java -> {
@@ -67,7 +66,7 @@ class USQLCondition {
             }
         }
 
-        private fun dateModify(value: Any, type: USQLVariable.VariableType<*>): String{
+        private fun dateModify(value: Any, type: USQLVariable.VariableType<*>): String {
             if (value is String){
                 if (value == "now()") return value
             }
@@ -81,7 +80,7 @@ class USQLCondition {
             }
         }
 
-        fun empty(): USQLCondition{
+        fun empty(): USQLCondition {
             val uSqlCondition = USQLCondition()
             uSqlCondition.builder.clear()
             return uSqlCondition
