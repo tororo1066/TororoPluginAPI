@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi.database
 
+import org.bson.Document
 import java.time.LocalDateTime
 
 class SDBResultSet(val result : HashMap<String,Any?>){
@@ -43,6 +44,10 @@ class SDBResultSet(val result : HashMap<String,Any?>){
 
     fun getBytes(name: String): ByteArray {
         return result[name] as ByteArray
+    }
+
+    fun getDeepResult(name: String): SDBResultSet {
+        return SDBResultSet(HashMap(result[name] as Document))
     }
 
     fun getNullableString(name: String): String? {

@@ -21,6 +21,7 @@ abstract class SDatabase(val plugin: JavaPlugin) {
     protected val pass: String?
     protected val db: String?
     protected val user: String?
+    protected val url: String?
 
     private val thread: ExecutorService = Executors.newCachedThreadPool()
 
@@ -42,6 +43,7 @@ abstract class SDatabase(val plugin: JavaPlugin) {
             pass = yml.getString("$configPath.pass")
             user = yml.getString("$configPath.user")
             db = yml.getString("$configPath.db")
+            url = yml.getString("$configPath.url")
         } else {
             host = yml.getString("database.host")
             if (yml.isSet("database.port")){
@@ -50,6 +52,7 @@ abstract class SDatabase(val plugin: JavaPlugin) {
             pass = yml.getString("database.pass")
             user = yml.getString("database.user")
             db = yml.getString("database.db")
+            url = yml.getString("database.url")
         }
 
     }

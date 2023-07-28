@@ -3,12 +3,20 @@ package tororo1066.tororopluginapi.database.mongo
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
+import com.mongodb.internal.connection.AbstractMultiServerCluster
+import com.mongodb.internal.connection.InternalStreamConnection
+import com.mongodb.internal.connection.SingleServerCluster
+import com.mongodb.internal.diagnostics.logging.Loggers
 import org.bson.Document
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.database.SDBResultSet
 import tororo1066.tororopluginapi.database.SDatabase
-import java.lang.NullPointerException
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
+import java.util.logging.Level
+import java.util.logging.Logger
+
 
 class SMongo: SDatabase {
 
@@ -16,24 +24,28 @@ class SMongo: SDatabase {
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): super(plugin, configFile, configPath)
 
     override fun open(): Pair<MongoClient, MongoDatabase> {
-        if (host == null){
-            throw NullPointerException("[MongoDB] Host name is empty.")
+        var url = this.url
+
+        if (url == null){
+            if (host == null){
+                throw NullPointerException("[MongoDB] Host name is empty.")
+            }
+            if (pass == null){
+                throw NullPointerException("[MongoDB] Password is empty.")
+            }
+            if (user == null){
+                throw NullPointerException("[MongoDB] User name is empty.")
+            }
+
+            url = "mongodb+srv://${user}:${pass}@${host}/?retryWrites=true&w=majority"
         }
-        if (port == null){
-            throw NullPointerException("[MongoDB] Port number is empty.")
-        }
-        if (pass == null){
-            throw NullPointerException("[MongoDB] Password is empty.")
-        }
-        if (user == null){
-            throw NullPointerException("[MongoDB] User name is empty.")
-        }
+
         if (db == null){
             throw NullPointerException("[MongoDB] Database name is empty.")
         }
 
         try {
-            val client = MongoClients.create("mongodb+srv://${user}:${pass}@${host}/?retryWrites=true&w=majority")
+            val client = MongoClients.create(url)
             return Pair(client, client.getDatabase(this.db))
         } catch (e: Exception) {
             throw e

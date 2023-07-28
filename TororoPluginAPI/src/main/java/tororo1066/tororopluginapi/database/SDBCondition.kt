@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.database
 
 import com.mongodb.client.model.Filters
 import org.bson.conversions.Bson
+import org.bukkit.Bukkit
 import tororo1066.tororopluginapi.mysql.ultimate.USQLVariable
 import java.text.SimpleDateFormat
 import java.util.*
@@ -54,6 +55,10 @@ class SDBCondition {
             orMode -> {
                 this.filter = Filters.or(this.filter, modifiedFilter)
             }
+
+            else -> {
+                this.filter = modifiedFilter
+            }
         }
         notMode = false
         andMode = false
@@ -87,6 +92,7 @@ class SDBCondition {
     }
 
     fun buildAsMongo(): Bson {
+        Bukkit.broadcastMessage(filter.toString())
         return filter
     }
 
