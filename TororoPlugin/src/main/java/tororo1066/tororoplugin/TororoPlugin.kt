@@ -1,22 +1,24 @@
 package tororo1066.tororoplugin
 
-import tororo1066.tororoplugin.command.TororoCommand
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
-import tororo1066.tororopluginapi.otherClass.Dict
-import tororo1066.tororopluginapi.otherClass.MultipleModuleMap
+import tororo1066.tororopluginapi.database.SDatabase
+import tororo1066.tororopluginapi.otherClass.MultipleValueMap
 import java.util.*
 
 class TororoPlugin: SJavaPlugin() {
 
     companion object{
-        val commandLogPlayers = MultipleModuleMap<UUID>()
+        val commandLogPlayers = MultipleValueMap<UUID>()
         val prefix = SStr("&6[&aTororo&5Plugin&cAPI&6]").toString()
         lateinit var plugin: TororoPlugin
+        lateinit var sDatabase: SDatabase
     }
 
     override fun onStart() {
+        saveDefaultConfig()
         plugin = this
+        sDatabase = SDatabase.newInstance(this)
     }
 
 }

@@ -1,17 +1,16 @@
 package tororo1066.tororoplugin.command
 
-import com.destroystokyo.paper.profile.ProfileProperty
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.command.CommandSender
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
@@ -21,17 +20,12 @@ import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
-import tororo1066.tororopluginapi.defaultMenus.NumericInputInventory
-import tororo1066.tororopluginapi.defaultMenus.StrSInventory
+import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.sCommand.*
-import tororo1066.tororopluginapi.sInventory.SInventoryItem
-import tororo1066.tororopluginapi.sItem.SInteractItemManager
 import tororo1066.tororopluginapi.script.ScriptFile
-import tororo1066.tororopluginapi.utils.sendMessage
 import tororo1066.tororopluginapi.utils.toPlayer
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.floor
 
 @Suppress("UNUSED")
@@ -71,6 +65,7 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
         .addArg(SCommandArg(SCommandArgType.ONLINE_PLAYER).addAlias("プレイヤー名"))
         .setPlayerExecutor {
             val p = it.args[2].toPlayer()!!
+            p.rayTraceBlocks(1.0)?.hitPosition
             val data = TororoPlugin.commandLogPlayers.getNullable(it.sender.uniqueId)
             if (data == null || data.instanceOf<Boolean>()){
                 TororoPlugin.commandLogPlayers[it.sender.uniqueId] = arrayListOf(p.uniqueId)
@@ -85,6 +80,17 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
         .addArg(SCommandArg("script"))
         .setNormalExecutor {
             ScriptFile(File(SJavaPlugin.plugin.dataFolder, "script/tororo.txt")).start()
+        }
+
+    @SCommandBody
+    val t = command()
+        .addArg(SCommandArg("t"))
+        .setPlayerExecutor {
+            TororoPlugin.sDatabase.insert("test_table", mapOf("info" to mapOf("name" to "tororo", "value" to "Hello")))
+            Bukkit.broadcastMessage(
+                TororoPlugin.sDatabase.select("test_table", SDBCondition().equal("info.name","tororo"))
+                .first().getDeepResult("info").getString("value")
+            )
         }
 
     @SCommandBody
