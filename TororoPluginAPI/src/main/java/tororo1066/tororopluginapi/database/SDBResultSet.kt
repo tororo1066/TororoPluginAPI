@@ -91,4 +91,8 @@ class SDBResultSet(val result : HashMap<String,Any?>){
         return result[name] as? ByteArray
     }
 
+    fun getNullableDeepResult(name: String): SDBResultSet? {
+        return result[name]?.let { SDBResultSet(HashMap(it as Document)) }
+    }
+
 }
