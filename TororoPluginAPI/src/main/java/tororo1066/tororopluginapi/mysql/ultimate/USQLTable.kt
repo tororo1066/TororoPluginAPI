@@ -1,11 +1,12 @@
 package tororo1066.tororopluginapi.mysql.ultimate
 
+import tororo1066.tororopluginapi.database.SDBVariable
 import tororo1066.tororopluginapi.mysql.SMySQL
 import tororo1066.tororopluginapi.mysql.SMySQLResultSet
 
 abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) {
 
-    private var variables = LinkedHashMap<String,USQLVariable<*>>()
+    private var variables = LinkedHashMap<String, SDBVariable<*>>()
 
     var debug = false
     var disableAutoCreateTable = false
@@ -16,9 +17,9 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
 
     init {
         javaClass.declaredFields.forEach { field ->
-            if (field.type == USQLVariable::class.java){
+            if (field.type == SDBVariable::class.java){
                 field.isAccessible = true
-                val variable = field.get(null) as? USQLVariable<*>?:return@forEach
+                val variable = field.get(null) as? SDBVariable<*> ?:return@forEach
                 variable.name = field.name
                 variable.type.name = field.name
                 variables[field.name] = variable
@@ -33,7 +34,7 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
         val queryBuilder = StringBuilder()
         if (sMySQL.useSQLite){
             queryBuilder.append("create table if not exists $table (")
-            queryBuilder.append(variables.values.joinToString(",") { it.name + " " + (if (it.type is USQLVariable.INT) "integer" else it.type.variableName.lowercase()) +
+            queryBuilder.append(variables.values.joinToString(",") { it.name + " " + (if (it.type is SDBVariable.INT) "integer" else it.type.variableName.lowercase()) +
                     (if (it.index != null) " ${it.index!!.tableString}" else "") +
                     (if (!it.nullable && !it.autoIncrement) " not null" else "") +
                     (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
@@ -46,7 +47,7 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
                     (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
                     if (it.autoIncrement) " auto_increment" else "" })
             queryBuilder.append(if (variables.values.find { it.index != null } != null) ", " + variables.values.filter { it.index != null }.joinToString(",")
-            { (if (it.index == USQLVariable.Index.PRIMARY) "${it.index!!.tableString} (${it.name})" else "${it.index!!.tableString} ${it.name} (${it.name})") + if (it.index!!.usingBTREE) " using btree" else "" } else "")
+            { (if (it.index == SDBVariable.Index.PRIMARY) "${it.index!!.tableString} (${it.name})" else "${it.index!!.tableString} ${it.name} (${it.name})") + if (it.index!!.usingBTREE) " using btree" else "" } else "")
             queryBuilder.append(")")
         }
 
@@ -108,7 +109,7 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
         return query
     }
 
-    private fun insertQuery1(values: HashMap<USQLVariable<*>,Any>): String {
+    private fun insertQuery1(values: HashMap<SDBVariable<*>,Any>): String {
         var query = "insert into $table (${values.keys.joinToString(",") { it.name }})" +
                 " values("
         for (variable in values){
@@ -154,19 +155,19 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
         callBackInsert(arrayListOf(*values), callBack)
     }
 
-    fun insert(values: HashMap<USQLVariable<*>,Any>): Boolean {
+    fun insert(values: HashMap<SDBVariable<*>,Any>): Boolean {
         return sMySQL.asyncExecute(insertQuery1(values))
     }
 
-    fun callBackInsert(values: HashMap<USQLVariable<*>, Any>, callBack: (Boolean) -> Unit = {}) {
+    fun callBackInsert(values: HashMap<SDBVariable<*>, Any>, callBack: (Boolean) -> Unit = {}) {
         sMySQL.callbackExecute(insertQuery1(values), callBack)
     }
 
-    fun insert(vararg values: Pair<USQLVariable<*>,Any>): Boolean {
+    fun insert(vararg values: Pair<SDBVariable<*>,Any>): Boolean {
         return insert(hashMapOf(*values))
     }
 
-    fun callBackInsert(vararg values: Pair<USQLVariable<*>,Any>, callBack: (Boolean) -> Unit = {}) {
+    fun callBackInsert(vararg values: Pair<SDBVariable<*>,Any>, callBack: (Boolean) -> Unit = {}) {
         callBackInsert(hashMapOf(*values), callBack)
     }
 
@@ -180,7 +181,7 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
         sMySQL.callbackExecute(insertQuery2(values), callBack)
     }
 
-    private fun updateQuery(values: HashMap<USQLVariable<*>, Any>, condition: USQLCondition): String {
+    private fun updateQuery(values: HashMap<SDBVariable<*>, Any>, condition: USQLCondition): String {
         val query = "update $table set ${values.entries.joinToString(",") { "${it.key.name} = ${USQLCondition.modifySQLString(variables[it.key.name]!!.type,it.value)}" }} ${condition.build()}"
         if (debug){
             sMySQL.plugin.logger.info(query)
@@ -198,27 +199,27 @@ abstract class USQLTable(private val table: String, private val sMySQL: SMySQL) 
         return query
     }
 
-    fun update(values: HashMap<USQLVariable<*>,Any>, condition: USQLCondition): Boolean {
+    fun update(values: HashMap<SDBVariable<*>,Any>, condition: USQLCondition): Boolean {
         return sMySQL.asyncExecute(updateQuery(values, condition))
     }
 
-    fun update(vararg values: Pair<USQLVariable<*>,Any>, condition: USQLCondition = USQLCondition.empty()): Boolean {
+    fun update(vararg values: Pair<SDBVariable<*>,Any>, condition: USQLCondition = USQLCondition.empty()): Boolean {
         return update(hashMapOf(*values),condition)
     }
 
-    fun update(condition: USQLCondition, vararg values: Pair<USQLVariable<*>,Any>): Boolean {
+    fun update(condition: USQLCondition, vararg values: Pair<SDBVariable<*>,Any>): Boolean {
         return update(hashMapOf(*values),condition)
     }
 
-    fun callBackUpdate(values: HashMap<USQLVariable<*>,Any>, condition: USQLCondition, callBack: (Boolean) -> Unit) {
+    fun callBackUpdate(values: HashMap<SDBVariable<*>,Any>, condition: USQLCondition, callBack: (Boolean) -> Unit) {
         sMySQL.callbackExecute(updateQuery(values, condition), callBack)
     }
 
-    fun callBackUpdate(vararg values: Pair<USQLVariable<*>,Any>, condition: USQLCondition = USQLCondition.empty(), callBack: (Boolean) -> Unit) {
+    fun callBackUpdate(vararg values: Pair<SDBVariable<*>,Any>, condition: USQLCondition = USQLCondition.empty(), callBack: (Boolean) -> Unit) {
         return callBackUpdate(hashMapOf(*values), condition, callBack)
     }
 
-    fun callBackUpdate(condition: USQLCondition, vararg values: Pair<USQLVariable<*>,Any>, callBack: (Boolean) -> Unit) {
+    fun callBackUpdate(condition: USQLCondition, vararg values: Pair<SDBVariable<*>,Any>, callBack: (Boolean) -> Unit) {
         return callBackUpdate(hashMapOf(*values), condition, callBack)
     }
 

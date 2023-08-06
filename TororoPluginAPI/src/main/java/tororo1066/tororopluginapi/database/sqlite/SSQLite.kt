@@ -3,10 +3,14 @@ package tororo1066.tororopluginapi.database.sqlite
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.database.SDBResultSet
+import tororo1066.tororopluginapi.database.SDBVariable
 import tororo1066.tororopluginapi.database.SDatabase
+import tororo1066.tororopluginapi.mysql.ultimate.USQLCondition
 import java.sql.*
 
 class SSQLite: SDatabase {
+
+    override val isMongo: Boolean = false
 
     constructor(plugin: JavaPlugin): super(plugin)
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): super(plugin, configFile, configPath)
@@ -24,6 +28,30 @@ class SSQLite: SDatabase {
         }
 
         return conn
+    }
+
+    override fun createTable(table: String, map: Map<String, SDBVariable<*>>): Boolean {
+        val conn = open()
+        val queryBuilder = StringBuilder()
+        queryBuilder.append("create table if not exists $table (")
+        queryBuilder.append(map.values.joinToString(",") { it.name + " " + (if (it.type is SDBVariable.INT) "integer" else it.type.variableName.lowercase()) +
+                (if (it.index != null) " ${it.index!!.tableString}" else "") +
+                (if (!it.nullable && !it.autoIncrement) " not null" else "") +
+                (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
+                if (it.autoIncrement) " autoincrement" else "" })
+        queryBuilder.append(")")
+
+        return try {
+            val stmt = conn.createStatement()
+            stmt.execute(queryBuilder.toString())
+            stmt.close()
+            true
+        } catch (e: Exception){
+            e.printStackTrace()
+            false
+        } finally {
+            conn.close()
+        }
     }
 
     override fun insert(table: String, map: Map<String, Any>): Boolean {

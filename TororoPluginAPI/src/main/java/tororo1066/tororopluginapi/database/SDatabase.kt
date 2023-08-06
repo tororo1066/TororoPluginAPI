@@ -3,9 +3,8 @@ package tororo1066.tororopluginapi.database
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.mongo.SMongo
-import tororo1066.tororopluginapi.database.mysql.SMySQLAlpha
+import tororo1066.tororopluginapi.database.mysql.SMySQL
 import tororo1066.tororopluginapi.database.sqlite.SSQLite
-import tororo1066.tororopluginapi.mysql.ultimate.USQLVariable
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
@@ -24,6 +23,8 @@ abstract class SDatabase(val plugin: JavaPlugin) {
     protected val url: String?
 
     private val thread: ExecutorService = Executors.newCachedThreadPool()
+
+    abstract val isMongo: Boolean
 
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): this(plugin){
         this.configFile = configFile
@@ -60,6 +61,8 @@ abstract class SDatabase(val plugin: JavaPlugin) {
 
     abstract fun open(): Any
 
+    abstract fun createTable(table: String, map: Map<String, SDBVariable<*>>): Boolean
+
     abstract fun insert(table: String, map: Map<String, Any>): Boolean
 
     abstract fun select(table: String, condition: SDBCondition = SDBCondition.empty()): List<SDBResultSet>
@@ -67,6 +70,10 @@ abstract class SDatabase(val plugin: JavaPlugin) {
     abstract fun update(table: String, map: Map<String, Any>, condition: SDBCondition = SDBCondition.empty()): Boolean
 
     abstract fun delete(table: String, condition: SDBCondition = SDBCondition.empty()): Boolean
+
+    fun asyncCreateTable(table: String, map: Map<String, SDBVariable<*>>): Future<Boolean> {
+        return thread.submit(Callable { createTable(table, map) })
+    }
 
     fun asyncInsert(table: String, map: Map<String, Any>): Future<Boolean> {
         return thread.submit(Callable { insert(table, map) })
@@ -84,8 +91,39 @@ abstract class SDatabase(val plugin: JavaPlugin) {
         return thread.submit(Callable { delete(table, condition) })
     }
 
+    fun backGroundCreateTable(table: String, map: Map<String, SDBVariable<*>>, callback: (Boolean) -> Unit = {}){
+        thread.execute {
+            callback(createTable(table, map))
+        }
+    }
+
+    fun backGroundInsert(table: String, map: Map<String, Any>, callback: (Boolean) -> Unit = {}){
+        thread.execute {
+            callback(insert(table, map))
+        }
+    }
+
+    fun backGroundSelect(table: String, condition: SDBCondition = SDBCondition.empty(), callback: (List<SDBResultSet>) -> Unit = {}){
+        thread.execute {
+            callback(select(table, condition))
+        }
+    }
+
+    fun backGroundUpdate(table: String, map: Map<String, Any>, condition: SDBCondition = SDBCondition.empty(), callback: (Boolean) -> Unit = {}){
+        thread.execute {
+            callback(update(table, map, condition))
+        }
+    }
+
+    fun backGroundDelete(table: String, condition: SDBCondition = SDBCondition.empty(), callback: (Boolean) -> Unit = {}){
+        thread.execute {
+            callback(delete(table, condition))
+        }
+    }
+
+
     companion object {
-        fun Any.toSQLVariable(type: USQLVariable.VariableType<*>): String {
+        fun Any.toSQLVariable(type: SDBVariable.VariableType<*>): String {
             return SDBCondition.modifySQLString(type, this)
         }
 
@@ -93,7 +131,7 @@ abstract class SDatabase(val plugin: JavaPlugin) {
             return when(plugin.config.getString("database.type")?:"mysql"){
                 "sqlite"-> SSQLite(plugin)
                 "mongodb"-> SMongo(plugin)
-                else-> SMySQLAlpha(plugin)
+                else-> SMySQL(plugin)
             }
         }
 
@@ -106,7 +144,7 @@ abstract class SDatabase(val plugin: JavaPlugin) {
             return when(config.getString("${configPath?:"database"}.type")?:"mysql"){
                 "sqlite"-> SSQLite(plugin, configFile, configPath)
                 "mongodb"-> SMongo(plugin, configFile, configPath)
-                else-> SMySQLAlpha(plugin, configFile, configPath)
+                else-> SMySQL(plugin, configFile, configPath)
             }
         }
     }

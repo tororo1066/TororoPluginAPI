@@ -1,5 +1,7 @@
 package tororo1066.tororopluginapi.mysql.ultimate
 
+import tororo1066.tororopluginapi.database.SDBVariable
+
 class USQLOption {
 
     enum class Order{
@@ -10,7 +12,7 @@ class USQLOption {
     private var orderBy = ""
     private var take = ""
 
-    fun orderBy(variable: USQLVariable<*>, order: Order): USQLOption {
+    fun orderBy(variable: SDBVariable<*>, order: Order): USQLOption {
         orderBy = "order by ${variable.name} ${order.name.lowercase()}"
         return this
     }

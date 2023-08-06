@@ -8,7 +8,8 @@ import tororo1066.tororopluginapi.script.action.hidden.ElseAction
 class IfAction: AbstractAction("if") {
 
     override fun invoke(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
-        val expression = Expression(line).withValues(scriptFile.publicVariables)
+        val expression = Expression(line, ScriptFile.configuration)
+            .withValues(scriptFile.publicVariables)
         if (expression.evaluate().booleanValue){
             val lines = scriptFile.lines.subList(lineIndex+1, scriptFile.lines.size).takeWhile {
                 it.separator == separator+1

@@ -3,10 +3,14 @@ package tororo1066.tororopluginapi.database.mysql
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.database.SDBResultSet
+import tororo1066.tororopluginapi.database.SDBVariable
 import tororo1066.tororopluginapi.database.SDatabase
+import tororo1066.tororopluginapi.mysql.ultimate.USQLCondition
 import java.sql.*
 
-class SMySQLAlpha: SDatabase {
+class SMySQL: SDatabase {
+
+    override val isMongo: Boolean = false
 
     constructor(plugin: JavaPlugin): super(plugin)
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): super(plugin, configFile, configPath)
@@ -36,6 +40,31 @@ class SMySQLAlpha: SDatabase {
         }
 
         return conn
+    }
+
+    override fun createTable(table: String, map: Map<String, SDBVariable<*>>): Boolean {
+        val conn = open()
+        val queryBuilder = StringBuilder()
+        queryBuilder.append("create table if not exists $table (")
+        queryBuilder.append(map.values.joinToString(",") { it.name + " " + it.type.variableName.lowercase() + (if (it.length != -1) "(${it.length})" else "") +
+                (if (!it.nullable) " not null" else " null") +
+                (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
+                if (it.autoIncrement) " auto_increment" else "" })
+        queryBuilder.append(if (map.values.find { it.index != null } != null) ", " + map.values.filter { it.index != null }.joinToString(",")
+        { (if (it.index == SDBVariable.Index.PRIMARY) "${it.index!!.tableString} (${it.name})" else "${it.index!!.tableString} ${it.name} (${it.name})") + if (it.index!!.usingBTREE) " using btree" else "" } else "")
+        queryBuilder.append(")")
+
+        return try {
+            val stmt = conn.createStatement()
+            stmt.execute(queryBuilder.toString())
+            stmt.close()
+            true
+        } catch (e: Exception){
+            e.printStackTrace()
+            false
+        } finally {
+            conn.close()
+        }
     }
 
     override fun insert(table: String, map: Map<String, Any>): Boolean {

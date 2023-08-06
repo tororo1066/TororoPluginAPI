@@ -16,7 +16,8 @@ class ScriptFile(val file: File) {
     val lines = ArrayList<ActionData>()
     val publicVariables = HashMap<String, Any>()
     val breakFunction = HashMap<String, Boolean>()
-    val configuration = ExpressionConfiguration.defaultConfiguration()
+    var returnFlag = false
+    internal var returnValue: Any? = null
 
     init {
         var index = 0
@@ -32,15 +33,21 @@ class ScriptFile(val file: File) {
         }
     }
 
-    fun start(){
+    fun start(): Any {
+        returnFlag = false
         lines.forEach {
+            if (returnFlag){
+                return returnValue!!
+            }
             if (it.separator == 0){
                 it.invoke()
             }
         }
+
+        return Unit
     }
 
-    fun startAsync(): Future<Unit> {
+    fun startAsync(): Future<Any> {
         return Executors.newSingleThreadExecutor().submit(Callable { start() })
     }
 
@@ -71,15 +78,25 @@ class ScriptFile(val file: File) {
 
     companion object {
 
+        val configuration: ExpressionConfiguration =
+            ExpressionConfiguration.defaultConfiguration()
+            .apply {
+                functionDictionary
+                    .addFunction("DATE", DateFunc())
+            }
+
         fun actionPair(vararg action: AbstractAction): Map<String,AbstractAction> {
             return action.associateBy { it.internalName }
         }
         val actions = HashMap(actionPair(
             PrintAction(),
             ForAction(),
+            WhileAction(),
             IfAction(),
             ElseAction(),
-            BreakAction()
+            BreakAction(),
+            ReturnAction(),
+            SleepAction()
         ))
     }
 

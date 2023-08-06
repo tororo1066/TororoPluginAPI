@@ -36,6 +36,9 @@ class ForAction: AbstractAction("for") {
                 for (i in ruleStr.toIntRange()) {
                     scriptFile.publicVariables[variable] = i
                     for (action in loadLine) {
+                        if (scriptFile.returnFlag){
+                            return
+                        }
                         if (scriptFile.breakFunction[format] == true){
                             break
                         }

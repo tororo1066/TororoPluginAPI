@@ -3,22 +3,17 @@ package tororo1066.tororopluginapi.database.mongo
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
-import com.mongodb.internal.connection.AbstractMultiServerCluster
-import com.mongodb.internal.connection.InternalStreamConnection
-import com.mongodb.internal.connection.SingleServerCluster
-import com.mongodb.internal.diagnostics.logging.Loggers
 import org.bson.Document
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.database.SDBResultSet
 import tororo1066.tororopluginapi.database.SDatabase
-import java.lang.reflect.Field
-import java.lang.reflect.Modifier
-import java.util.logging.Level
-import java.util.logging.Logger
+import tororo1066.tororopluginapi.database.SDBVariable
 
 
 class SMongo: SDatabase {
+
+    override val isMongo: Boolean = true
 
     constructor(plugin: JavaPlugin): super(plugin)
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): super(plugin, configFile, configPath)
@@ -49,6 +44,22 @@ class SMongo: SDatabase {
             return Pair(client, client.getDatabase(this.db))
         } catch (e: Exception) {
             throw e
+        }
+    }
+
+    override fun createTable(table: String, map: Map<String, SDBVariable<*>>): Boolean {
+        var client: MongoClient? = null
+        return try {
+            val open = open()
+            client = open.first
+            val db = open.second
+            db.createCollection(table)
+            true
+        } catch (e: Exception){
+            e.printStackTrace()
+            false
+        } finally {
+            client?.close()
         }
     }
 

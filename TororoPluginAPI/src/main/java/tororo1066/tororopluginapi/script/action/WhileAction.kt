@@ -24,13 +24,17 @@ class WhileAction: AbstractAction("while") {
         }
 
         val split = line.split("@")
-        val condition = Expression(split[0])
+        val condition = Expression(split[0], ScriptFile.configuration)
+            .withValues(scriptFile.publicVariables)
         val label = split.getOrNull(1)
         val uuid = UUID.randomUUID()
         val format = if (label != null) "$uuid $label" else uuid.toString()
         scriptFile.breakFunction[format] = false
         while (condition.evaluate().booleanValue){
             for (actionData in loadLine) {
+                if (scriptFile.returnFlag){
+                    return
+                }
                 if (scriptFile.breakFunction[format] == true){
                     break
                 }
