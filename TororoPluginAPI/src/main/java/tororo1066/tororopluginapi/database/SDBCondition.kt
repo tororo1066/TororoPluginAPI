@@ -91,7 +91,6 @@ class SDBCondition {
     }
 
     fun buildAsMongo(): Bson {
-        Bukkit.broadcastMessage(filter.toString())
         return filter
     }
 

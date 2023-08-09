@@ -3,12 +3,15 @@ package tororo1066.tororopluginapi.database.mongo
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
+import com.mongodb.client.model.Updates
+import com.mongodb.internal.diagnostics.logging.Loggers
 import org.bson.Document
+import org.bson.conversions.Bson
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.database.SDBResultSet
-import tororo1066.tororopluginapi.database.SDatabase
 import tororo1066.tororopluginapi.database.SDBVariable
+import tororo1066.tororopluginapi.database.SDatabase
 
 
 class SMongo: SDatabase {
@@ -17,6 +20,10 @@ class SMongo: SDatabase {
 
     constructor(plugin: JavaPlugin): super(plugin)
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): super(plugin, configFile, configPath)
+
+    init {
+        Loggers.USE_SLF4J = false
+    }
 
     override fun open(): Pair<MongoClient, MongoDatabase> {
         var url = this.url
@@ -100,14 +107,14 @@ class SMongo: SDatabase {
         }
     }
 
-    override fun update(table: String, map: Map<String, Any>, condition: SDBCondition): Boolean {
+    override fun update(table: String, update: Any, condition: SDBCondition): Boolean {
         var client: MongoClient? = null
         return try {
             val open = open()
             client = open.first
             val db = open.second
             val collection = db.getCollection(table)
-            collection.updateMany(condition.buildAsMongo(), map.map { Document(it.key, it.value) }).wasAcknowledged()
+            collection.updateMany(condition.buildAsMongo(), update as Bson).wasAcknowledged()
         } catch (e: Exception){
             e.printStackTrace()
             false

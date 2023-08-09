@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi.script.action
 
+import com.ezylang.evalex.Expression
 import tororo1066.tororopluginapi.script.ActionData
 import tororo1066.tororopluginapi.script.ScriptFile
 import tororo1066.tororopluginapi.utils.toIntRange
@@ -31,9 +32,11 @@ class ForAction: AbstractAction("for") {
         val uuid = UUID.randomUUID()
         val format = if (label != null) "$uuid $label" else uuid.toString()
         scriptFile.breakFunction[format] = false
+        val expr = Expression(ruleStr, ScriptFile.configuration)
+            .withValues(scriptFile.publicVariables).evaluate().stringValue
         when {
-            ruleStr.toIntRangeOrNull() != null -> {
-                for (i in ruleStr.toIntRange()) {
+             expr != null -> {
+                for (i in expr.toIntRange()) {
                     scriptFile.publicVariables[variable] = i
                     for (action in loadLine) {
                         if (scriptFile.returnFlag){

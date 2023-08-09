@@ -67,7 +67,7 @@ abstract class SDatabase(val plugin: JavaPlugin) {
 
     abstract fun select(table: String, condition: SDBCondition = SDBCondition.empty()): List<SDBResultSet>
 
-    abstract fun update(table: String, map: Map<String, Any>, condition: SDBCondition = SDBCondition.empty()): Boolean
+    abstract fun update(table: String, update: Any, condition: SDBCondition = SDBCondition.empty()): Boolean
 
     abstract fun delete(table: String, condition: SDBCondition = SDBCondition.empty()): Boolean
 
@@ -83,8 +83,8 @@ abstract class SDatabase(val plugin: JavaPlugin) {
         return thread.submit(Callable { select(table, condition) })
     }
 
-    fun asyncUpdate(table: String, map: Map<String, Any>, condition: SDBCondition): Future<Boolean> {
-        return thread.submit(Callable { update(table, map, condition) })
+    fun asyncUpdate(table: String, update: Any, condition: SDBCondition): Future<Boolean> {
+        return thread.submit(Callable { update(table, update, condition) })
     }
 
     fun asyncDelete(table: String, condition: SDBCondition = SDBCondition.empty()): Future<Boolean> {

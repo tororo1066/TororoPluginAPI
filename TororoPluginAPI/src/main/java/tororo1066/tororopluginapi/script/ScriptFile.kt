@@ -1,13 +1,11 @@
 package tororo1066.tororopluginapi.script
 
 import com.ezylang.evalex.config.ExpressionConfiguration
-import tororo1066.tororopluginapi.otherClass.MultipleKeyMap
 import tororo1066.tororopluginapi.script.action.*
 import tororo1066.tororopluginapi.script.action.hidden.ElseAction
 import tororo1066.tororopluginapi.script.action.inline.MathAction
 import tororo1066.tororopluginapi.script.expressionFunc.DateFunc
 import java.io.File
-import java.util.UUID
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -89,7 +87,7 @@ class ScriptFile(val file: File) {
             return action.associateBy { it.internalName }
         }
         val actions = HashMap(actionPair(
-            PrintAction(),
+            BroadcastAction(),
             ForAction(),
             WhileAction(),
             IfAction(),

@@ -28,8 +28,7 @@ dependencies {
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     api 'com.ezylang:EvalEx:3.0.5'
-    api 'org.mongodb:mongodb-driver-sync:4.10.2'
-    api 'ch.qos.logback:logback-classic:1.2.3'
+    api fileTree(dir: 'libs', include: '*.jar')
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens

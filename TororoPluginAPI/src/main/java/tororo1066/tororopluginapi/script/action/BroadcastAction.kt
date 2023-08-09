@@ -6,7 +6,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Server
 import tororo1066.tororopluginapi.script.ScriptFile
 
-class PrintAction: AbstractAction("print") {
+class BroadcastAction: AbstractAction("broadcast") {
     override fun invoke(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
         Bukkit.broadcast(Component.text(
             Expression(line, ScriptFile.configuration)

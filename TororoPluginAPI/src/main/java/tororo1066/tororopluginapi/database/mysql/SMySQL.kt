@@ -130,8 +130,10 @@ class SMySQL: SDatabase {
         }
     }
 
-    override fun update(table: String, map: Map<String, Any>, condition: SDBCondition): Boolean {
+    @Suppress("UNCHECKED_CAST")
+    override fun update(table: String, update: Any, condition: SDBCondition): Boolean {
         val conn = open()
+        val map = update as Map<String, Any>
         val query = "update $table set ${map.entries.joinToString(",") { "${it.key} = ?" }}"
         val stmt = conn.prepareStatement(query)
         map.values.forEachIndexed { index, any ->
