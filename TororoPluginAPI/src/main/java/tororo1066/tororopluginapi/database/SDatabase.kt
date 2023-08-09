@@ -109,9 +109,9 @@ abstract class SDatabase(val plugin: JavaPlugin) {
         }
     }
 
-    fun backGroundUpdate(table: String, map: Map<String, Any>, condition: SDBCondition = SDBCondition.empty(), callback: (Boolean) -> Unit = {}){
+    fun backGroundUpdate(table: String, update: Any, condition: SDBCondition = SDBCondition.empty(), callback: (Boolean) -> Unit = {}){
         thread.execute {
-            callback(update(table, map, condition))
+            callback(update(table, update, condition))
         }
     }
 
