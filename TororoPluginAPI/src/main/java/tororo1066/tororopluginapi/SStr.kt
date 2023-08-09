@@ -13,6 +13,7 @@ import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.inventory.ItemStack
 
+@Suppress("UNUSED", "DEPRECATION")
 class SStr: Cloneable {
     private val componentBuilder = Component.text()
     private val md5ComponentBuilder = ComponentBuilder()
