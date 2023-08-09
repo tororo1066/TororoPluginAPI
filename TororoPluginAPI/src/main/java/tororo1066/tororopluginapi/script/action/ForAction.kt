@@ -35,7 +35,7 @@ class ForAction: AbstractAction("for") {
         val expr = Expression(ruleStr, ScriptFile.configuration)
             .withValues(scriptFile.publicVariables).evaluate().stringValue
         when {
-             expr != null -> {
+             expr != null && expr.toIntRangeOrNull() != null -> {
                 for (i in expr.toIntRange()) {
                     scriptFile.publicVariables[variable] = i
                     for (action in loadLine) {
