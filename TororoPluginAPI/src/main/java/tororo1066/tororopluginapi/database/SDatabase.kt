@@ -93,6 +93,10 @@ abstract class SDatabase(val plugin: JavaPlugin) {
         return thread.submit(Callable { delete(table, condition) })
     }
 
+    fun asyncQuery(query: String): Future<List<SDBResultSet>> {
+        return thread.submit(Callable { query(query) })
+    }
+
     fun backGroundCreateTable(table: String, map: Map<String, SDBVariable<*>>, callback: (Boolean) -> Unit = {}){
         thread.execute {
             callback(createTable(table, map))
@@ -120,6 +124,12 @@ abstract class SDatabase(val plugin: JavaPlugin) {
     fun backGroundDelete(table: String, condition: SDBCondition = SDBCondition.empty(), callback: (Boolean) -> Unit = {}){
         thread.execute {
             callback(delete(table, condition))
+        }
+    }
+
+    fun backGroundQuery(query: String, callback: (List<SDBResultSet>) -> Unit = {}){
+        thread.execute {
+            callback(query(query))
         }
     }
 
