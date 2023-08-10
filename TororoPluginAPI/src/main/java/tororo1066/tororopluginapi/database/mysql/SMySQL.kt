@@ -46,10 +46,10 @@ class SMySQL: SDatabase {
         val conn = open()
         val queryBuilder = StringBuilder()
         queryBuilder.append("create table if not exists $table (")
-        queryBuilder.append(map.values.joinToString(",") { it.name + " " + it.type.variableName.lowercase() + (if (it.length != -1) "(${it.length})" else "") +
-                (if (!it.nullable) " not null" else " null") +
-                (if (it.autoIncrement || !it.nullable) "" else if (it.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.type,it.default!!)) +
-                if (it.autoIncrement) " auto_increment" else "" })
+        queryBuilder.append(map.entries.joinToString(",") { it.key + " " + it.value.type.variableName.lowercase() + (if (it.value.length != -1) "(${it.value.length})" else "") +
+                (if (!it.value.nullable) " not null" else " null") +
+                (if (it.value.autoIncrement || !it.value.nullable) "" else if (it.value.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.value.type,it.value.default!!)) +
+                if (it.value.autoIncrement) " auto_increment" else "" })
         queryBuilder.append(if (map.values.find { it.index != null } != null) ", " + map.values.filter { it.index != null }.joinToString(",")
         { (if (it.index == SDBVariable.Index.PRIMARY) "${it.index!!.tableString} (${it.name})" else "${it.index!!.tableString} ${it.name} (${it.name})") + if (it.index!!.usingBTREE) " using btree" else "" } else "")
         queryBuilder.append(")")
@@ -98,7 +98,9 @@ class SMySQL: SDatabase {
     override fun update(table: String, update: Any, condition: SDBCondition): Boolean {
         val conn = open()
         val map = update as Map<String, Any>
-        val query = "update $table set ${map.entries.joinToString(",") { "${it.key} = ?" }}"
+        val query = "update $table set ${
+            map.entries.joinToString(",") { "${it.key} = ?" }
+        } ${condition.build()}"
         val stmt = conn.prepareStatement(query)
         map.values.forEachIndexed { index, any ->
             stmt.setObject(index+1, any)
