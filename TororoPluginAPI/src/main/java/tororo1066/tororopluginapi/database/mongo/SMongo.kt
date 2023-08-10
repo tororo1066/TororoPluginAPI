@@ -138,4 +138,24 @@ class SMongo: SDatabase {
             client?.close()
         }
     }
+
+    override fun query(query: String): List<SDBResultSet> {
+        var client: MongoClient? = null
+        return try {
+            val open = open()
+            client = open.first
+            val db = open.second
+            val list = ArrayList<SDBResultSet>()
+            db.runCommand(Document.parse(query)).forEach {
+                list.add(SDBResultSet(hashMapOf(it.toPair())))
+            }
+
+            return list
+        } catch (e: Exception){
+            e.printStackTrace()
+            arrayListOf()
+        } finally {
+            client?.close()
+        }
+    }
 }

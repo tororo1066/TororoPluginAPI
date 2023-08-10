@@ -71,6 +71,8 @@ abstract class SDatabase(val plugin: JavaPlugin) {
 
     abstract fun delete(table: String, condition: SDBCondition = SDBCondition.empty()): Boolean
 
+    abstract fun query(query: String): List<SDBResultSet>
+
     fun asyncCreateTable(table: String, map: Map<String, SDBVariable<*>>): Future<Boolean> {
         return thread.submit(Callable { createTable(table, map) })
     }

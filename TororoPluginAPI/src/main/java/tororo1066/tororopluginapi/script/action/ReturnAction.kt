@@ -13,11 +13,6 @@ class ReturnAction: AbstractAction("return") {
         }
         val expression = Expression(line, ScriptFile.configuration)
             .withValues(scriptFile.publicVariables)
-        val eval = expression.evaluate()
-        if (eval.isBooleanValue){
-            scriptFile.returnValue = eval.booleanValue
-        } else {
-            scriptFile.returnValue = eval.value
-        }
+        scriptFile.returnValue = expression.evaluate().value
     }
 }

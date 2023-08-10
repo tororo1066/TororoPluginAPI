@@ -91,43 +91,7 @@ class SMySQL: SDatabase {
     }
 
     override fun select(table: String, condition: SDBCondition): List<SDBResultSet> {
-        val conn = open()
-        val stmt: Statement
-        val rs: ResultSet
-
-        try {
-            stmt = conn.createStatement()
-            rs = stmt.executeQuery("select * from $table ${condition.build()}")
-        } catch (e : SQLException) {
-            e.printStackTrace()
-            return arrayListOf()
-        }
-
-        val result = ArrayList<SDBResultSet>()
-        try {
-            while (rs.next()){
-                val meta = rs.metaData
-                val data = HashMap<String,Any?>()
-                for (i in 1 until meta.columnCount + 1) {
-                    val name = meta.getColumnName(i)
-                    val obj = rs.getObject(name)
-                    if (obj == "true" || obj == "false"){
-                        data[name] = obj.toString().toBoolean()
-                    } else {
-                        data[name] = obj
-                    }
-                }
-                result.add(SDBResultSet(data))
-            }
-            return result
-        } catch (e : Exception){
-            e.printStackTrace()
-            return arrayListOf()
-        } finally {
-            rs.close()
-            stmt.close()
-            conn.close()
-        }
+        return query("select * from $table ${condition.build()}")
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -163,6 +127,46 @@ class SMySQL: SDatabase {
             e.printStackTrace()
             false
         } finally {
+            stmt.close()
+            conn.close()
+        }
+    }
+
+    override fun query(query: String): List<SDBResultSet> {
+        val conn = open()
+        val stmt: Statement
+        val rs: ResultSet
+
+        try {
+            stmt = conn.createStatement()
+            rs = stmt.executeQuery(query)
+        } catch (e : SQLException) {
+            e.printStackTrace()
+            return arrayListOf()
+        }
+
+        val result = ArrayList<SDBResultSet>()
+        try {
+            while (rs.next()){
+                val meta = rs.metaData
+                val data = HashMap<String,Any?>()
+                for (i in 1 until meta.columnCount + 1) {
+                    val name = meta.getColumnName(i)
+                    val obj = rs.getObject(name)
+                    if (obj == "true" || obj == "false"){
+                        data[name] = obj.toString().toBoolean()
+                    } else {
+                        data[name] = obj
+                    }
+                }
+                result.add(SDBResultSet(data))
+            }
+            return result
+        } catch (e : Exception){
+            e.printStackTrace()
+            return arrayListOf()
+        } finally {
+            rs.close()
             stmt.close()
             conn.close()
         }

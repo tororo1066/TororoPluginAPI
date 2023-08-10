@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.database
 
 import org.bson.Document
 import java.time.LocalDateTime
+import java.util.Date
 
 class SDBResultSet(val result : HashMap<String,Any?>){
     fun getString(name: String): String {
@@ -26,8 +27,12 @@ class SDBResultSet(val result : HashMap<String,Any?>){
         return result[name] as Boolean
     }
 
-    fun getDate(name: String): LocalDateTime {
+    fun getLocalDateTime(name: String): LocalDateTime {
         return result[name] as LocalDateTime
+    }
+
+    fun getDate(name: String): Date {
+        return result[name] as Date
     }
 
     fun getType(name: String): Class<*> {
