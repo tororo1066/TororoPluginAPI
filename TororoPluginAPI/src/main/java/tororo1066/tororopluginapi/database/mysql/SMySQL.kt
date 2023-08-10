@@ -50,8 +50,8 @@ class SMySQL: SDatabase {
                 (if (!it.value.nullable) " not null" else " null") +
                 (if (it.value.autoIncrement || !it.value.nullable) "" else if (it.value.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.value.type,it.value.default!!)) +
                 if (it.value.autoIncrement) " auto_increment" else "" })
-        queryBuilder.append(if (map.values.find { it.index != null } != null) ", " + map.values.filter { it.index != null }.joinToString(",")
-        { (if (it.index == SDBVariable.Index.PRIMARY) "${it.index!!.tableString} (${it.name})" else "${it.index!!.tableString} ${it.name} (${it.name})") + if (it.index!!.usingBTREE) " using btree" else "" } else "")
+        queryBuilder.append(if (map.entries.find { it.value.index != null } != null) ", " + map.entries.filter { it.value.index != null }.joinToString(",")
+        { (if (it.value.index == SDBVariable.Index.PRIMARY) "${it.value.index!!.tableString} (${it.key})" else "${it.value.index!!.tableString} ${it.key} (${it.key})") + if (it.value.index!!.usingBTREE) " using btree" else "" } else "")
         queryBuilder.append(")")
 
         return try {
