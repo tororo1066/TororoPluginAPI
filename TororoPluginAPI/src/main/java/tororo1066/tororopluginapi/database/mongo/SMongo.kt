@@ -60,7 +60,7 @@ class SMongo: SDatabase {
             val open = open()
             client = open.first
             val db = open.second
-            db.createCollection(table)
+            db.getCollection(table)
             true
         } catch (e: Exception){
             e.printStackTrace()
@@ -77,7 +77,7 @@ class SMongo: SDatabase {
             client = open.first
             val db = open.second
             val collection = db.getCollection(table)
-            collection.insertMany(map.map { Document(it.key, it.value) }).wasAcknowledged()
+            collection.insertOne(Document(map)).wasAcknowledged()
         } catch (e: Exception){
             e.printStackTrace()
             false
