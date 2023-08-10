@@ -1,6 +1,7 @@
 package tororo1066.tororopluginapi.script
 
 import com.ezylang.evalex.config.ExpressionConfiguration
+import org.bukkit.Bukkit
 import tororo1066.tororopluginapi.script.action.*
 import tororo1066.tororopluginapi.script.action.hidden.ElseAction
 import tororo1066.tororopluginapi.script.action.inline.MathAction
@@ -34,11 +35,11 @@ class ScriptFile(val file: File) {
     fun start(): Any {
         returnFlag = false
         lines.forEach {
-            if (returnFlag){
-                return returnValue!!
-            }
             if (it.separator == 0){
                 it.invoke()
+            }
+            if (returnFlag){
+                return returnValue!!
             }
         }
 
