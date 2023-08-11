@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi.database.sqlite
 
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.database.SDBResultSet
@@ -35,21 +36,30 @@ class SSQLite: SDatabase {
         val queryBuilder = StringBuilder()
         queryBuilder.append("create table if not exists $table (")
         queryBuilder.append(map.entries.joinToString(",") { it.key + " " + (if (it.value.type is SDBVariable.INT) "integer" else it.value.type.variableName.lowercase()) +
-                (if (it.value.index != null) " ${it.value.index!!.tableString}" else "") +
+                (if (it.value.index == SDBVariable.Index.PRIMARY) " ${it.value.index!!.tableString}" else "") +
                 (if (!it.value.nullable && !it.value.autoIncrement) " not null" else "") +
                 (if (it.value.autoIncrement || !it.value.nullable) "" else if (it.value.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.value.type,it.value.default!!)) +
                 if (it.value.autoIncrement) " autoincrement" else "" })
+        if (map.any { it.value.index == SDBVariable.Index.UNIQUE }){
+            queryBuilder.append(",")
+            queryBuilder.append(map.filter { it.value.index == SDBVariable.Index.UNIQUE }.keys.joinToString(",") { "unique($it)" })
+        }
         queryBuilder.append(")")
 
+        val stmt = conn.createStatement()
+
+        val createIndexQuery = map.filter { it.value.index == SDBVariable.Index.KEY }.map { "create index if not exists ${table}_${it.key}_index on $table(${it.key})" }
         return try {
-            val stmt = conn.createStatement()
-            stmt.execute(queryBuilder.toString())
-            stmt.close()
+            if (!stmt.execute(queryBuilder.toString()))return false
+            createIndexQuery.forEach {
+                if (!stmt.execute(it))return false
+            }
             true
         } catch (e: Exception){
             e.printStackTrace()
             false
         } finally {
+            stmt.close()
             conn.close()
         }
     }

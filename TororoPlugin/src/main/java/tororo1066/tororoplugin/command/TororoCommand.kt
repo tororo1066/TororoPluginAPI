@@ -1,5 +1,6 @@
 package tororo1066.tororoplugin.command
 
+import com.mongodb.client.model.Updates
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.event.ClickEvent
@@ -21,6 +22,7 @@ import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
 import tororo1066.tororopluginapi.database.SDBCondition
+import tororo1066.tororopluginapi.database.SDBVariable
 import tororo1066.tororopluginapi.sCommand.*
 import tororo1066.tororopluginapi.script.ScriptFile
 import tororo1066.tororopluginapi.utils.toPlayer
@@ -79,18 +81,20 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
     val testScript = command()
         .addArg(SCommandArg("script"))
         .setNormalExecutor {
-            ScriptFile(File(SJavaPlugin.plugin.dataFolder, "script/tororo.txt")).start()
+            Bukkit.broadcastMessage((ScriptFile(File(SJavaPlugin.plugin.dataFolder, "script/tororo.txt")).start().javaClass.name).toString())
         }
 
     @SCommandBody
     val t = command()
         .addArg(SCommandArg("t"))
-        .setPlayerExecutor {
-            TororoPlugin.sDatabase.insert("test_table", mapOf("info" to mapOf("name" to "tororo", "value" to "Hello")))
-            Bukkit.broadcastMessage(
-                TororoPlugin.sDatabase.select("test_table", SDBCondition().equal("info.name","tororo"))
-                .first().getDeepResult("info").getString("value")
-            )
+        .setNormalExecutor {
+            TororoPlugin.sDatabase.createTable("test_daa",
+                mapOf(
+                    "id" to SDBVariable(SDBVariable.Int, autoIncrement = true),
+                    "party_uuid" to SDBVariable(SDBVariable.VarChar, length = 36, nullable = false, index = SDBVariable.Index.KEY),
+                    "uuid" to SDBVariable(SDBVariable.Text),
+                    "name" to SDBVariable(SDBVariable.Text)
+                ))
         }
 
     @SCommandBody

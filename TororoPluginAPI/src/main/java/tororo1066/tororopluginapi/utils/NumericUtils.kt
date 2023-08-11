@@ -14,13 +14,17 @@ fun String.isLong(): Boolean {
     return this.toLongOrNull() != null
 }
 
-fun String.toIntRange(): IntRange {
+fun String.toIntRange(): IntProgression {
     if (!this.contains(".."))throw NumberFormatException("$this is not IntRange.")
     val split = this.split("..")
     if (!split[0].isInt() || !split[1].isInt())throw NumberFormatException("$this is not IntRange.")
-    return split[0].toInt()..split[1].toInt()
+    return IntProgression.fromClosedRange(split[0].toInt(), split[1].toInt(), if (split[0].toInt() < split[1].toInt()) 1 else -1)
 }
 
-fun String.toIntRangeOrNull(): IntRange? {
+fun String.toIntRangeOrNull(): IntProgression? {
     return UsefulUtility.sTry({ this.toIntRange() }) { null }
+}
+
+fun String.isIntRange(): Boolean {
+    return this.toIntRangeOrNull() != null
 }

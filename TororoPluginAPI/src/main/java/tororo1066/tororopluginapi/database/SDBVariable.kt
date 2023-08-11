@@ -93,7 +93,7 @@ class SDBVariable<V: SDBVariable.VariableType<*>>(val type: V) {
 
     var length = -1
 
-    enum class Index(val tableString: String,val usingBTREE: Boolean){
+    enum class Index(val tableString: String, val usingBTREE: Boolean){
         PRIMARY("primary key",true),
         KEY("index",true),
         UNIQUE("unique index",false),
