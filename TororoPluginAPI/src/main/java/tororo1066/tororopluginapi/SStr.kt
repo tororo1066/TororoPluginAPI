@@ -7,6 +7,7 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.hover.content.Item
 import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
 import org.bukkit.Server
@@ -70,6 +71,7 @@ class SStr: Cloneable {
      * Only Supported Paper
      */
     fun appendTrans(key: String): SStr {
+        checkPaper()
         this.componentBuilder.append(Component.translatable(key))
         return this
     }
@@ -139,6 +141,9 @@ class SStr: Cloneable {
     fun showItem(item: ItemStack){
         checkPaper()
         componentBuilder.hoverEvent(item)
+        md5ComponentBuilder.event(net.md_5.bungee.api.chat.HoverEvent(
+                net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_ITEM, Bukkit.getItemFactory().hoverContentOf(item))
+        ) // Only supported Paper because Bukkit.getItemFactory().hoverContentOf(item) is Paper API
     }
     fun sendMessage(commandSender: CommandSender){
         if (isPaper()){

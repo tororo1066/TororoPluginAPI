@@ -54,7 +54,7 @@ open class LargeSInventory(plugin: JavaPlugin, title: String) : SInventory(plugi
     }
 
 
-    override fun afterRenderMenu(p: Player) {
+    override fun afterRenderMenu() {
         renderInventory(nowPage)
     }
 }

@@ -9,6 +9,7 @@ import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.lang.LangEditor
 import tororo1066.tororopluginapi.lang.SLang
+import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import java.util.function.Consumer
 
 abstract class SCommand(private val command: String) : CommandExecutor, TabCompleter {
@@ -81,13 +82,15 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
         register.setExecutor(this)
         register.tabCompleter = this
 
-        if (!SJavaPlugin.plugin.deprecatedMode){
-            Bukkit.getScheduler().runTaskLater(SJavaPlugin.plugin, Runnable {
-                Bukkit.getScheduler().runTask(SJavaPlugin.plugin, Runnable {
-                    loadAllCommands()
-                })
-            }, 1)
-        }
+        UsefulUtility.sTry({
+            if (!SJavaPlugin.plugin.deprecatedMode){
+                Bukkit.getScheduler().runTaskLater(SJavaPlugin.plugin, Runnable {
+                    Bukkit.getScheduler().runTask(SJavaPlugin.plugin, Runnable {
+                        loadAllCommands()
+                    })
+                }, 1)
+            }
+        },{})
     }
 
 

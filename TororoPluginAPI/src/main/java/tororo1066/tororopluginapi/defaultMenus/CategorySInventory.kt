@@ -88,7 +88,7 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
     }
 
 
-    override fun afterRenderMenu(p: Player) {
+    override fun afterRenderMenu() {
         renderInventory(nowCategory,nowPage)
     }
 

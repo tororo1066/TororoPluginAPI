@@ -10,19 +10,7 @@ import java.util.UUID
 class ForAction: AbstractAction("for") {
 
     override fun invoke(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
-        val lines = scriptFile.lines.subList(lineIndex+1, scriptFile.lines.size)
-        val loadLine = ArrayList<ActionData>()
-        run {
-            lines.forEach {
-                if (it.separator < separator+1){
-                    return@run
-                }
-                if (it.separator > separator+1){
-                    return@forEach
-                }
-                loadLine.add(it)
-            }
-        }
+        val loadLine = loadNextLines(scriptFile, lineIndex, separator)
 
         val split = line.split(" in ")
         val variable = split[0].replace(" ", "")
@@ -33,25 +21,32 @@ class ForAction: AbstractAction("for") {
         val format = if (label != null) "$uuid $label" else uuid.toString()
         scriptFile.breakFunction[format] = false
         val expr = Expression(ruleStr, ScriptFile.configuration)
-            .withValues(scriptFile.publicVariables).evaluate().stringValue
-        when {
-             expr != null && expr.toIntRangeOrNull() != null -> {
-                for (i in expr.toIntRange()) {
-                    scriptFile.publicVariables[variable] = i
-                    for (action in loadLine) {
-                        if (scriptFile.returnFlag){
-                            return
-                        }
-                        if (scriptFile.breakFunction[format] == true){
-                            break
-                        }
-                        action.invoke()
+            .withValues(scriptFile.publicVariables).evaluate()
+        fun loop(variables: Iterable<Any>){
+            for (i in variables) {
+                scriptFile.publicVariables[variable] = i
+                for (action in loadLine) {
+                    if (scriptFile.returnFlag){
+                        return
                     }
                     if (scriptFile.breakFunction[format] == true){
                         break
                     }
+                    action.invoke()
                 }
-                scriptFile.breakFunction.remove(format)
+                if (scriptFile.breakFunction[format] == true){
+                    break
+                }
+            }
+            scriptFile.breakFunction.remove(format)
+        }
+        when {
+             expr != null && expr.stringValue?.toIntRangeOrNull() != null -> {
+                loop(expr.stringValue!!.toIntRange())
+            }
+
+            expr != null && expr.isArrayValue -> {
+                loop(expr.arrayValue)
             }
 
 

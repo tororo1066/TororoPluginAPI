@@ -9,36 +9,23 @@ import kotlin.collections.ArrayList
 class WhileAction: AbstractAction("while") {
 
     override fun invoke(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
-        val lines = scriptFile.lines.subList(lineIndex+1, scriptFile.lines.size)
-        val loadLine = ArrayList<ActionData>()
-        run {
-            lines.forEach {
-                if (it.separator < separator+1){
-                    return@run
-                }
-                if (it.separator > separator+1){
-                    return@forEach
-                }
-                loadLine.add(it)
-            }
-        }
+        val loadLine = loadNextLines(scriptFile, lineIndex, separator)
 
         val split = line.split("@")
         val condition = Expression(split[0], ScriptFile.configuration)
-            .withValues(scriptFile.publicVariables)
         val label = split.getOrNull(1)
         val uuid = UUID.randomUUID()
         val format = if (label != null) "$uuid $label" else uuid.toString()
         scriptFile.breakFunction[format] = false
-        while (condition.evaluate().booleanValue){
-            for (actionData in loadLine) {
+        while (condition.withValues(scriptFile.publicVariables).evaluate().booleanValue){
+            for (action in loadLine) {
                 if (scriptFile.returnFlag){
                     return
                 }
                 if (scriptFile.breakFunction[format] == true){
                     break
                 }
-                actionData.invoke()
+                action.invoke()
             }
             if (scriptFile.breakFunction[format] == true){
                 break

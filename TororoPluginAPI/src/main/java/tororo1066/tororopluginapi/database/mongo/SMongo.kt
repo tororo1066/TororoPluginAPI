@@ -7,6 +7,7 @@ import com.mongodb.client.model.Updates
 import com.mongodb.internal.diagnostics.logging.Loggers
 import org.bson.Document
 import org.bson.conversions.Bson
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.database.SDBResultSet
@@ -39,8 +40,11 @@ class SMongo: SDatabase {
                 throw NullPointerException("[MongoDB] User name is empty.")
             }
 
-            url = "mongodb+srv://${user}:${pass}@${host}/?retryWrites=true&w=majority"
+            url = "mongodb://${user}:${pass}@${host}${if (port != null) ":$port" else ""}" +
+                    "/?retryWrites=true&w=majority"
         }
+
+        Bukkit.getPlayer("tororo_1066")?.sendMessage("[MongoDB] Connecting to ${url}...")
 
         if (db == null){
             throw NullPointerException("[MongoDB] Database name is empty.")
