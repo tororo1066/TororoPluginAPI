@@ -44,8 +44,6 @@ class SMongo: SDatabase {
                     "/?retryWrites=true&w=majority"
         }
 
-        Bukkit.getPlayer("tororo_1066")?.sendMessage("[MongoDB] Connecting to ${url}...")
-
         if (db == null){
             throw NullPointerException("[MongoDB] Database name is empty.")
         }

@@ -167,6 +167,15 @@ class SInput(private val plugin: JavaPlugin) {
                 }
 
             }
+
+            if (clazz.isEnum){
+                val enum = UsefulUtility.sTry({clazz.getMethod("valueOf",String::class.java).invoke(null,value)},{
+                    UsefulUtility.sTry({clazz.getMethod("valueOf",String::class.java).invoke(null,value.uppercase())}) {
+                        null
+                    }
+                })
+                return enum as? T
+            }
             return null
         }
     }

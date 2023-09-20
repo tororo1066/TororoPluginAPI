@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import tororo1066.tororopluginapi.SStr
 import java.util.UUID
 
@@ -46,5 +47,18 @@ fun World.broadcast(sStr: SStr){
 fun World.broadcast(str: String){
     this.players.forEach {
         it.sendMessage(str)
+    }
+}
+
+fun Player.returnItem(itemStack: ItemStack){
+    val addItem = this.inventory.addItem(itemStack)
+    if (addItem.isNotEmpty()){
+        addItem.forEach { item ->
+            this.world.dropItem(this.location, item.value) {
+                it.pickupDelay = 0
+                it.owner = this.uniqueId
+                it.setCanMobPickup(false)
+            }
+        }
     }
 }

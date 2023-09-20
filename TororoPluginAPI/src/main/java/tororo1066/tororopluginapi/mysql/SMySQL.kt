@@ -93,7 +93,7 @@ class SMySQL(val plugin : JavaPlugin) {
                 Class.forName("com.mysql.cj.jdbc.Driver")
                 conn = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.db + "?useSSL=false", this.user, this.pass)
             }
-        }catch (e : SQLException){
+        } catch (e : SQLException){
             throw e
         }
 

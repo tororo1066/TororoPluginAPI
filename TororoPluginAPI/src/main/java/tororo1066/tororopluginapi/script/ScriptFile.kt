@@ -3,6 +3,7 @@ package tororo1066.tororopluginapi.script
 import com.ezylang.evalex.config.ExpressionConfiguration
 import org.bukkit.Bukkit
 import tororo1066.tororopluginapi.script.action.*
+import tororo1066.tororopluginapi.script.action.entity.player.SendMessageAction
 import tororo1066.tororopluginapi.script.action.hidden.ElseAction
 import tororo1066.tororopluginapi.script.action.inline.MathAction
 import tororo1066.tororopluginapi.script.expressionFunc.DateFunc
@@ -95,7 +96,8 @@ class ScriptFile(val file: File) {
             ElseAction(),
             BreakAction(),
             ReturnAction(),
-            SleepAction()
+            SleepAction(),
+            SendMessageAction()
         ))
     }
 

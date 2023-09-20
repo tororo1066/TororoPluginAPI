@@ -41,6 +41,7 @@ abstract class SJavaPlugin() : JavaPlugin() {
         lateinit var sConfig: SConfig
         lateinit var mysql: SMySQL
         lateinit var vault: SVault
+        lateinit var sInput: SInput
         lateinit var plugin: SJavaPlugin
     }
 
@@ -96,6 +97,9 @@ abstract class SJavaPlugin() : JavaPlugin() {
         }
         if (useOptions.contains(UseOption.Vault)){
             vault = SVault()
+        }
+        if (useOptions.contains(UseOption.SInput)){
+            sInput = SInput(this)
         }
 
         onStart()
@@ -182,7 +186,12 @@ abstract class SJavaPlugin() : JavaPlugin() {
          * configのシステムを使う
          * @see SConfig
          */
-        SConfig
+        SConfig,
+
+        /**
+         * 入力システムを使う
+         */
+        SInput
     }
 
 
