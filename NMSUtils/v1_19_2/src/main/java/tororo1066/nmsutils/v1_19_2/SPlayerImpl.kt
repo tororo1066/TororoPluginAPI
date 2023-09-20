@@ -146,4 +146,20 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
         handle.connection.send(packet)
     }
 
+    override fun invisibleItems(slots: List<EquipmentSlot>, invisible: Boolean) {
+        if (invisible){
+            val packet = ClientboundSetEquipmentPacket(entityId, mutableListOf())
+            slots.forEach {
+                packet.slots.add(Pair(CraftEquipmentSlot.getNMS(it),null))
+            }
+            handle.connection.send(packet)
+        } else {
+            val packet = ClientboundSetEquipmentPacket(entityId, mutableListOf())
+            slots.forEach {
+                packet.slots.add(Pair(CraftEquipmentSlot.getNMS(it),CraftItemStack.asNMSCopy(inventory.getItem(it))))
+            }
+            handle.connection.send(packet)
+        }
+    }
+
 }

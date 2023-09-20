@@ -31,6 +31,8 @@ interface SPlayer: Player {
 
     fun removeFakeInvisibleArmorStand(entityId: Int)
 
+    fun invisibleItems(slots: List<EquipmentSlot>, invisible: Boolean)
+
     companion object{
         fun getSPlayer(p: Player): SPlayer {
             return fromPlayer(p)?:throw UnsupportedOperationException("SPlayer not supported mc_version ${Bukkit.getServer().minecraftVersion}.")
