@@ -44,6 +44,12 @@ class SDBCondition {
         return this
     }
 
+    fun like(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
+        append(Filters.regex(variable, value.toString()))
+        builder.append("$variable like ${modifySQLString(type?: SDBVariable.Text,value)}")
+        return this
+    }
+
     private fun append(filter: Bson): SDBCondition {
 
         val modifiedFilter = if (notMode) Filters.not(filter) else filter

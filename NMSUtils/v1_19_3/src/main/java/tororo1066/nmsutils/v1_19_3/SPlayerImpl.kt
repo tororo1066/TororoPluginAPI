@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.MenuType
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_19_R2.CraftEquipmentSlot
 import org.bukkit.craftbukkit.v1_19_R2.CraftServer
 import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
@@ -152,13 +153,14 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
         if (invisible){
             val packet = ClientboundSetEquipmentPacket(entityId, mutableListOf())
             slots.forEach {
-                packet.slots.add(Pair(CraftEquipmentSlot.getNMS(it),null))
+                packet.slots.add(Pair(CraftEquipmentSlot.getNMS(it),CraftItemStack.asNMSCopy(ItemStack(Material.AIR))))
             }
             handle.connection.send(packet)
         } else {
             val packet = ClientboundSetEquipmentPacket(entityId, mutableListOf())
             slots.forEach {
-                packet.slots.add(Pair(CraftEquipmentSlot.getNMS(it),CraftItemStack.asNMSCopy(inventory.getItem(it))))
+                val item = inventory.getItem(it)?: ItemStack(Material.AIR)
+                packet.slots.add(Pair(CraftEquipmentSlot.getNMS(it),CraftItemStack.asNMSCopy(item)))
             }
             handle.connection.send(packet)
         }
