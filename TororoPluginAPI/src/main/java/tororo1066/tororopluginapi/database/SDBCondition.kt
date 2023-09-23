@@ -10,86 +10,63 @@ class SDBCondition {
 
     private val builder = StringBuilder("where ")
     private var filter = Filters.empty()
-    private var orMode = false
-    private var andMode = false
-    private var notMode = false
 
     fun equal(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
-        append(Filters.eq(variable, value))
+        filter = Filters.eq(variable, value)
         builder.append("$variable = ${modifySQLString(type?: SDBVariable.Text,value)}")
         return this
     }
 
     fun orHigher(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
-        append(Filters.gte(variable, value))
+        filter = Filters.gte(variable, value)
         builder.append("$variable >= ${modifySQLString(type?: SDBVariable.Text,value)}")
         return this
     }
 
     fun orLower(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
-        append(Filters.lte(variable, value))
+        filter = Filters.lte(variable, value)
         builder.append("$variable <= ${modifySQLString(type?: SDBVariable.Text,value)}")
         return this
     }
 
     fun moreThan(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
-        append(Filters.gt(variable, value))
+        filter = Filters.gt(variable, value)
         builder.append("$variable > ${modifySQLString(type?: SDBVariable.Text,value)}")
         return this
     }
 
     fun lessThan(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
-        append(Filters.lt(variable, value))
+        filter = Filters.lt(variable, value)
         builder.append("$variable < ${modifySQLString(type?: SDBVariable.Text,value)}")
         return this
     }
 
     fun like(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
-        append(Filters.regex(variable, value.toString()))
+        filter = Filters.regex(variable, value.toString())
         builder.append("$variable like ${modifySQLString(type?: SDBVariable.Text,value)}")
         return this
     }
 
-    private fun append(filter: Bson): SDBCondition {
-
-        val modifiedFilter = if (notMode) Filters.not(filter) else filter
-        when {
-            andMode -> {
-                this.filter = Filters.and(this.filter, modifiedFilter)
-            }
-            orMode -> {
-                this.filter = Filters.or(this.filter, modifiedFilter)
-            }
-
-            else -> {
-                this.filter = modifiedFilter
-            }
-        }
-        notMode = false
-        andMode = false
-        orMode = false
-
+    fun and(condition: SDBCondition): SDBCondition {
+        this.filter = Filters.and(this.filter, condition.filter)
+        builder.append(" and (${replaceWhere(condition)})")
         return this
     }
 
-    fun and(): SDBCondition {
-        andMode = true
-        orMode = false
-        builder.append(" and ")
+    fun or(condition: SDBCondition): SDBCondition {
+        this.filter = Filters.or(this.filter, condition.filter)
+        builder.append(" or (${replaceWhere(condition)})")
         return this
     }
 
-    fun or(): SDBCondition {
-        orMode = true
-        andMode = false
-        builder.append(" or ")
+    fun not(condition: SDBCondition): SDBCondition {
+        this.filter = Filters.not(condition.filter)
+        builder.append(" not (${replaceWhere(condition)})")
         return this
     }
 
-    fun not(): SDBCondition {
-        notMode = true
-        builder.append(" not ")
-        return this
+    private fun replaceWhere(condition: SDBCondition): String {
+        return condition.build().replace("where ","")
     }
 
     fun build(): String {
