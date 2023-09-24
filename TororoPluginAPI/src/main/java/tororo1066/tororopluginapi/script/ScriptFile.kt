@@ -63,7 +63,7 @@ class ScriptFile(val file: File) {
             false
         }
         val actionString = lineString.split(" ")[0]
-        val action = actions[actionString.lowercase()]
+        val action = actions[actionString]
         if (action == null){
             if (!lineString.contains("="))
                 throw NullPointerException("Not found script action or variable function $actionString in ${file.name}(Line: ${line})")
