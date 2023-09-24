@@ -47,6 +47,12 @@ class SDBCondition {
         return this
     }
 
+    fun include(variable: String, values: List<Any>, type: SDBVariable.VariableType<*>? = null): SDBCondition {
+        filter = Filters.`in`(variable, values)
+        builder.append("$variable in (${values.joinToString(",") { modifySQLString(type?: SDBVariable.Text,it) }})")
+        return this
+    }
+
     fun and(condition: SDBCondition): SDBCondition {
         this.filter = Filters.and(this.filter, condition.filter)
         builder.append(" and (${replaceWhere(condition)})")
