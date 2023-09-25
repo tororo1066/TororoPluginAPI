@@ -31,13 +31,16 @@ abstract class AbstractAction(val internalName: String) {
     }
 
     protected fun getPlayer(scriptFile: ScriptFile, string: String): Player? {
+        scriptFile.debug("Get player from $string")
         val format = Expression(string, ScriptFile.configuration)
             .withValues(scriptFile.publicVariables)
             .evaluate().stringValue
         val uuid = UsefulUtility.sTry({ UUID.fromString(format) }, { null })
         return if (uuid == null){
+            scriptFile.debug("Get player from $format as name")
             format.toPlayer()
         } else {
+            scriptFile.debug("Get player from $format as uuid")
             uuid.toPlayer()
         }
     }

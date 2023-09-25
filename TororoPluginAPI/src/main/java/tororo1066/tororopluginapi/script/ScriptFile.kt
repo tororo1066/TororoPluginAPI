@@ -17,7 +17,9 @@ class ScriptFile(val file: File) {
     val publicVariables = HashMap<String, Any>()
     val breakFunction = HashMap<String, Boolean>()
     var returnFlag = false
-    internal var returnValue: Any? = null
+    var returnValue: Any? = null
+
+    var debug = false
 
     init {
         var index = 0
@@ -67,13 +69,20 @@ class ScriptFile(val file: File) {
         if (action == null){
             if (!lineString.contains("="))
                 throw NullPointerException("Not found script action or variable function $actionString in ${file.name}(Line: ${line})")
+            debug("Loading math action '$lineString' in ${file.name}(Line: ${line})...")
             return ActionData(MathAction(), this, lineString, line, space/2)
         }
         var formatLine = lineStr.replaceFirst("$actionString ", "")
         if (formatLine == lineStr){
             formatLine = lineStr.replaceFirst(actionString, "")
         }
+        debug("Loading action '$lineString' in ${file.name}(Line: ${line})...")
         return ActionData(action, this, formatLine, line, space/2)
+    }
+
+    fun debug(message: String){
+        if (!debug)return
+        Bukkit.getLogger().info("[Script Debug] $message")
     }
 
     companion object {
