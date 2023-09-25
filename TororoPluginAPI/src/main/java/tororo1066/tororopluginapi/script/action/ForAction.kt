@@ -41,7 +41,7 @@ class ForAction: AbstractAction("for") {
             scriptFile.breakFunction.remove(format)
         }
         when {
-             expr != null && expr.stringValue?.toIntRangeOrNull() != null -> {
+            expr != null && expr.stringValue?.toIntRangeOrNull() != null -> {
                 loop(expr.stringValue!!.toIntRange())
             }
 

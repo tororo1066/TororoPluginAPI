@@ -21,6 +21,10 @@ class ScriptFile(val file: File) {
 
     var debug = false
 
+    constructor(file: File, debug: Boolean): this(file){
+        this.debug = debug
+    }
+
     init {
         var index = 0
         file.readLines().forEach {
@@ -72,9 +76,9 @@ class ScriptFile(val file: File) {
             debug("Loading math action '$lineString' in ${file.name}(Line: ${line})...")
             return ActionData(MathAction(), this, lineString, line, space/2)
         }
-        var formatLine = lineStr.replaceFirst("$actionString ", "")
-        if (formatLine == lineStr){
-            formatLine = lineStr.replaceFirst(actionString, "")
+        var formatLine = lineString.replaceFirst("$actionString ", "")
+        if (formatLine == lineString){
+            formatLine = lineString.replaceFirst(actionString, "")
         }
         debug("Loading action '$lineString' in ${file.name}(Line: ${line})...")
         return ActionData(action, this, formatLine, line, space/2)
