@@ -1,6 +1,8 @@
 package tororo1066.tororopluginapi.script.action
 
+import com.ezylang.evalex.Expression
 import org.bukkit.entity.Player
+import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.script.ActionData
 import tororo1066.tororopluginapi.script.ScriptFile
 import tororo1066.tororopluginapi.utils.toPlayer
@@ -28,10 +30,13 @@ abstract class AbstractAction(val internalName: String) {
         return loadLine
     }
 
-    protected fun getPlayer(string: String): Player? {
-        val uuid = UUID.fromString(string)
+    protected fun getPlayer(scriptFile: ScriptFile, string: String): Player? {
+        val format = Expression(string, ScriptFile.configuration)
+            .withValues(scriptFile.publicVariables)
+            .evaluate().stringValue
+        val uuid = UsefulUtility.sTry({ UUID.fromString(format) }, { null })
         return if (uuid == null){
-            string.toPlayer()
+            format.toPlayer()
         } else {
             uuid.toPlayer()
         }
