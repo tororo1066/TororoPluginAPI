@@ -1,10 +1,9 @@
 package tororo1066.tororopluginapi.script.action
 
 import com.ezylang.evalex.Expression
-import tororo1066.tororopluginapi.script.ActionData
 import tororo1066.tororopluginapi.script.ScriptFile
-import tororo1066.tororopluginapi.utils.toIntRange
-import tororo1066.tororopluginapi.utils.toIntRangeOrNull
+import tororo1066.tororopluginapi.utils.toIntProgression
+import tororo1066.tororopluginapi.utils.toIntProgressionOrNull
 import java.util.UUID
 
 class ForAction: AbstractAction("for") {
@@ -41,8 +40,8 @@ class ForAction: AbstractAction("for") {
             scriptFile.breakFunction.remove(format)
         }
         when {
-            expr != null && expr.stringValue?.toIntRangeOrNull() != null -> {
-                loop(expr.stringValue!!.toIntRange())
+            expr != null && expr.stringValue?.toIntProgressionOrNull() != null -> {
+                loop(expr.stringValue!!.toIntProgression())
             }
 
             expr != null && expr.isArrayValue -> {

@@ -14,7 +14,7 @@ import tororo1066.tororopluginapi.otherClass.PlusInt.Companion.toPlusInt
 import tororo1066.tororopluginapi.otherClass.StrExcludeFileIllegalCharacter
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.sEvent.SEvent
-import tororo1066.tororopluginapi.utils.toIntRangeOrNull
+import tororo1066.tororopluginapi.utils.toIntProgressionOrNull
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.function.Consumer
@@ -158,8 +158,8 @@ class SInput(private val plugin: JavaPlugin) {
                     })
                     return date as? T
                 }
-                IntRange::class.java->{
-                    return value.toIntRangeOrNull() as? T
+                IntProgression::class.java->{
+                    return value.toIntProgressionOrNull() as? T
                 }
                 StrExcludeFileIllegalCharacter::class.java->{
                     if (value.matches(Regex("[(<|>:?\"/\\\\)*]")))return null
