@@ -37,9 +37,11 @@ abstract class AbstractAction(val internalName: String) {
     companion object {
         fun getPlayer(string: String, scriptFile: ScriptFile? = null): Player? {
             scriptFile?.debug("Get player from $string")
-            val format = Expression(string, ScriptFile.configuration)
-                .withValues(scriptFile?.publicVariables)
-                .evaluate().stringValue
+            val expr = Expression(string, ScriptFile.configuration)
+            if (scriptFile != null){
+                expr.withValues(scriptFile.publicVariables)
+            }
+            val format = expr.evaluate().stringValue
             val uuid = UsefulUtility.sTry({ UUID.fromString(format) }, { null })
             return if (uuid == null){
                 scriptFile?.debug("Get player from $format as name")
