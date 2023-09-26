@@ -7,7 +7,7 @@ class SendMessageAction: AbstractAction("sendMessage") {
 
     override fun invoke(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
         val split = line.split(" ")
-        val player = getPlayer(scriptFile, split[0])?:return
+        val player = getPlayer(split[0], scriptFile)?:return
         val message = split.drop(1).joinToString(" ").replace("&","§")
         player.sendMessage(message)
     }

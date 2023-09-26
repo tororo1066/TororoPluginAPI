@@ -7,6 +7,7 @@ import tororo1066.tororopluginapi.script.action.entity.player.SendMessageAction
 import tororo1066.tororopluginapi.script.action.hidden.ElseAction
 import tororo1066.tororopluginapi.script.action.inline.MathAction
 import tororo1066.tororopluginapi.script.expressionFunc.DateFunc
+import tororo1066.tororopluginapi.script.expressionFunc.IsOp
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -94,8 +95,11 @@ class ScriptFile(val file: File) {
         val configuration: ExpressionConfiguration =
             ExpressionConfiguration.defaultConfiguration()
             .apply {
-                functionDictionary
-                    .addFunction("DATE", DateFunc())
+                functionDictionary.apply {
+                    addFunction("func_now", DateFunc())
+                    addFunction("func_isOp", IsOp())
+                }
+
             }
 
         fun actionPair(vararg action: AbstractAction): Map<String,AbstractAction> {
