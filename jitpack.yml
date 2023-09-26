@@ -1,11 +1,6 @@
 jdk:
   - openjdk17
 
-modules:
-  - TororoPluginAPI
-  - TororoPluginAPIFolia
-  - NMSUtils/base
-
 before_install:
   - source "$HOME/.sdkman/bin/sdkman-init.sh"
   - sdk update
