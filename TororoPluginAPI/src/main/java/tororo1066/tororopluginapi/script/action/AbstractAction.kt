@@ -31,7 +31,7 @@ abstract class AbstractAction(val internalName: String) {
     }
 
     protected fun getPlayer(string: String, scriptFile: ScriptFile? = null): Player? {
-        return getPlayer(string, scriptFile)
+        return Companion.getPlayer(string, scriptFile)
     }
 
     companion object {
