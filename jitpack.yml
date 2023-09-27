@@ -8,4 +8,6 @@ before_install:
   - sdk use java 17.0.2-open
 
 install:
-  - ./gradlew assemble publishToMavenLocal
+  - ./gradlew TororoPluginAPI:publishToMavenLocal
+  - ./gradlew TororoPluginAPIFolia:publishToMavenLocal
+  - ./gradlew NMSUtils:base:publishToMavenLocal
