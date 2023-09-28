@@ -32,7 +32,7 @@ import java.util.UUID
 
 class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.level.craftServer, p.handle) {
 
-    override val player: Player
+    override val bukkitPlayer: Player
         get() = this
 
     override fun updateInventoryTitle(inv: Inventory, title: String) {

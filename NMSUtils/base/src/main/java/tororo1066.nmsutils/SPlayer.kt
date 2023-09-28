@@ -13,7 +13,7 @@ import java.util.UUID
 
 interface SPlayer {
 
-    val player: Player
+    val bukkitPlayer: Player
 
     fun updateInventoryTitle(inv: Inventory, title: String)
 
