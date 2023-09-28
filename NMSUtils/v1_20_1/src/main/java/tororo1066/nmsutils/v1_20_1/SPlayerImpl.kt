@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.MenuType
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld
@@ -28,6 +29,9 @@ import tororo1066.nmsutils.SPlayer
 import tororo1066.nmsutils.SPlayer.Companion.hiddenEntities
 
 class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.level().craftServer, p.handle) {
+
+    override val player: Player
+        get() = this
 
     override fun updateInventoryTitle(inv: Inventory, title: String) {
         val con = when(inv.size){
@@ -141,6 +145,23 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
     override fun removeFakeInvisibleArmorStand(entityId: Int) {
         val packet = ClientboundRemoveEntitiesPacket(entityId)
         handle.connection.send(packet)
+    }
+
+    override fun invisibleItems(slots: List<EquipmentSlot>, invisible: Boolean) {
+        if (invisible){
+            val packet = ClientboundSetEquipmentPacket(entityId, mutableListOf())
+            slots.forEach {
+                packet.slots.add(Pair(CraftEquipmentSlot.getNMS(it),CraftItemStack.asNMSCopy(ItemStack(Material.AIR))))
+            }
+            handle.connection.send(packet)
+        } else {
+            val packet = ClientboundSetEquipmentPacket(entityId, mutableListOf())
+            slots.forEach {
+                val item = inventory.getItem(it)?: ItemStack(Material.AIR)
+                packet.slots.add(Pair(CraftEquipmentSlot.getNMS(it),CraftItemStack.asNMSCopy(item)))
+            }
+            handle.connection.send(packet)
+        }
     }
 
 }

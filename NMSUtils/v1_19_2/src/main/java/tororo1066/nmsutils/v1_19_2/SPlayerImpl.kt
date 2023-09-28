@@ -32,6 +32,9 @@ import java.util.UUID
 
 class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.level.craftServer, p.handle) {
 
+    override val player: Player
+        get() = this
+
     override fun updateInventoryTitle(inv: Inventory, title: String) {
         val con = when(inv.size){
             9-> MenuType.GENERIC_9x1

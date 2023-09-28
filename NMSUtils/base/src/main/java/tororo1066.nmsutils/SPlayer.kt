@@ -11,7 +11,9 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.util.UUID
 
-interface SPlayer: Player {
+interface SPlayer {
+
+    val player: Player
 
     fun updateInventoryTitle(inv: Inventory, title: String)
 
