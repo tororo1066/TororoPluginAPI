@@ -16,9 +16,10 @@ import tororo1066.tororopluginapi.sEvent.SEvent
 import kotlin.math.ceil
 import kotlin.random.Random
 
-class SInteractItemManager(val plugin: JavaPlugin, var disableCoolTimeView: Boolean = false) {
+class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean = false) {
 
     val items = HashMap<ItemStack,SInteractItem>()
+    val sEvent = SEvent(plugin)
 
     fun createSInteractItem(sItem: SItem): SInteractItem {
         return SInteractItem(this,sItem)
@@ -40,8 +41,16 @@ class SInteractItemManager(val plugin: JavaPlugin, var disableCoolTimeView: Bool
         }
     }
 
+    fun unregister() {
+        sEvent.unregisterAll()
+        items.values.forEach {
+            it.task?.cancel()
+        }
+        items.clear()
+    }
+
     init {
-        SEvent(plugin).register(PlayerInteractEvent::class.java) { e ->
+        sEvent.register(PlayerInteractEvent::class.java) { e ->
             if (!e.hasItem())return@register
             val item = e.item!!.clone()
             item.amount = 1
@@ -54,7 +63,6 @@ class SInteractItemManager(val plugin: JavaPlugin, var disableCoolTimeView: Bool
             val interactItem = items[item]!!
             if (interactItem.interactCoolDown != 0){
                 e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent())
-
                 return@register
             }
             interactItem.interactEvents.forEach {
@@ -75,7 +83,7 @@ class SInteractItemManager(val plugin: JavaPlugin, var disableCoolTimeView: Bool
             }.runTaskTimer(plugin,0,1)
         }
 
-        SEvent(plugin).register(PlayerDropItemEvent::class.java) { e ->
+        sEvent.register(PlayerDropItemEvent::class.java) { e ->
             val item = e.itemDrop.itemStack.clone()
             item.amount = 1
             if (!items.containsKey(item))return@register
@@ -87,7 +95,7 @@ class SInteractItemManager(val plugin: JavaPlugin, var disableCoolTimeView: Bool
 
         if (!disableCoolTimeView){
 
-            SEvent(plugin).register(PlayerItemHeldEvent::class.java) { e ->
+            sEvent.register(PlayerItemHeldEvent::class.java) { e ->
                 val previousItem = e.player.inventory.getItem(e.previousSlot)
                 val newItem = e.player.inventory.getItem(e.newSlot)
 

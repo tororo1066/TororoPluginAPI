@@ -160,11 +160,17 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
         } else {
             val packet = ClientboundSetEquipmentPacket(entityId, mutableListOf())
             slots.forEach {
-                val item = inventory.getItem(it)?: ItemStack(Material.AIR)
+                val item = inventory.getItem(it)
                 packet.slots.add(Pair(CraftEquipmentSlot.getNMS(it),CraftItemStack.asNMSCopy(item)))
             }
             handle.connection.send(packet)
         }
+    }
+
+    override fun setFakeItem(slot: EquipmentSlot, item: ItemStack) {
+        val packet = ClientboundSetEquipmentPacket(entityId, mutableListOf())
+        packet.slots.add(Pair(CraftEquipmentSlot.getNMS(slot),CraftItemStack.asNMSCopy(item)))
+        handle.connection.send(packet)
     }
 
 }

@@ -1,17 +1,19 @@
 package tororo1066.tororopluginapi
 
+import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
-import net.md_5.bungee.api.chat.hover.content.Item
 import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 @Suppress("UNUSED", "DEPRECATION")
@@ -76,6 +78,12 @@ class SStr: Cloneable {
         return this
     }
 
+    fun font(font: String): SStr {
+        this.componentBuilder.font(Key.key(font))
+        this.md5ComponentBuilder.font(font)
+        return this
+    }
+
 
     operator fun plus(any: Any): SStr {
         return SStr(this).append(any)
@@ -85,7 +93,7 @@ class SStr: Cloneable {
         append(any)
     }
 
-    fun toInt(): Int?{
+    fun toInt(): Int? {
         return toString().replace(",","").toIntOrNull()
     }
 
@@ -113,43 +121,42 @@ class SStr: Cloneable {
     }
 
     fun commandText(command: String): SStr {
-        return clickText(ClickEvent.Action.RUN_COMMAND, command)
+        return clickText(ClickAction.RUN_COMMAND, command)
     }
 
     fun suggestText(command: String): SStr {
-        return clickText(ClickEvent.Action.SUGGEST_COMMAND,command)
+        return clickText(ClickAction.SUGGEST_COMMAND,command)
     }
 
-    /**
-     * Only Supported Paper
-     */
-    fun clickText(action: ClickEvent.Action, actionString: String): SStr {
-        componentBuilder.clickEvent(ClickEvent.clickEvent(action,actionString))
-        md5ComponentBuilder.event(net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.valueOf(action.name),actionString))
-        return this
-    }
-
-    fun clickText(action: net.md_5.bungee.api.chat.ClickEvent.Action, actionString: String): SStr {
-        md5ComponentBuilder.event(net.md_5.bungee.api.chat.ClickEvent(action,actionString))
+    fun clickText(action: ClickAction, actionString: String): SStr {
+        componentBuilder.clickEvent(ClickEvent.clickEvent(action.getPaperAction(),actionString))
+        md5ComponentBuilder.event(net.md_5.bungee.api.chat.ClickEvent(action.getBukkitAction(),actionString))
         return this
     }
 
     /**
      * Only Supported Paper
-     * @since 1.17.1
      */
     fun showItem(item: ItemStack){
         checkPaper()
         componentBuilder.hoverEvent(item)
         md5ComponentBuilder.event(net.md_5.bungee.api.chat.HoverEvent(
                 net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_ITEM, Bukkit.getItemFactory().hoverContentOf(item))
-        ) // Only supported Paper because Bukkit.getItemFactory().hoverContentOf(item) is Paper API
+        ) // Only supported Paper because Bukkit.getItemFactory().hoverContentOf(item) is Paper API function.
     }
     fun sendMessage(commandSender: CommandSender){
         if (isPaper()){
             commandSender.sendMessage(toPaperComponent())
         } else {
             commandSender.sendMessage(*toBukkitComponent())
+        }
+    }
+
+    fun actionBar(player: Player){
+        if (isPaper()){
+            player.sendActionBar(toPaperComponent())
+        } else {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, *toBukkitComponent())
         }
     }
 
@@ -165,6 +172,23 @@ class SStr: Cloneable {
 
     enum class DisableOption {
         COLOR_CODE,
+    }
+
+    enum class ClickAction {
+
+        RUN_COMMAND,
+        SUGGEST_COMMAND,
+        OPEN_URL,
+        COPY_TO_CLIPBOARD,
+        CHANGE_PAGE;
+
+        fun getBukkitAction(): net.md_5.bungee.api.chat.ClickEvent.Action {
+            return net.md_5.bungee.api.chat.ClickEvent.Action.valueOf(this.name)
+        }
+
+        fun getPaperAction(): ClickEvent.Action {
+            return ClickEvent.Action.valueOf(this.name)
+        }
     }
 
     public override fun clone(): SStr {
@@ -186,7 +210,7 @@ class SStr: Cloneable {
         if (!isPaper()) throw UnsupportedOperationException("This function is available only Paper.")
     }
 
-    companion object{
+    companion object {
 
         fun Component.toSStr(): SStr {
             return SStr(this)

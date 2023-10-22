@@ -163,4 +163,10 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
             handle.connection.send(packet)
         }
     }
+
+    override fun setFakeItem(slot: EquipmentSlot, item: ItemStack) {
+        val packet = ClientboundSetEquipmentPacket(entityId, mutableListOf())
+        packet.slots.add(Pair(CraftEquipmentSlot.getNMS(slot),CraftItemStack.asNMSCopy(item)))
+        handle.connection.send(packet)
+    }
 }
