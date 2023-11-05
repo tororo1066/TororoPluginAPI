@@ -13,8 +13,8 @@ import java.util.function.BiFunction
 class SInteractItem(private val manager: SInteractItemManager, private val itemStack: ItemStack) : ItemStack(itemStack) {
 
     val interactEvents = ArrayList<(PlayerInteractEvent, SInteractItem)->Boolean>()
-    val dropEvents = ArrayList<(PlayerDropItemEvent, SInteractItem)->Boolean>()
-    val swapEvents = ArrayList<(PlayerSwapHandItemsEvent, SInteractItem)->Boolean>()
+    val dropEvents = ArrayList<(PlayerDropItemEvent, SInteractItem)->Unit>()
+    val swapEvents = ArrayList<(PlayerSwapHandItemsEvent, SInteractItem)->Unit>()
     var interactCoolDown = 0
     var initialCoolDown = 0
 
@@ -35,13 +35,13 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
         return this
     }
 
-    fun setDropEvent(e: (PlayerDropItemEvent,SInteractItem) -> Boolean): SInteractItem {
+    fun setDropEvent(e: (PlayerDropItemEvent,SInteractItem) -> Unit): SInteractItem {
         dropEvents.add(e)
         manager.items[itemStack] = this
         return this
     }
 
-    fun setSwapEvent(e: (PlayerSwapHandItemsEvent,SInteractItem) -> Boolean): SInteractItem {
+    fun setSwapEvent(e: (PlayerSwapHandItemsEvent,SInteractItem) -> Unit): SInteractItem {
         swapEvents.add(e)
         manager.items[itemStack] = this
         return this
