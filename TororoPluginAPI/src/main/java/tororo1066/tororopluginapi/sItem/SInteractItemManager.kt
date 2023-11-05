@@ -53,14 +53,14 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
     init {
         sEvent.register(PlayerInteractEvent::class.java) { e ->
             if (!e.hasItem())return@register
-            val item = e.item!!.clone()
-            item.amount = 1
-            if (!items.containsKey(item))return@register
-            if (e.player.inventory.itemInMainHand.isSimilar(item)){
+            if (e.player.inventory.itemInMainHand.isSimilar(e.item!!)){
                 if (e.hand != EquipmentSlot.HAND)return@register
             } else {
                 if (e.hand != EquipmentSlot.OFF_HAND)return@register
             }
+            val item = e.item!!.clone()
+            item.amount = 1
+            if (!items.containsKey(item))return@register
             val interactItem = items[item]!!
             if (interactItem.interactCoolDown != 0){
                 e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent())
