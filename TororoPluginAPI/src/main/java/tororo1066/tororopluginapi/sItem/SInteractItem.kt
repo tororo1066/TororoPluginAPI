@@ -25,7 +25,7 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
     constructor(manager: SInteractItemManager,sItem: SItem): this(manager, ItemStack(sItem))
 
     init {
-        manager.items[itemStack.clone().apply { amount = 1 }] = this
+        manager.items[itemStack.apply { amount = 1 }] = this
     }
 
     fun setInteractEvent(e: (PlayerInteractEvent,SInteractItem) -> Boolean): SInteractItem {

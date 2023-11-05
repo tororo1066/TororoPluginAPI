@@ -96,10 +96,8 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
         }
 
         sEvent.register(PlayerSwapHandItemsEvent::class.java) { e ->
-            val mainHandItem = e.mainHandItem?.clone()?.apply { amount = 1 }
-            val offHandItem = e.offHandItem?.clone()?.apply { amount = 1 }
-
-            if (mainHandItem == null && offHandItem == null)return@register
+            val mainHandItem = e.offHandItem?.clone()?.apply { amount = 1 }
+            val offHandItem = e.mainHandItem?.clone()?.apply { amount = 1 }
 
             if (mainHandItem != null){
                 val interactItem = getItem(mainHandItem)?:return@register
