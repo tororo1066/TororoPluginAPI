@@ -12,13 +12,11 @@ class TororoPlugin: SJavaPlugin() {
         val commandLogPlayers = MultipleValueMap<UUID>()
         val prefix = SStr("&6[&aTororo&5Plugin&cAPI&6]").toString()
         lateinit var plugin: TororoPlugin
-        lateinit var sDatabase: SDatabase
     }
 
     override fun onStart() {
         saveDefaultConfig()
         plugin = this
-        sDatabase = SDatabase.newInstance(this)
     }
 
 }

@@ -28,3 +28,18 @@ fun String.toIntProgressionOrNull(): IntProgression? {
 fun String.isIntProgression(): Boolean {
     return this.toIntProgressionOrNull() != null
 }
+
+fun String.toIntRange(): IntRange {
+    if (!this.contains(".."))throw NumberFormatException("$this is not IntRange.")
+    val split = this.split("..")
+    if (!split[0].isInt() || !split[1].isInt())throw NumberFormatException("$this is not IntRange.")
+    return IntRange(split[0].toInt(), split[1].toInt())
+}
+
+fun String.toIntRangeOrNull(): IntRange? {
+    return UsefulUtility.sTry({ this.toIntRange() }) { null }
+}
+
+fun String.isIntRange(): Boolean {
+    return this.toIntRangeOrNull() != null
+}

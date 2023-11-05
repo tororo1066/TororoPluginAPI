@@ -1,8 +1,8 @@
 package tororo1066.tororopluginapi.otherClass
 
-open class Dict: HashMapPlus<String,AnyObject>() {
+open class Dict: MultipleValueMap<String>() {
 
-    operator fun set(key: String, value: Any): AnyObject? {
+    override operator fun set(key: String, value: Any): AnyObject? {
         return put(key, AnyObject(value))
     }
 

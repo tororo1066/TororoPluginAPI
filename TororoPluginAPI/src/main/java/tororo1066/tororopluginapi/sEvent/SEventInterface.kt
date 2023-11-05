@@ -22,6 +22,10 @@ abstract class SEventInterface<T : Event>(val plugin : JavaPlugin, val event : C
         this.priority = priority
     }
 
+    constructor(event : Class<T>, priority: EventPriority) : this(SJavaPlugin.plugin, event){
+        this.priority = priority
+    }
+
     private fun register(){
         Bukkit.getServer().pluginManager.registerEvent(event,this,priority,this,plugin)
     }

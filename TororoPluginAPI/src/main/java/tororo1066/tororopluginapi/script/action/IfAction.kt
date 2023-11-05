@@ -16,6 +16,9 @@ class IfAction: AbstractAction("if") {
             }
 
             lines.forEach {
+                if (scriptFile.returnFlag){
+                    return
+                }
                 it.invoke()
             }
         } else {
@@ -30,6 +33,9 @@ class IfAction: AbstractAction("if") {
             }
 
             lines.forEach {
+                if (scriptFile.returnFlag){
+                    return
+                }
                 it.invoke()
             }
         }

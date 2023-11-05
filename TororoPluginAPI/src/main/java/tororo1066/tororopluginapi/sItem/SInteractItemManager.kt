@@ -6,6 +6,7 @@ import org.bukkit.Material
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
+import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
@@ -66,7 +67,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
                 return@register
             }
             interactItem.interactEvents.forEach {
-                if (!it.apply(e,interactItem))return@register
+                if (!it.invoke(e,interactItem))return@register
             }
 
             interactItem.interactCoolDown = interactItem.initialCoolDown
@@ -89,7 +90,32 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
             if (!items.containsKey(item))return@register
             val interactItem = items[item]!!
             interactItem.dropEvents.forEach {
-                it.accept(e,interactItem)
+                it.invoke(e,interactItem)
+            }
+        }
+
+        sEvent.register(PlayerSwapHandItemsEvent::class.java) { e ->
+            val mainHandItem = e.mainHandItem?.clone()?.apply { amount = 1 }
+            val offHandItem = e.offHandItem?.clone()?.apply { amount = 1 }
+
+            if (mainHandItem == null && offHandItem == null)return@register
+
+            if (mainHandItem != null){
+                if (items.containsKey(mainHandItem)){
+                    val interactItem = items[mainHandItem]!!
+                    interactItem.swapEvents.forEach {
+                        it.invoke(e,interactItem)
+                    }
+                }
+            }
+
+            if (offHandItem != null){
+                if (items.containsKey(offHandItem)){
+                    val interactItem = items[offHandItem]!!
+                    interactItem.swapEvents.forEach {
+                        it.invoke(e,interactItem)
+                    }
+                }
             }
         }
 

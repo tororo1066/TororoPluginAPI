@@ -3,6 +3,7 @@ package tororo1066.tororopluginapi.sItem
 import org.bukkit.Material
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
@@ -11,8 +12,9 @@ import java.util.function.BiFunction
 
 class SInteractItem(private val manager: SInteractItemManager, private val itemStack: ItemStack) : ItemStack(itemStack) {
 
-    val interactEvents = ArrayList<BiFunction<PlayerInteractEvent,SInteractItem,Boolean>>()
-    val dropEvents = ArrayList<BiConsumer<PlayerDropItemEvent,SInteractItem>>()
+    val interactEvents = ArrayList<(PlayerInteractEvent, SInteractItem)->Boolean>()
+    val dropEvents = ArrayList<(PlayerDropItemEvent, SInteractItem)->Boolean>()
+    val swapEvents = ArrayList<(PlayerSwapHandItemsEvent, SInteractItem)->Boolean>()
     var interactCoolDown = 0
     var initialCoolDown = 0
 
@@ -27,14 +29,20 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
         manager.items[itemStack] = this
     }
 
-    fun setInteractEvent(e: BiFunction<PlayerInteractEvent,SInteractItem,Boolean>): SInteractItem {
+    fun setInteractEvent(e: (PlayerInteractEvent,SInteractItem) -> Boolean): SInteractItem {
         interactEvents.add(e)
         manager.items[itemStack] = this
         return this
     }
 
-    fun setDropEvent(e: BiConsumer<PlayerDropItemEvent,SInteractItem>): SInteractItem {
+    fun setDropEvent(e: (PlayerDropItemEvent,SInteractItem) -> Boolean): SInteractItem {
         dropEvents.add(e)
+        manager.items[itemStack] = this
+        return this
+    }
+
+    fun setSwapEvent(e: (PlayerSwapHandItemsEvent,SInteractItem) -> Boolean): SInteractItem {
+        swapEvents.add(e)
         manager.items[itemStack] = this
         return this
     }

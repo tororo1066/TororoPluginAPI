@@ -5,6 +5,7 @@ import org.bukkit.Material
 import org.bukkit.block.banner.Pattern
 import org.bukkit.block.banner.PatternType
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
@@ -132,6 +133,28 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
         numItems.putAll(mapOf(Pair(46,zero),Pair(37,one),Pair(38,two),Pair(39,three)
             ,Pair(28,four),Pair(29,five),Pair(30,six),Pair(19,seven),Pair(20,eight),Pair(21,nine)
         ))
+
+        setOnClick {
+
+            if (it.clickedInventory == inv) it.isCancelled = true
+
+            when(it.click){
+                ClickType.NUMBER_KEY->{
+                    it.isCancelled = true
+                    clickAction(it.hotbarButton+1)
+                }
+                ClickType.DROP->{
+                    it.isCancelled = true
+                    clickAction(0)
+                }
+                ClickType.SWAP_OFFHAND->{
+                    it.isCancelled = true
+                    nowNum = 0
+                    displayNumber()
+                }
+                else ->{}
+            }
+        }
     }
 
     var nowNum = 0L
@@ -180,33 +203,7 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
 
         for ((index, num) in numItems.entries.withIndex()){
             val item = SInventoryItem(num.value).setDisplayName("$index").setCanClick(false).setClickEvent {
-                var str = nowNum.toString()
-
-                if (nowNum == 0L){
-                    if (index == 0)return@setClickEvent
-                    str = index.toString()
-                } else {
-                    str += index
-                }
-
-                if (str.length > maxDigits){
-                    val builder = SStr()
-                    for (i in 1..maxDigits){
-                        builder.append("9")
-                    }
-                    nowNum = builder.toString().toLong()
-                    displayNumber()
-                    return@setClickEvent
-                }
-
-                if (str.toInt() > maxNum && maxNum != -1L){
-                    nowNum = str.toLong()
-                    displayNumber()
-                    return@setClickEvent
-                }
-
-                nowNum = str.toLong()
-                displayNumber()
+                clickAction(index)
             }
 
             setItem(num.key, item)
@@ -217,6 +214,36 @@ class NumericInputInventory(plugin: JavaPlugin, name: String): SInventory(plugin
             displayNumber()
         }
         setItem(48,deleteItem)
+    }
+
+    fun clickAction(num: Int){
+        var str = nowNum.toString()
+
+        if (nowNum == 0L){
+            if (num == 0)return
+            str = num.toString()
+        } else {
+            str += num
+        }
+
+        if (str.length > maxDigits){
+            val builder = SStr()
+            for (i in 1..maxDigits){
+                builder.append("9")
+            }
+            nowNum = builder.toString().toLong()
+            displayNumber()
+            return
+        }
+
+        if (str.toInt() > maxNum && maxNum != -1L){
+            nowNum = str.toLong()
+            displayNumber()
+            return
+        }
+
+        nowNum = str.toLong()
+        displayNumber()
     }
 
     fun renderButton(){
