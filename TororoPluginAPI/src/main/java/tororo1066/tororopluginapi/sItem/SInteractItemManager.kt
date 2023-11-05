@@ -1,7 +1,6 @@
 package tororo1066.tororopluginapi.sItem
 
 import net.md_5.bungee.api.ChatMessageType
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
@@ -50,6 +49,10 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
         items.clear()
     }
 
+    private fun getItem(itemStack: ItemStack): SInteractItem? {
+        return items.values.firstOrNull { it.equalFunc(itemStack,it) }
+    }
+
     init {
         sEvent.register(PlayerInteractEvent::class.java) { e ->
             if (!e.hasItem())return@register
@@ -60,8 +63,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
             }
             val item = e.item!!.clone()
             item.amount = 1
-            if (!items.containsKey(item))return@register
-            val interactItem = items[item]!!
+            val interactItem = getItem(item)?:return@register
             if (interactItem.interactCoolDown != 0){
                 e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent())
                 return@register
@@ -87,8 +89,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
         sEvent.register(PlayerDropItemEvent::class.java) { e ->
             val item = e.itemDrop.itemStack.clone()
             item.amount = 1
-            if (!items.containsKey(item))return@register
-            val interactItem = items[item]!!
+            val interactItem = getItem(item)?:return@register
             interactItem.dropEvents.forEach {
                 it.invoke(e,interactItem)
             }
@@ -101,20 +102,16 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
             if (mainHandItem == null && offHandItem == null)return@register
 
             if (mainHandItem != null){
-                if (items.containsKey(mainHandItem)){
-                    val interactItem = items[mainHandItem]!!
-                    interactItem.swapEvents.forEach {
-                        it.invoke(e,interactItem)
-                    }
+                val interactItem = getItem(mainHandItem)?:return@register
+                interactItem.swapEvents.forEach {
+                    it.invoke(e,interactItem)
                 }
             }
 
             if (offHandItem != null){
-                if (items.containsKey(offHandItem)){
-                    val interactItem = items[offHandItem]!!
-                    interactItem.swapEvents.forEach {
-                        it.invoke(e,interactItem)
-                    }
+                val interactItem = getItem(offHandItem)?:return@register
+                interactItem.swapEvents.forEach {
+                    it.invoke(e,interactItem)
                 }
             }
         }
@@ -130,41 +127,37 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
                 if (previousItem != null){
                     val item = previousItem.clone()
                     item.amount = 1
-                    if (items.containsKey(item)){
-                        val interactItem = items[item]!!
-                        interactItem.task?.cancel()
-                        e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("").toBukkitComponent())
-                    }
+                    val interactItem = getItem(item)?:return@register
+                    interactItem.task?.cancel()
+                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("").toBukkitComponent())
                 }
 
                 if (newItem != null){
                     val item = newItem.clone()
                     item.amount = 1
-                    if (items.containsKey(item)){
-                        val interactItem = items[item]!!
-                        interactItem.task = object : BukkitRunnable() {
-                            override fun run() {
-                                val mainHandItem = e.player.inventory.itemInMainHand.clone()
-                                val offHandItem = e.player.inventory.itemInOffHand.clone()
-                                if (!item.isSimilar(mainHandItem) && !item.isSimilar(offHandItem)) {
-                                    cancel()
-                                    return
-                                }
-                                if (interactItem.interactCoolDown <= 0) {
-                                    e.player.spigot().sendMessage(
-                                        ChatMessageType.ACTION_BAR,
-                                        *SStr("&a&l使用可能！").toBukkitComponent()
-                                    )
-                                } else {
-                                    e.player.spigot().sendMessage(
-                                        ChatMessageType.ACTION_BAR,
-                                        *SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent()
-                                    )
-                                }
-
+                    val interactItem = getItem(item)?:return@register
+                    interactItem.task = object : BukkitRunnable() {
+                        override fun run() {
+                            val mainHandItem = e.player.inventory.itemInMainHand.clone()
+                            val offHandItem = e.player.inventory.itemInOffHand.clone()
+                            if (!item.isSimilar(mainHandItem) && !item.isSimilar(offHandItem)) {
+                                cancel()
+                                return
                             }
-                        }.runTaskTimer(plugin,1, 1)
-                    }
+                            if (interactItem.interactCoolDown <= 0) {
+                                e.player.spigot().sendMessage(
+                                    ChatMessageType.ACTION_BAR,
+                                    *SStr("&a&l使用可能！").toBukkitComponent()
+                                )
+                            } else {
+                                e.player.spigot().sendMessage(
+                                    ChatMessageType.ACTION_BAR,
+                                    *SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent()
+                                )
+                            }
+
+                        }
+                    }.runTaskTimer(plugin,1, 1)
                 }
 
             }

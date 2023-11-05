@@ -7,8 +7,6 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
-import java.util.function.BiConsumer
-import java.util.function.BiFunction
 
 class SInteractItem(private val manager: SInteractItemManager, private val itemStack: ItemStack) : ItemStack(itemStack) {
 
@@ -18,30 +16,35 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
     var interactCoolDown = 0
     var initialCoolDown = 0
 
+    var equalFunc: (ItemStack, SInteractItem) -> Boolean =  { itemStack, sInteractItem -> itemStack == sInteractItem }
+
     var task: BukkitTask? = null
 
     constructor(manager: SInteractItemManager,material: Material): this(manager, ItemStack(material))
 
+    constructor(manager: SInteractItemManager,sItem: SItem): this(manager, ItemStack(sItem))
+
     init {
-        itemStack.amount = 1
-        manager.items[itemStack] = this
+        manager.items[itemStack.clone().apply { amount = 1 }] = this
     }
 
     fun setInteractEvent(e: (PlayerInteractEvent,SInteractItem) -> Boolean): SInteractItem {
         interactEvents.add(e)
-        manager.items[itemStack] = this
         return this
     }
 
     fun setDropEvent(e: (PlayerDropItemEvent,SInteractItem) -> Unit): SInteractItem {
         dropEvents.add(e)
-        manager.items[itemStack] = this
         return this
     }
 
     fun setSwapEvent(e: (PlayerSwapHandItemsEvent,SInteractItem) -> Unit): SInteractItem {
         swapEvents.add(e)
-        manager.items[itemStack] = this
+        return this
+    }
+
+    fun setEqualFunc(func: (ItemStack, SInteractItem) -> Boolean): SInteractItem {
+        equalFunc = func
         return this
     }
 
