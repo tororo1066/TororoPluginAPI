@@ -11,6 +11,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
+import tororo1066.tororopluginapi.SDebug
+import tororo1066.tororopluginapi.SDebug.Companion.sendDebug
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.sEvent.SEvent
 import kotlin.math.ceil
@@ -100,14 +102,18 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
             val offHandItem = e.player.inventory.itemInOffHand.clone().apply { amount = 1 }
 
             if (!mainHandItem.type.isAir){
+                e.player.sendDebug(1, "§7[TPA] [SInteractManager] [PlayerSwapHandItemsEvent] mainHandItem: ${mainHandItem.type}")
                 val interactItem = getItem(mainHandItem)?:return@register
+                e.player.sendDebug(1, "§7[TPA] [SInteractManager] [PlayerSwapHandItemsEvent] Invoke mainHandItem swapEvents...")
                 interactItem.swapEvents.forEach {
                     it.invoke(e,interactItem)
                 }
             }
 
             if (!offHandItem.type.isAir){
+                e.player.sendDebug(1, "§7[TPA] [SInteractManager] [PlayerSwapHandItemsEvent] offHandItem: ${offHandItem.type}")
                 val interactItem = getItem(offHandItem)?:return@register
+                e.player.sendDebug(1, "§7[TPA] [SInteractManager] [PlayerSwapHandItemsEvent] Invoke offHandItem swapEvents...")
                 interactItem.swapEvents.forEach {
                     it.invoke(e,interactItem)
                 }
