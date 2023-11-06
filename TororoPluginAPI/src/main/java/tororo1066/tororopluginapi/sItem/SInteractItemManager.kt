@@ -100,6 +100,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
             val offHandItem = e.mainHandItem?.clone()?.apply { amount = 1 }
 
             if (mainHandItem != null){
+                e.player.sendMessage(mainHandItem.type.name)
                 val interactItem = getItem(mainHandItem)?:return@register
                 interactItem.swapEvents.forEach {
                     it.invoke(e,interactItem)
@@ -107,6 +108,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
             }
 
             if (offHandItem != null){
+                e.player.sendMessage(offHandItem.type.name)
                 val interactItem = getItem(offHandItem)?:return@register
                 interactItem.swapEvents.forEach {
                     it.invoke(e,interactItem)
