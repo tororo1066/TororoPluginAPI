@@ -96,19 +96,17 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
         }
 
         sEvent.register(PlayerSwapHandItemsEvent::class.java) { e ->
-            val mainHandItem = e.offHandItem?.clone()?.apply { amount = 1 }
-            val offHandItem = e.mainHandItem?.clone()?.apply { amount = 1 }
+            val mainHandItem = e.player.inventory.itemInMainHand.clone().apply { amount = 1 }
+            val offHandItem = e.player.inventory.itemInOffHand.clone().apply { amount = 1 }
 
-            if (mainHandItem != null){
-                e.player.sendMessage(mainHandItem.type.name)
+            if (!mainHandItem.type.isAir){
                 val interactItem = getItem(mainHandItem)?:return@register
                 interactItem.swapEvents.forEach {
                     it.invoke(e,interactItem)
                 }
             }
 
-            if (offHandItem != null){
-                e.player.sendMessage(offHandItem.type.name)
+            if (!offHandItem.type.isAir){
                 val interactItem = getItem(offHandItem)?:return@register
                 interactItem.swapEvents.forEach {
                     it.invoke(e,interactItem)

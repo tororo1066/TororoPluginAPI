@@ -12,7 +12,7 @@ abstract class SharedSInventory(plugin : JavaPlugin, name : String, row : Int): 
 
     override var savePlaceItems: Boolean
         get() = super.savePlaceItems
-        set(value) {
+        set(_) {
             plugin.logger.warning("SharedSInventory not settable savePlaceItems.")
         }
 

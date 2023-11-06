@@ -13,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
-import tororo1066.tororopluginapi.nbt.ItemStackPersistent
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -203,12 +202,12 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
 
 
     /**
-     * @param csm カスタムモデルデータ
+     * @param cmd カスタムモデルデータ
      * @return 変更したアイテム
      */
-    open fun setCustomModelData(csm : Int): SItem {
+    open fun setCustomModelData(cmd : Int): SItem {
         val meta = itemMeta
-        meta.setCustomModelData(csm)
+        meta.setCustomModelData(cmd)
         itemMeta = meta
         return this
     }

@@ -1,26 +1,20 @@
 package tororo1066.tororopluginapi.sInventory
 
-import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.NamespacedKey
 import org.bukkit.Sound
 import org.bukkit.block.banner.Pattern
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.BannerMeta
-import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitTask
 import tororo1066.tororopluginapi.sItem.SItem
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.BiConsumer
 import java.util.function.Consumer
-import kotlin.collections.ArrayList
 
 /**
  * SInventoryに使えるitem。eventとか入れられる
@@ -109,41 +103,31 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
     }
 
     override fun setItemAmount(amount: Int): SInventoryItem {
-        this.amount = amount
-        return this
+        return super.setItemAmount(amount) as SInventoryItem
     }
 
     override fun setDisplayName(name: String): SInventoryItem {
-        val meta = itemMeta?:return this
-        meta.setDisplayName(name)
-        itemMeta = meta
-        return this
+        return super.setDisplayName(name) as SInventoryItem
     }
 
     override fun setLore(lore: List<String>): SInventoryItem {
-        val meta = itemMeta?:return this
-        meta.lore = lore
-        itemMeta = meta
-        return this
+        return super.setLore(lore) as SInventoryItem
     }
 
     override fun addLore(lore: List<String>): SInventoryItem {
-        return setLore(getStringLore().toMutableList().apply { addAll(lore) })
+        return super.addLore(lore) as SInventoryItem
     }
 
     override fun addLore(lore: String): SInventoryItem {
-        return addLore(mutableListOf(lore))
+        return super.addLore(lore) as SInventoryItem
     }
 
     override fun addLore(vararg lore : String): SInventoryItem {
-        return addLore(lore.toList())
+        return super.addLore(*lore) as SInventoryItem
     }
 
-    override fun setCustomModelData(csm: Int): SInventoryItem {
-        val meta = itemMeta?:return this
-        meta.setCustomModelData(csm)
-        itemMeta = meta
-        return this
+    override fun setCustomModelData(cmd: Int): SInventoryItem {
+        return super.setCustomModelData(cmd) as SInventoryItem
     }
 
     override fun <T : Any, Z : Any> setCustomData(
@@ -156,22 +140,15 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
     }
 
     override fun setEnchantment(enchantment: Enchantment, level: Int): SInventoryItem {
-        this.addUnsafeEnchantment(enchantment,level)
-        return this
+        return super.setEnchantment(enchantment, level) as SInventoryItem
     }
 
     override fun setSkullOwner(uuid: UUID): SInventoryItem {
-        val meta = itemMeta as SkullMeta
-        meta.owningPlayer = Bukkit.getOfflinePlayer(uuid)
-        itemMeta = meta
-        return this
+        return super.setSkullOwner(uuid) as SInventoryItem
     }
 
     override fun addPattern(pattern: Pattern): SInventoryItem {
-        val meta = itemMeta as BannerMeta
-        meta.addPattern(pattern)
-        itemMeta = meta
-        return this
+        return super.addPattern(pattern) as SInventoryItem
     }
 
     override fun clone(): SInventoryItem {
