@@ -7,7 +7,6 @@ pluginManagement {
     }
 }
 include("TororoPluginAPI")
-include("TororoPluginAPIFolia")
 include("TororoPlugin")
 include("NMSUtils:base")
 include("NMSUtils:v1_17_1")
