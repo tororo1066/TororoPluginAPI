@@ -139,6 +139,7 @@ abstract class SJavaPlugin() : JavaPlugin() {
                     if (!sEvent.autoRegister)return@second
                     val instance =
                         if (instancedClasses.contains(clazz)) instancedClasses[clazz]!! else clazz.getConstructor().newInstance()
+                    instancedClasses[clazz] = instance
                     val listener = object : Listener, EventExecutor {
                         override fun execute(listener: Listener, e: Event) {
                             if (e.javaClass != event)return

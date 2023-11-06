@@ -146,11 +146,13 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
         return this
     }
 
-    override fun <T : Any> setCustomData(plugin: JavaPlugin, key: String, type: PersistentDataType<T, T>, value: T): SInventoryItem {
-        val meta = this.itemMeta?:return this
-        meta.persistentDataContainer[NamespacedKey(plugin,key),type] = value
-        this.itemMeta = meta
-        return this
+    override fun <T : Any, Z : Any> setCustomData(
+        plugin: JavaPlugin,
+        key: String,
+        type: PersistentDataType<T, Z>,
+        value: Z
+    ): SInventoryItem {
+        return super.setCustomData(plugin, key, type, value) as SInventoryItem
     }
 
     override fun setEnchantment(enchantment: Enchantment, level: Int): SInventoryItem {
@@ -165,7 +167,7 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
         return this
     }
 
-    override fun addPattern(pattern: Pattern): SItem {
+    override fun addPattern(pattern: Pattern): SInventoryItem {
         val meta = itemMeta as BannerMeta
         meta.addPattern(pattern)
         itemMeta = meta

@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
+import tororo1066.tororopluginapi.nbt.ItemStackPersistent
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -215,7 +216,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     /**
      * @return カスタムモデルデータ
      */
-    fun getCustomModelData(): Int {
+    open fun getCustomModelData(): Int {
         if (!this.itemMeta.hasCustomModelData())return 0
         return itemMeta.customModelData
     }
@@ -227,7 +228,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @param value 値
      * @return 変更したアイテム
      */
-    open fun<T : Any> setCustomData(plugin: JavaPlugin, key: String, type : PersistentDataType<T,T>, value: T): SItem {
+    open fun <T : Any, Z: Any> setCustomData(plugin: JavaPlugin, key: String, type : PersistentDataType<T,Z>, value: Z): SItem {
         val meta = this.itemMeta
         meta.persistentDataContainer[NamespacedKey(plugin,key),type] = value
         this.itemMeta = meta
@@ -240,7 +241,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @param type PersistentDataType
      * @return value
      */
-    fun<T : Any> getCustomData(plugin: JavaPlugin, key: String, type: PersistentDataType<T,T>): T? {
+    open fun <T : Any, Z: Any> getCustomData(plugin: JavaPlugin, key: String, type: PersistentDataType<T,Z>): Z? {
         return itemMeta.persistentDataContainer.get(NamespacedKey(plugin, key), type)
     }
 
@@ -255,7 +256,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
         return this
     }
 
-    fun getEnchantment(enchantment: Enchantment): Int? {
+    open fun getEnchantment(enchantment: Enchantment): Int? {
         val level = this.itemMeta.getEnchantLevel(enchantment)
         if (level == 0)return null
         return level
