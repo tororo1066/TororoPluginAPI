@@ -194,6 +194,60 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
                 }
                 it.sender.sendMessage("${it.sender.name} debug level ${it.args[1]} now.")
             })
+
+        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("debug"))
+            .addArg(SCommandArg().addChangeableAllowString(object : ChangeableAllowString() {
+                override fun getAllowString(data: SCommandData): ArrayList<String> {
+                    return SDebug.debugType
+                }
+            }))
+            .setNormalExecutor {
+                if (it.sender is Player){
+                    val uuid = (it.sender as Player).uniqueId
+                    if (SDebug.typeDebug[uuid] == null){
+                        SDebug.typeDebug[uuid] = ArrayList()
+                    }
+                    val list = SDebug.typeDebug[uuid]!!
+                    if (list.contains(it.args[1])){
+                        list.remove(it.args[1])
+                        it.sender.sendMessage("${it.sender.name} debug type ${it.args[1]} removed.")
+                    } else {
+                        list.add(it.args[1])
+                        it.sender.sendMessage("${it.sender.name} debug type ${it.args[1]} added.")
+                    }
+                } else {
+                    if (SDebug.consoleTypeDebug.contains(it.args[1])){
+                        SDebug.consoleTypeDebug.remove(it.args[1])
+                        it.sender.sendMessage("Console debug type ${it.args[1]} removed.")
+                    } else {
+                        SDebug.consoleTypeDebug.add(it.args[1])
+                        it.sender.sendMessage("Console debug type ${it.args[1]} added.")
+                    }
+                }
+
+            })
+
+        addCommand(SCommandObject().addArg(SCommandArg().addAllowString("debug"))
+            .addArg(SCommandArg().addAllowString("list"))
+            .setNormalExecutor {
+                if (it.sender is Player){
+                    val uuid = (it.sender as Player).uniqueId
+                    if (SDebug.typeDebug[uuid].isNullOrEmpty()){
+                        it.sender.sendMessage("Your debug type list is empty.")
+                        return@setNormalExecutor
+                    }
+                    val list = SDebug.typeDebug[uuid]!!
+                    it.sender.sendMessage("Your debug type list:")
+                    list.forEach { type ->
+                        it.sender.sendMessage(type)
+                    }
+                } else {
+                    it.sender.sendMessage("Console debug type list:")
+                    SDebug.consoleTypeDebug.forEach { type ->
+                        it.sender.sendMessage(type)
+                    }
+                }
+            })
     }
 
     fun registerSLangCommand(plugin: JavaPlugin, perm: String){

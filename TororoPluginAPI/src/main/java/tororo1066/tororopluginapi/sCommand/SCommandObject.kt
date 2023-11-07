@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi.sCommand
 
+import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -66,9 +67,20 @@ class SCommandObject {
         return this
     }
 
+    fun setNormalFunction(executor: (sender: CommandSender, command: Command, label: String, args: Array<out String>)->Unit): SCommandObject {
+        this.consumerExecutors.add(Consumer { executor.invoke(it.sender, it.command, it.label, it.args) })
+        return this
+    }
+
     fun setPlayerExecutor(executor: Consumer<SCommandOnlyPlayerData>): SCommandObject {
         setMode(Mode.PLAYER)
         this.onlyPlayerConsumerExecutors.add(executor)
+        return this
+    }
+
+    fun setPlayerFunction(executor: (sender: Player, command: Command, label: String, args: Array<out String>)->Unit): SCommandObject {
+        setMode(Mode.PLAYER)
+        this.onlyPlayerConsumerExecutors.add(Consumer { executor.invoke(it.sender, it.command, it.label, it.args) })
         return this
     }
 

@@ -101,19 +101,19 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
             val mainHandItem = e.mainHandItem?.clone()?.apply { amount = 1 }
             val offHandItem = e.offHandItem?.clone()?.apply { amount = 1 }
 
+            e.player.sendDebug("SInteractManager", "§7[PlayerSwapHandItemsEvent] mainHandItem: ${mainHandItem?.type} offHandItem: ${offHandItem?.type}")
+
             if (mainHandItem != null && !mainHandItem.type.isAir){
-                e.player.sendDebug(1, "§7[TPA] [SInteractManager] [PlayerSwapHandItemsEvent] mainHandItem: ${mainHandItem.type}")
                 val interactItem = getItem(mainHandItem)?:return@register
-                e.player.sendDebug(1, "§7[TPA] [SInteractManager] [PlayerSwapHandItemsEvent] Invoke mainHandItem swapEvents...")
+                e.player.sendDebug("SInteractManager", "§7[PlayerSwapHandItemsEvent] Invoke mainHandItem swapEvents...")
                 interactItem.swapEvents.forEach {
                     it.invoke(e,interactItem)
                 }
             }
 
             if (offHandItem != null && !offHandItem.type.isAir){
-                e.player.sendDebug(1, "§7[TPA] [SInteractManager] [PlayerSwapHandItemsEvent] offHandItem: ${offHandItem.type}")
                 val interactItem = getItem(offHandItem)?:return@register
-                e.player.sendDebug(1, "§7[TPA] [SInteractManager] [PlayerSwapHandItemsEvent] Invoke offHandItem swapEvents...")
+                e.player.sendDebug("SInteractManager", "§7[PlayerSwapHandItemsEvent] Invoke offHandItem swapEvents...")
                 interactItem.swapEvents.forEach {
                     it.invoke(e,interactItem)
                 }

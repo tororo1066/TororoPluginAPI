@@ -195,21 +195,6 @@ class SStr: Cloneable {
         return super.clone() as SStr
     }
 
-    private fun isPaper(): Boolean {
-        var isPaper = false
-        try {
-            Class.forName("io.papermc.paper.text.PaperComponents")
-            isPaper = true
-        } catch (_: ClassNotFoundException) {
-        }
-
-        return isPaper
-    }
-
-    private fun checkPaper() {
-        if (!isPaper()) throw UnsupportedOperationException("This function is available only Paper.")
-    }
-
     companion object {
 
         fun Component.toSStr(): SStr {
@@ -217,6 +202,21 @@ class SStr: Cloneable {
         }
         fun Any.toSStr(): SStr{
             return SStr(this.toString())
+        }
+
+        fun isPaper(): Boolean {
+            var isPaper = false
+            try {
+                Class.forName("io.papermc.paper.text.PaperComponents")
+                isPaper = true
+            } catch (_: ClassNotFoundException) {
+            }
+
+            return isPaper
+        }
+
+        fun checkPaper() {
+            if (!isPaper()) throw UnsupportedOperationException("This function is available only Paper.")
         }
     }
 }

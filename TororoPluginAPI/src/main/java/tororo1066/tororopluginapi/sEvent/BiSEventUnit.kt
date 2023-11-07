@@ -9,7 +9,7 @@ import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.function.BiConsumer
 
-class BiSEventUnit<T : Event>(private val eventClass: Class<T>, val plugin : JavaPlugin, private val handlers : List<BiConsumer<in T,BiSEventUnit<T>>>) : Listener, EventExecutor {
+class BiSEventUnit<T : Event>(private val eventClass: Class<T>, val plugin : JavaPlugin, private val handlers : List<(T, BiSEventUnit<in T>)->Unit>) : Listener, EventExecutor {
 
     var priority = EventPriority.NORMAL
 
@@ -17,7 +17,7 @@ class BiSEventUnit<T : Event>(private val eventClass: Class<T>, val plugin : Jav
         register()
     }
 
-    constructor(eventClass: Class<T>, plugin: JavaPlugin, handlers : List<BiConsumer<in T,BiSEventUnit<T>>>, priority : EventPriority) : this(eventClass,plugin,handlers) {
+    constructor(eventClass: Class<T>, plugin: JavaPlugin, handlers : List<(T, BiSEventUnit<in T>)->Unit>, priority : EventPriority) : this(eventClass,plugin,handlers) {
         this.priority = priority
     }
 
@@ -29,7 +29,7 @@ class BiSEventUnit<T : Event>(private val eventClass: Class<T>, val plugin : Jav
         if (this.eventClass != p1.javaClass) return
         val event = this.eventClass.cast(p1)
         for (handler in handlers){
-            handler.accept(event,this)
+            handler.invoke(event,this)
         }
     }
 

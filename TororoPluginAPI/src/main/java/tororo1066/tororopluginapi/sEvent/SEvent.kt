@@ -6,8 +6,6 @@ import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SJavaPlugin
-import java.util.function.BiConsumer
-import java.util.function.Consumer
 
 /**
  * イベント関連のAPI
@@ -22,23 +20,23 @@ class SEvent(private val plugin : JavaPlugin) {
     /**
      * イベント登録
      */
-    fun <T : Event>register(clazz: Class<T> , consumer: Consumer<T>, finishedFunction: Consumer<SEventUnit<in T>>) : SEventUnit<T> {
-        return register(clazz, EventPriority.NORMAL, listOf(consumer), finishedFunction)
+    fun <T : Event>register(clazz: Class<T> , function: (T)->Unit, finishedFunction: (SEventUnit<in T>)->Unit) : SEventUnit<T> {
+        return register(clazz, EventPriority.NORMAL, listOf(function), finishedFunction)
     }
 
     /**
      * イベント登録
      */
-    fun <T : Event>register(clazz: Class<T> , consumer: Consumer<T>) : SEventUnit<T> {
-        return register(clazz, EventPriority.NORMAL, listOf(consumer)) {}
+    fun <T : Event>register(clazz: Class<T> , function: (T)->Unit) : SEventUnit<T> {
+        return register(clazz, EventPriority.NORMAL, listOf(function)) {}
     }
 
     /**
      * イベント登録
      * プロパティも使えるよ
      */
-    fun <T : Event>register(clazz: Class<T> , priority : EventPriority , consumer: List<Consumer<T>>,finishedFunction: Consumer<SEventUnit<in T>>) : SEventUnit<T> {
-        val event = SEventUnit(clazz,plugin, consumer,finishedFunction,priority)
+    fun <T : Event>register(clazz: Class<T> , priority : EventPriority , function: List<(T)->Unit>,finishedFunction: (SEventUnit<in T>)->Unit) : SEventUnit<T> {
+        val event = SEventUnit(clazz, plugin, function, finishedFunction, priority)
         sEventUnits.add(event)
         return event
     }
@@ -47,20 +45,20 @@ class SEvent(private val plugin : JavaPlugin) {
      * イベント登録
      * プロパティも使えるよ
      */
-    fun <T : Event>register(clazz: Class<T> , priority: EventPriority , consumer: Consumer<T>) : SEventUnit<T> {
-        return register(clazz, priority, listOf(consumer)) {}
+    fun <T : Event>register(clazz: Class<T>, priority: EventPriority, function: (T)->Unit) : SEventUnit<T> {
+        return register(clazz, priority, listOf(function)) {}
     }
 
-    fun <T : Event>biRegister(clazz: Class<T>, consumer: BiConsumer<T,BiSEventUnit<T>>) : BiSEventUnit<T> {
-        return biRegister(clazz, EventPriority.NORMAL, listOf(consumer))
+    fun <T : Event>biRegister(clazz: Class<T>, function: (T, BiSEventUnit<in T>)->Unit) : BiSEventUnit<T> {
+        return biRegister(clazz, EventPriority.NORMAL, listOf(function))
     }
 
-    fun <T : Event>biRegister(clazz: Class<T>, priority: EventPriority, consumer: BiConsumer<T,BiSEventUnit<T>>) : BiSEventUnit<T> {
-        return biRegister(clazz, priority, listOf(consumer))
+    fun <T : Event>biRegister(clazz: Class<T>, priority: EventPriority, function: (T, BiSEventUnit<in T>)->Unit) : BiSEventUnit<T> {
+        return biRegister(clazz, priority, listOf(function))
     }
 
-    fun <T : Event>biRegister(clazz: Class<T>, priority: EventPriority, consumer: List<BiConsumer<T,BiSEventUnit<T>>>) : BiSEventUnit<T> {
-        val event = BiSEventUnit(clazz,plugin,consumer,priority)
+    fun <T : Event>biRegister(clazz: Class<T>, priority: EventPriority, function: List<(T, BiSEventUnit<in T>)->Unit>) : BiSEventUnit<T> {
+        val event = BiSEventUnit(clazz,plugin,function,priority)
         biSEventUnits.add(event)
         return event
     }
