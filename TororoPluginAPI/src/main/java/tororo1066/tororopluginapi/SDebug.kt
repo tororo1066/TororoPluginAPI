@@ -35,11 +35,11 @@ class SDebug {
             if (this is Player){
                 val pLevel = typeDebug[this.uniqueId]?:return
                 if (pLevel.contains(type)){
-                    this.sendMessage(msg)
+                    this.sendMessage("[${type}] $msg")
                 }
             } else {
                 if (consoleTypeDebug.contains(type)){
-                    this.sendMessage(msg)
+                    this.sendMessage("[${type}] $msg")
                 }
             }
         }
@@ -60,11 +60,11 @@ class SDebug {
             Bukkit.getOnlinePlayers().forEach {
                 val pLevel = typeDebug[it.uniqueId]?:return@forEach
                 if (pLevel.contains(type)){
-                    it.sendMessage(msg)
+                    it.sendMessage("[${type}] $msg")
                 }
             }
             if (consoleTypeDebug.contains(type)){
-                Bukkit.getConsoleSender().sendMessage(msg)
+                Bukkit.getConsoleSender().sendMessage("[${type}] $msg")
             }
         }
     }

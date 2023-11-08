@@ -104,18 +104,22 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
             e.player.sendDebug("SInteractManager", "§7[PlayerSwapHandItemsEvent] mainHandItem: ${mainHandItem?.type} offHandItem: ${offHandItem?.type}")
 
             if (mainHandItem != null && !mainHandItem.type.isAir){
-                val interactItem = getItem(mainHandItem)?:return@register
-                e.player.sendDebug("SInteractManager", "§7[PlayerSwapHandItemsEvent] Invoke mainHandItem swapEvents...")
-                interactItem.swapEvents.forEach {
-                    it.invoke(e,interactItem)
+                val interactItem = getItem(mainHandItem)
+                interactItem?.let {
+                    e.player.sendDebug("SInteractManager", "§7[PlayerSwapHandItemsEvent] Invoke mainHandItem swapEvents...")
+                    interactItem.swapEvents.forEach {
+                        it.invoke(e,interactItem)
+                    }
                 }
             }
 
             if (offHandItem != null && !offHandItem.type.isAir){
-                val interactItem = getItem(offHandItem)?:return@register
-                e.player.sendDebug("SInteractManager", "§7[PlayerSwapHandItemsEvent] Invoke offHandItem swapEvents...")
-                interactItem.swapEvents.forEach {
-                    it.invoke(e,interactItem)
+                val interactItem = getItem(offHandItem)
+                interactItem?.let {
+                    e.player.sendDebug("SInteractManager", "§7[PlayerSwapHandItemsEvent] Invoke offHandItem swapEvents...")
+                    interactItem.swapEvents.forEach {
+                        it.invoke(e,interactItem)
+                    }
                 }
             }
         }
@@ -131,39 +135,43 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
                 if (previousItem != null){
                     val item = previousItem.clone()
                     item.amount = 1
-                    val interactItem = getItem(item)?:return@register
-                    e.player.sendDebug("SInteractManager", "§7[PlayerItemHeldEvent] Cancel previousItem task...")
-                    interactItem.task?.cancel()
-                    e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("").toBukkitComponent())
+                    val interactItem = getItem(item)
+                    interactItem?.let {
+                        e.player.sendDebug("SInteractManager", "§7[PlayerItemHeldEvent] Cancel previousItem task...")
+                        interactItem.task?.cancel()
+                        e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("").toBukkitComponent())
+                    }
                 }
 
                 if (newItem != null){
                     val item = newItem.clone()
                     item.amount = 1
-                    val interactItem = getItem(item)?:return@register
-                    e.player.sendDebug("SInteractManager", "§7[PlayerItemHeldEvent] Invoke newItem task...")
-                    interactItem.task = object : BukkitRunnable() {
-                        override fun run() {
-                            val mainHandItem = e.player.inventory.itemInMainHand.clone()
-                            val offHandItem = e.player.inventory.itemInOffHand.clone()
-                            if (!item.isSimilar(mainHandItem) && !item.isSimilar(offHandItem)) {
-                                cancel()
-                                return
-                            }
-                            if (interactItem.interactCoolDown <= 0) {
-                                e.player.spigot().sendMessage(
-                                    ChatMessageType.ACTION_BAR,
-                                    *SStr("&a&l使用可能！").toBukkitComponent()
-                                )
-                            } else {
-                                e.player.spigot().sendMessage(
-                                    ChatMessageType.ACTION_BAR,
-                                    *SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent()
-                                )
-                            }
+                    val interactItem = getItem(item)
+                    interactItem?.let {
+                        e.player.sendDebug("SInteractManager", "§7[PlayerItemHeldEvent] Invoke newItem task...")
+                        interactItem.task = object : BukkitRunnable() {
+                            override fun run() {
+                                val mainHandItem = e.player.inventory.itemInMainHand.clone()
+                                val offHandItem = e.player.inventory.itemInOffHand.clone()
+                                if (!item.isSimilar(mainHandItem) && !item.isSimilar(offHandItem)) {
+                                    cancel()
+                                    return
+                                }
+                                if (interactItem.interactCoolDown <= 0) {
+                                    e.player.spigot().sendMessage(
+                                        ChatMessageType.ACTION_BAR,
+                                        *SStr("&a&l使用可能！").toBukkitComponent()
+                                    )
+                                } else {
+                                    e.player.spigot().sendMessage(
+                                        ChatMessageType.ACTION_BAR,
+                                        *SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent()
+                                    )
+                                }
 
-                        }
-                    }.runTaskTimer(plugin,1, 1)
+                            }
+                        }.runTaskTimer(plugin,1, 1)
+                    }
                 }
 
             }
