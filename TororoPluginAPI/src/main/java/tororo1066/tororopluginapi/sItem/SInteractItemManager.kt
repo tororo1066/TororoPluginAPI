@@ -132,6 +132,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
                     val item = previousItem.clone()
                     item.amount = 1
                     val interactItem = getItem(item)?:return@register
+                    e.player.sendDebug("SInteractManager", "§7[PlayerItemHeldEvent] Cancel previousItem task...")
                     interactItem.task?.cancel()
                     e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("").toBukkitComponent())
                 }
@@ -140,6 +141,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
                     val item = newItem.clone()
                     item.amount = 1
                     val interactItem = getItem(item)?:return@register
+                    e.player.sendDebug("SInteractManager", "§7[PlayerItemHeldEvent] Invoke newItem task...")
                     interactItem.task = object : BukkitRunnable() {
                         override fun run() {
                             val mainHandItem = e.player.inventory.itemInMainHand.clone()
