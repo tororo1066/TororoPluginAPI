@@ -90,6 +90,7 @@ class SLang(private val plugin: JavaPlugin) {
          * @param msg configのパス
          * @param value {<数字>}の文字を置き換える
          */
+        @Suppress("DEPRECATION")
         fun CommandSender.sendTranslateMsg(msg: String, vararg value: String){
             if (this !is Player){
                 val defaultLang = langFile[defaultLanguage]
@@ -163,6 +164,7 @@ class SLang(private val plugin: JavaPlugin) {
         }
 
         @JvmName("translate1")
+        @Suppress("DEPRECATION")
         fun translate(msg: String, p: Player, vararg value: String): String {
             val lang = langFile[p.locale]
                 ?: return translate(msg,*value)

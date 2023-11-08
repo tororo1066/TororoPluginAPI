@@ -2,7 +2,6 @@ package tororo1066.tororoplugin
 
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
-import tororo1066.tororopluginapi.database.SDatabase
 import tororo1066.tororopluginapi.otherClass.MultipleValueMap
 import java.util.*
 

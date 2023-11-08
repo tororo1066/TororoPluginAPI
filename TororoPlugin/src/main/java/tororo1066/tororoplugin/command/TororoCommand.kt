@@ -4,6 +4,7 @@ import com.mongodb.client.model.Updates
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
@@ -193,8 +194,8 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
             it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
         }
 
-    @SCommandBody
-    val playerSudoCommand = getPlayerCommand().addArg(SCommandArg("sudo"))
+//    @SCommandBody
+//    val playerSudoCommand = getPlayerCommand().addArg(SCommandArg("sudo"))
     
     @SCommandBody
     val playerInfo = getPInfoCommand()
@@ -438,10 +439,10 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
 
 
     private fun CommandSender.sendCopyableMsg(msg: String, copy: String){
-        this.sendMessage(text(msg).clickEvent(ClickEvent.copyToClipboard(copy)))
+        sendCopyableMsg(text(msg),copy)
     }
 
     private fun CommandSender.sendCopyableMsg(msg: Component, copy: String){
-        this.sendMessage(msg.clickEvent(ClickEvent.copyToClipboard(copy)))
+        this.sendMessage(msg.clickEvent(ClickEvent.copyToClipboard(copy)).hoverEvent(HoverEvent.showText(text("§aクリックでコピー"))))
     }
 }

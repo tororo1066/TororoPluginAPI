@@ -6,8 +6,10 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.*
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.MoverType
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.inventory.MenuType
+import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
 import org.bukkit.Location
@@ -168,5 +170,9 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
         val packet = ClientboundSetEquipmentPacket(entityId, mutableListOf())
         packet.slots.add(Pair(CraftEquipmentSlot.getNMS(slot),CraftItemStack.asNMSCopy(item)))
         handle.connection.send(packet)
+    }
+
+    override fun move(x: Double, y: Double, z: Double) {
+        handle.move(MoverType.PLAYER, Vec3(x,y,z))
     }
 }

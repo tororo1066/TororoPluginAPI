@@ -37,6 +37,8 @@ interface SPlayer {
 
     fun setFakeItem(slot: EquipmentSlot, item: ItemStack)
 
+    fun move(x: Double, y: Double, z: Double)
+
     companion object{
         fun getSPlayer(p: Player): SPlayer {
             return fromPlayer(p)?:throw UnsupportedOperationException("SPlayer not supported mc_version ${Bukkit.getServer().minecraftVersion}.")
