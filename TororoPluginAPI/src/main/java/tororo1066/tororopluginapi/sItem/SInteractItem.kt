@@ -16,7 +16,7 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
     var interactCoolDown = 0
     var initialCoolDown = 0
 
-    var equalFunc: (ItemStack, SInteractItem) -> Boolean =  { itemStack, sInteractItem -> itemStack == sInteractItem }
+    var equalFunc: (ItemStack, SInteractItem) -> Boolean =  { itemStack, sInteractItem -> itemStack == ItemStack(sInteractItem) }
 
     var task: BukkitTask? = null
 
