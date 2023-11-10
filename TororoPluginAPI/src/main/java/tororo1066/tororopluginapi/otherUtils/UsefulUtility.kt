@@ -25,6 +25,10 @@ class UsefulUtility(val plugin: JavaPlugin) {
             return decimalFormat.format(double)
         }
 
+        fun Double.removeDecimalPoint(): String {
+            return removeDecimalPoint(this)
+        }
+
         fun<V> sTry(unit: ()->V, onError: (Exception)->V) : V {
             return try {
                 unit.invoke()
