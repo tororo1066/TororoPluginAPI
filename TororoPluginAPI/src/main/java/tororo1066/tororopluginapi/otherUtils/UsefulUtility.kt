@@ -25,6 +25,7 @@ class UsefulUtility(val plugin: JavaPlugin) {
             return decimalFormat.format(double)
         }
 
+        @JvmName("removeDecimalPoint1")
         fun Double.removeDecimalPoint(): String {
             return removeDecimalPoint(this)
         }
