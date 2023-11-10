@@ -44,7 +44,6 @@ class UsefulUtility(val plugin: JavaPlugin) {
             }
             return values
         }
-
     }
 
     fun runTask(consumer: Consumer<BukkitTask>){
