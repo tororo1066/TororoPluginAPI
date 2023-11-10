@@ -3,19 +3,26 @@ package tororo1066.tororopluginapi.otherUtils
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
-import java.util.Date
-import java.util.concurrent.FutureTask
+import java.text.DecimalFormat
 import java.util.function.Consumer
 
+@Suppress("unused")
 class UsefulUtility(val plugin: JavaPlugin) {
 
     companion object{
+
+        val decimalFormat = DecimalFormat("0.#")
+
         fun doubleToFormatString(double: Double): String {
             return String.format("%,.0f",double)
         }
 
         fun Double.toFormatString(): String {
             return doubleToFormatString(this)
+        }
+
+        fun removeDecimalPoint(double: Double): String {
+            return decimalFormat.format(double)
         }
 
         fun<V> sTry(unit: ()->V, onError: (Exception)->V) : V {
@@ -28,7 +35,7 @@ class UsefulUtility(val plugin: JavaPlugin) {
 
         fun<V> repeat(amount: Int, unit: ()->V): List<V> {
             val values = ArrayList<V>()
-            (1..amount).forEach {
+            (1..amount).forEach { _ ->
                 values.add(unit.invoke())
             }
             return values
@@ -54,6 +61,10 @@ class UsefulUtility(val plugin: JavaPlugin) {
 
     fun doubleToFormatString(double: Double): String {
         return UsefulUtility.doubleToFormatString(double)
+    }
+
+    fun removeDecimalPoint(double: Double): String {
+        return UsefulUtility.removeDecimalPoint(double)
     }
 
     fun<V> sTry(unit: ()->V,onError: (Exception)->V) : V {

@@ -114,30 +114,6 @@ class SLang(private val plugin: JavaPlugin) {
             this.sendMessage(prefix + modifyValue(lang.getString(msg,msg)!!,value))
         }
 
-
-        /**
-         * 言語によってメッセージを変更する
-         *
-         * ```java
-         * //例 Java
-         * String translate = SLang.translate("test_message");
-         * ```
-         *
-         * ```kotlin
-         * //例 Kotlin
-         * val translate = translate("test_message")
-         * ```
-         *
-         * @param msg configのパス
-         * @param values {<数字>}の文字を置き換える
-         */
-        fun translate(msg: String, values: Array<out String>): String {
-            val defaultLang = langFile[defaultLanguage]
-                ?: return "§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File."
-
-            return modifyValue(defaultLang.getString(msg,msg)!!,values)
-        }
-
         /**
          * 言語によってメッセージを変更する
          *
@@ -154,28 +130,25 @@ class SLang(private val plugin: JavaPlugin) {
          * @param msg configのパス
          * @param value {<数字>}の文字を置き換える
          */
-        @JvmName("translate1")
-        fun translate(msg: String, vararg value: String): String {
-            return translate(msg, value)
+        fun translate(msg: String, vararg value: Any): String {
+            val defaultLang = langFile[defaultLanguage]
+                ?: return "§cLanguage Error. This Plugin is Not Registered ${defaultLanguage}(default) File."
+
+            return modifyValue(defaultLang.getString(msg,msg)!!,value)
         }
 
-        fun translate(msg: String, p: Player, values: Array<out String>): String {
-            return translate(msg, p, values)
-        }
-
-        @JvmName("translate1")
         @Suppress("DEPRECATION")
-        fun translate(msg: String, p: Player, vararg value: String): String {
+        fun translate(msg: String, p: Player, vararg value: Any): String {
             val lang = langFile[p.locale]
                 ?: return translate(msg,*value)
 
             return modifyValue(lang.getString(msg,msg)!!,value)
         }
 
-        private fun modifyValue(msg: String, value: Array<out String>): String {
+        private fun modifyValue(msg: String, value: Array<out Any>): String {
             var modifyString = msg
-            value.forEachIndexed { index, string ->
-                modifyString = modifyString.replace("{${index}}",string)
+            value.forEachIndexed { index, any ->
+                modifyString = modifyString.replace("{${index}}",any.toString())
             }
             return modifyString.replace("&","§")
         }
