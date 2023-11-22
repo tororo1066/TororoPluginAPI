@@ -21,14 +21,20 @@ repositories {
         name = 'sk89q-repo'
         url = 'https://maven.enginehub.org/repo/'
     }
+    maven {
+        url "https://libraries.minecraft.net"
+    }
 }
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
+    api 'me.lucko:commodore:2.0'
     api 'com.ezylang:EvalEx:3.0.5'
     api fileTree(dir: 'libs', include: '*.jar')
+    compileOnly 'com.mojang:brigadier:1.0.18'
+    compileOnly project(":NMSUtils:base")
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens

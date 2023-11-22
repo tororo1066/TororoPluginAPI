@@ -22,6 +22,7 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
 
     api project(":TororoPluginAPI")
+    api project(":NMSUtils")
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -64,4 +65,13 @@ jar {
             it.isDirectory() ? it : zipTree(it)
         }
     }
+}
+
+tasks.register("map", Copy) {
+    dependsOn("build")
+
+    from("build/libs") {
+        include("*.jar")
+    }
+    into("../debug_server_1.19.3/plugins")
 }

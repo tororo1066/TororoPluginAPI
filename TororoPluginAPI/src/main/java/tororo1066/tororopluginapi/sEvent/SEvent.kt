@@ -10,7 +10,7 @@ import tororo1066.tororopluginapi.SJavaPlugin
 /**
  * イベント関連のAPI
  */
-class SEvent(private val plugin : JavaPlugin) {
+class SEvent(val plugin : JavaPlugin) {
 
     constructor() : this(SJavaPlugin.plugin)
 

@@ -31,3 +31,9 @@ dependencies {
     api files('v1_20_1/build/libs/v1_20_1-1.0-SNAPSHOT.jar')
     api files('base/build/libs/base-1.0-SNAPSHOT.jar')
 }
+
+subprojects {
+    dependencies {
+        compileOnly 'com.mojang:brigadier:1.0.18'
+    }
+}

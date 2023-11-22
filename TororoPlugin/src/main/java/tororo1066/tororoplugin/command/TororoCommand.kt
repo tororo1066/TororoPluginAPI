@@ -1,6 +1,5 @@
 package tororo1066.tororoplugin.command
 
-import com.mongodb.client.model.Updates
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.event.ClickEvent
@@ -12,28 +11,29 @@ import org.bukkit.attribute.AttributeModifier
 import org.bukkit.command.CommandSender
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
-import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.Damageable
 import tororo1066.tororoplugin.TororoPlugin
-import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
-import tororo1066.tororopluginapi.database.SDBCondition
-import tororo1066.tororopluginapi.database.SDBVariable
-import tororo1066.tororopluginapi.defaultMenus.NumericInputInventory
-import tororo1066.tororopluginapi.sCommand.*
-import tororo1066.tororopluginapi.script.ScriptFile
+import tororo1066.tororopluginapi.sCommand.SCommand
+import tororo1066.tororopluginapi.sCommand.SCommandArg
+import tororo1066.tororopluginapi.sCommand.SCommandArgType
+import tororo1066.tororopluginapi.sCommand.SCommandObject
 import tororo1066.tororopluginapi.utils.toPlayer
-import java.io.File
 import java.util.*
 import kotlin.math.floor
 
 @Suppress("UNUSED")
 class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
+
+    @SCommandBody
+    val t = command().addArg(SCommandArg("t")).setPlayerFunction { sender, _, _, _ ->
+
+    }
 
     @SCommandBody
     val sendToCommandLog = command().addArg(SCommandArg().addAllowString("commandLog")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))
@@ -69,7 +69,6 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
         .addArg(SCommandArg(SCommandArgType.ONLINE_PLAYER).addAlias("プレイヤー名"))
         .setPlayerExecutor {
             val p = it.args[2].toPlayer()!!
-            p.rayTraceBlocks(1.0)?.hitPosition
             val data = TororoPlugin.commandLogPlayers.getNullable(it.sender.uniqueId)
             if (data == null || data.instanceOf<Boolean>()){
                 TororoPlugin.commandLogPlayers[it.sender.uniqueId] = arrayListOf(p.uniqueId)
@@ -194,8 +193,13 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
             it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
         }
 
-//    @SCommandBody
-//    val playerSudoCommand = getPlayerCommand().addArg(SCommandArg("sudo"))
+    @SCommandBody
+    val playerSudoCommand = getPlayerCommand().addArg(SCommandArg("sudo")).addArg(SCommandArg("command")).noLimit(true)
+        .setNormalExecutor {
+            val p = it.args[1].toPlayer()!!
+            val cmd = it.args.copyOfRange(2,it.args.size).joinToString(" ")
+            Bukkit.dispatchCommand(p,cmd)
+        }
     
     @SCommandBody
     val playerInfo = getPInfoCommand()
@@ -404,7 +408,7 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
         }
     }
 
-    @SEventHandler
+    @SEventHandler(autoRegister = false)
     fun onCommandProcess(e: PlayerCommandPreprocessEvent){
         if (e.isCancelled)return
         TororoPlugin.commandLogPlayers.forEach {
@@ -416,7 +420,7 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
         }
     }
 
-    @SEventHandler
+    @SEventHandler(autoRegister = false)
     fun onQuit(e: PlayerQuitEvent){
         TororoPlugin.commandLogPlayers.values.forEach {
             if (it.instanceOf<Boolean>())return@forEach

@@ -41,7 +41,7 @@ interface SPlayer {
 
     companion object{
         fun getSPlayer(p: Player): SPlayer {
-            return fromPlayer(p)?:throw UnsupportedOperationException("SPlayer not supported mc_version ${Bukkit.getServer().minecraftVersion}.")
+            return fromPlayer(p) ?:throw UnsupportedOperationException("SPlayer not supported mc_version ${Bukkit.getServer().minecraftVersion}.")
         }
 
         private fun fromPlayer(p: Player?): SPlayer? {

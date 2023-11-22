@@ -5,7 +5,6 @@ import net.minecraft.core.Rotations
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.*
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.MoverType
 import net.minecraft.world.entity.decoration.ArmorStand
@@ -18,7 +17,6 @@ import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_19_R1.CraftEquipmentSlot
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftArmorStand
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack
@@ -30,7 +28,6 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import tororo1066.nmsutils.SPlayer
 import tororo1066.nmsutils.SPlayer.Companion.hiddenEntities
-import java.util.UUID
 
 class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.level.craftServer, p.handle) {
 

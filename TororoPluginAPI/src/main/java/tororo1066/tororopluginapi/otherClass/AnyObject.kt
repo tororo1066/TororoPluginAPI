@@ -15,8 +15,6 @@ open class AnyObject(val value: Any) {
 
     inline fun <reified I: Any>instanceOf(): Boolean = value is I
 
-    operator fun contains(any: Any): Boolean = value == any
-
     fun get(): Any = asObj()
 
     fun asInt(): Int = asObj()
