@@ -1,6 +1,7 @@
 package tororo1066.tororopluginapi.sCommand.v2
 
 import tororo1066.nmsutils.SNms
+import tororo1066.nmsutils.command.LiteralCommandElement
 import tororo1066.nmsutils.command.ToolTip
 
 class SCommandV2Object() {
@@ -26,10 +27,10 @@ class SCommandV2Object() {
 
     infix fun String.toolTip(toolTip: String) = ToolTip(this, toolTip)
 
-    fun register(command: String) {
+    fun register(command: SCommandV2Literal) {
         args.forEach {
             val sNms = SNms.newInstance()
-            sNms.registerCommands(command, it.toElement())
+            sNms.registerCommands(command.toElement() as LiteralCommandElement, it.toElement())
         }
     }
 }

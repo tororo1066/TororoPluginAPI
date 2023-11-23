@@ -2,15 +2,15 @@ package tororo1066.nmsutils
 
 import org.bukkit.Bukkit
 import org.bukkit.Color
-import org.bukkit.Registry
 import org.bukkit.block.Block
 import tororo1066.nmsutils.command.AbstractCommandElement
+import tororo1066.nmsutils.command.LiteralCommandElement
 
 interface SNms {
 
     fun getMapColor(block: Block): Color
 
-    fun registerCommands(command: String, vararg commands: AbstractCommandElement<*>)
+    fun registerCommands(command: LiteralCommandElement, vararg commands: AbstractCommandElement<*>)
 
     companion object {
 

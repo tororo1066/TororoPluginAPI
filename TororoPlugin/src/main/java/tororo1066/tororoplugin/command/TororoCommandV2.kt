@@ -8,6 +8,10 @@ import tororo1066.tororopluginapi.sCommand.v2.argumentType.StringArg
 
 class TororoCommandV2: SCommandV2("tororo") {
 
+    init {
+        root.setPermission("tororo")
+    }
+
     @SCommandBody
     val tororo = command {
         literal("send") {

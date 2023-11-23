@@ -5,13 +5,17 @@ import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.annotation.SCommandBody
 
-abstract class SCommandV2(val plugin: JavaPlugin, val command: String){
+abstract class SCommandV2(val plugin: JavaPlugin, val command: String, val permission: String? = null) {
 
     val commands = ArrayList<SCommandV2Object>()
+    protected val root = SCommandV2Literal(command)
 
     constructor(command: String): this(SJavaPlugin.plugin, command)
 
+    constructor(command: String, permission: String): this(SJavaPlugin.plugin, command, permission)
+
     init {
+
         Bukkit.getScheduler().runTaskLater(plugin, Runnable {
             loadAllCommands()
         }, 1)
@@ -29,7 +33,7 @@ abstract class SCommandV2(val plugin: JavaPlugin, val command: String){
                 it.isAccessible = true
                 val data = it.get(this) as SCommandV2Object
                 addCommand(data)
-                data.register(command)
+                data.register(root)
             }
         }
 
