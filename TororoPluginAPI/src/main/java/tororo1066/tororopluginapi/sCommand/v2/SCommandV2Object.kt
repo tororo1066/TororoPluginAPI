@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi.sCommand.v2
 
+import com.mojang.brigadier.Message
 import tororo1066.nmsutils.SNms
 import tororo1066.nmsutils.command.LiteralCommandElement
 import tororo1066.nmsutils.command.ToolTip
@@ -26,6 +27,8 @@ class SCommandV2Object() {
     }
 
     infix fun String.toolTip(toolTip: String) = ToolTip(this, toolTip)
+
+    infix fun String.toolTip(toolTip: Message) = ToolTip(this, toolTip)
 
     fun register(command: SCommandV2Literal) {
         args.forEach {

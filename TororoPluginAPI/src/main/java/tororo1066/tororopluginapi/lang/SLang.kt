@@ -1,10 +1,16 @@
 package tororo1066.tororopluginapi.lang
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
+import java.net.URL
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 
 /**
  * 言語によってメッセージが変わるクラス
@@ -37,6 +43,7 @@ class SLang(private val plugin: JavaPlugin) {
     }
     fun init(){
         langFile.clear()
+
         if (!File(plugin.dataFolder.path + "/config.yml").exists())return
         plugin.reloadConfig()
         defaultLanguage = plugin.config.getString("defaultLanguage","en_us")!!
@@ -70,8 +77,14 @@ class SLang(private val plugin: JavaPlugin) {
 
 
         val langFile = HashMap<String,YamlConfiguration>()
+        val mcLangFile = HashMap<String,JsonObject>()
+        private val es = Executors.newSingleThreadExecutor()
         var defaultLanguage = "en_us"
         private var prefix = ""
+
+        init {
+            mcLangInit()
+        }
 
         /**
          * [CommandSender(Player)][CommandSender]に言語によって変わるメッセージを送る
@@ -151,6 +164,66 @@ class SLang(private val plugin: JavaPlugin) {
                 modifyString = modifyString.replace("{${index}}",any.toString())
             }
             return modifyString.replace("&","§")
+        }
+
+        private fun mcLangInit(){
+            mcLangFile.clear()
+
+            val mcLangFolder = File("plugins/TororoPluginAPI/lang/")
+            if (!mcLangFolder.exists())mcLangFolder.mkdirs()
+            mcLangFolder.listFiles()?.let { files ->
+                files.filter { it?.extension == "json" }.forEach {
+                    val lang = it.nameWithoutExtension
+                    val json = Gson().fromJson(it.readText(),JsonObject::class.java)
+                    mcLangFile[lang] = json
+                }
+            }
+        }
+
+        fun getMcLangFile(lang: String, sender: CommandSender? = Bukkit.getConsoleSender(), downloadMain: Boolean = false): JsonObject? {
+            if (mcLangFile.containsKey(lang)){
+                if (downloadMain){
+                    sender?.sendMessage("§aFound Minecraft Language File($lang).")
+                }
+                return mcLangFile[lang]
+            }
+            try {
+                if (!downloadMain){
+                    sender?.sendMessage("§cMinecraft Language File($lang) Not Found.")
+                }
+                sender?.sendMessage("§aDownloading Minecraft Language File($lang)...")
+                es.execute {
+                    val version = Bukkit.getMinecraftVersion()
+                    val request = URL("https://launchermeta.mojang.com/mc/game/version_manifest.json").readText()
+                    val json = Gson().fromJson(request,JsonObject::class.java)
+                    val versionList = json.getAsJsonArray("versions")
+                    val url = versionList.first { it.asJsonObject.get("id").asString == version }.asJsonObject.get("url").asString
+                    val versionJson = Gson().fromJson(URL(url).readText(),JsonObject::class.java)
+                    val assetsUrl = versionJson.getAsJsonObject("assetIndex").get("url").asString
+                    val assetsJson = Gson().fromJson(URL(assetsUrl).readText(),JsonObject::class.java)
+                    val langHash = assetsJson.getAsJsonObject("objects").get("minecraft/lang/$lang.json").asJsonObject.get("hash").asString
+                    val langContent = URL("https://resources.download.minecraft.net/${langHash.substring(0,2)}/${langHash}").readText()
+                    val langJson = Gson().fromJson(langContent,JsonObject::class.java)
+                    mcLangFile[lang] = langJson
+                    val file = File("plugins/TororoPluginAPI/lang/$lang.json")
+                    if (!file.exists()){
+                        if (!file.parentFile.exists())file.parentFile.mkdirs()
+                        file.createNewFile()
+                    }
+                    file.writeText(Gson().toJson(langJson))
+
+                    sender?.sendMessage("§aDownloaded Minecraft Language File($lang).")
+                    if (!downloadMain){
+                        sender?.sendMessage("§aPlease Try Again.")
+                    }
+                }
+            } catch (e: Exception) {
+                sender?.sendMessage("§cFailed to download Minecraft Language File($lang).")
+                sender?.sendMessage("§cSee the console for details.")
+                e.printStackTrace()
+            }
+
+            return null
         }
     }
 

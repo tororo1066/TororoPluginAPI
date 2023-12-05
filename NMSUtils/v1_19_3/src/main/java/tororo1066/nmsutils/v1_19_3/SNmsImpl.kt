@@ -4,7 +4,13 @@ import com.mojang.brigadier.Message
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
+import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands
+import net.minecraft.commands.arguments.ResourceArgument
+import net.minecraft.core.registries.Registries
+import net.minecraft.data.registries.VanillaRegistries
+import net.minecraft.network.chat.Component
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.block.Block
@@ -12,6 +18,7 @@ import org.bukkit.craftbukkit.v1_19_R2.CraftServer
 import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock
 import tororo1066.nmsutils.SNms
 import tororo1066.nmsutils.command.*
+import tororo1066.nmsutils.command.argument.EnchantArgument
 import tororo1066.nmsutils.command.argument.EntityArgument
 import tororo1066.nmsutils.v1_19_3.command.CommandArgumentsImpl
 
@@ -40,9 +47,14 @@ class SNmsImpl: SNms {
 
             builder.then(argumentBuilder)
 
+            (Bukkit.getServer() as CraftServer).server.vanillaCommandDispatcher.dispatcher.root.addChild(builder.build())
             (Bukkit.getServer() as CraftServer).server.resources.managers.commands.dispatcher.register(builder)
         }
 
+    }
+
+    override fun translate(text: String, vararg variable: Any): Message {
+        return Component.translatable(text, *variable)
     }
 
     private fun convert(command: AbstractCommandElement<*>): ArgumentBuilder<CommandSourceStack, *> {
@@ -90,7 +102,7 @@ class SNmsImpl: SNms {
                     val arg = try {
                         context.getArgument(command.name, Any::class.java).toString()
                     } catch (e: Exception) { "" }
-                    if (it.text.startsWith(arg)) suggestionsBuilder.suggest(it.text, it.toolTip?.let { Message { it } })
+                    if (it.text.startsWith(arg)) suggestionsBuilder.suggest(it.text, it.toolTip)
                 }
 
                 suggestionsBuilder.buildFuture()
@@ -120,6 +132,7 @@ class SNmsImpl: SNms {
     }
 
     private fun convertArgumentType(element: ArgumentCommandElement<*>): ArgumentCommandElement<*> {
+        val context = Commands.createValidationContext(VanillaRegistries.createLookup())
         val newType = when(val type = element.type) {
             is EntityArgument -> when {
                 type.playersOnly && type.singleTarget -> net.minecraft.commands.arguments.EntityArgument.player()
@@ -127,6 +140,7 @@ class SNmsImpl: SNms {
                 !type.playersOnly && type.singleTarget -> net.minecraft.commands.arguments.EntityArgument.entity()
                 else -> net.minecraft.commands.arguments.EntityArgument.entities()
             }
+            is EnchantArgument -> ResourceArgument.resource(context, Registries.ENCHANTMENT)
             else -> type
         }
 

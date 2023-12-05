@@ -4,7 +4,19 @@ import com.mojang.brigadier.Message
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
+import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands
+import net.minecraft.commands.arguments.ResourceKeyArgument
+import net.minecraft.core.HolderLookup
+import net.minecraft.core.HolderSet
+import net.minecraft.core.Registry
+import net.minecraft.core.RegistryAccess
+import net.minecraft.data.BuiltinRegistries
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.TagKey
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.block.Block
@@ -14,8 +26,11 @@ import tororo1066.nmsutils.SNms
 import tororo1066.nmsutils.command.AbstractCommandElement
 import tororo1066.nmsutils.command.ArgumentCommandElement
 import tororo1066.nmsutils.command.LiteralCommandElement
+import tororo1066.nmsutils.command.argument.EnchantArgument
 import tororo1066.nmsutils.command.argument.EntityArgument
 import tororo1066.nmsutils.v1_19_2.command.CommandArgumentsImpl
+import java.util.*
+import java.util.function.Supplier
 
 class SNmsImpl: SNms {
 
@@ -42,9 +57,14 @@ class SNmsImpl: SNms {
 
             builder.then(argumentBuilder)
 
+            (Bukkit.getServer() as CraftServer).server.vanillaCommandDispatcher.dispatcher.root.addChild(builder.build())
             (Bukkit.getServer() as CraftServer).server.resources.managers.commands.dispatcher.register(builder)
         }
 
+    }
+
+    override fun translate(text: String, vararg variable: Any): Message {
+        return Component.translatable(text, *variable)
     }
 
     private fun convert(command: AbstractCommandElement<*>): ArgumentBuilder<CommandSourceStack, *> {
@@ -92,7 +112,7 @@ class SNmsImpl: SNms {
                     val arg = try {
                         context.getArgument(command.name, Any::class.java).toString()
                     } catch (e: Exception) { "" }
-                    if (it.text.startsWith(arg)) suggestionsBuilder.suggest(it.text, it.toolTip?.let { Message { it } })
+                    if (it.text.startsWith(arg)) suggestionsBuilder.suggest(it.text, it.toolTip)
                 }
 
                 suggestionsBuilder.buildFuture()
@@ -129,6 +149,7 @@ class SNmsImpl: SNms {
                 !type.playersOnly && type.singleTarget -> net.minecraft.commands.arguments.EntityArgument.entity()
                 else -> net.minecraft.commands.arguments.EntityArgument.entities()
             }
+            is EnchantArgument -> ResourceKeyArgument.key(Registry.ENCHANTMENT_REGISTRY)
             else -> type
         }
 

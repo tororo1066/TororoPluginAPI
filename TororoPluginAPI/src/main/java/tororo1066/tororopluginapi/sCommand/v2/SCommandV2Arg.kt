@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.sCommand.v2
 
 import com.mojang.brigadier.builder.ArgumentBuilder
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import tororo1066.nmsutils.command.AbstractCommandElement
 import tororo1066.nmsutils.command.CommandArguments
 
@@ -40,8 +41,22 @@ abstract class SCommandV2Arg {
         return this
     }
 
+    fun setPlayerExecutor(executor: (data: SCommandV2PlayerData) -> Unit): SCommandV2Arg {
+        return setExecutor { data ->
+            val sender = data.sender as? Player ?: return@setExecutor
+            executor(SCommandV2PlayerData(sender, data.label, data.args))
+        }
+    }
+
     fun setFunctionExecutor(executor: (sender: CommandSender, label: String, args: CommandArguments) -> Unit): SCommandV2Arg {
         return setExecutor { data -> executor(data.sender, data.label, data.args) }
+    }
+
+    fun setPlayerFunctionExecutor(executor: (sender: Player, label: String, args: CommandArguments) -> Unit): SCommandV2Arg {
+        return setExecutor { data ->
+            val sender = data.sender as? Player ?: return@setExecutor
+            executor(sender, data.label, data.args)
+        }
     }
 
     fun setRequirement(requirement: Requirement): SCommandV2Arg {

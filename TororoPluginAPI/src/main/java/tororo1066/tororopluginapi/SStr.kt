@@ -6,15 +6,18 @@ import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import net.kyori.adventure.title.Title
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.TranslatableComponent
 import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import java.time.Duration
 
 @Suppress("UNUSED", "DEPRECATION")
 class SStr: Cloneable {
@@ -69,12 +72,10 @@ class SStr: Cloneable {
         return this
     }
 
-    /**
-     * Only Supported Paper
-     */
-    fun appendTrans(key: String): SStr {
-        checkPaper()
-        this.componentBuilder.append(Component.translatable(key))
+    fun appendTrans(key: String, vararg variable: Any): SStr {
+        val toComponent = variable.map { Component.text(it.toString()) }
+        this.componentBuilder.append(Component.translatable(key, toComponent))
+        this.md5ComponentBuilder.append(TranslatableComponent(key, *variable))
         return this
     }
 
@@ -168,7 +169,23 @@ class SStr: Cloneable {
         }
     }
 
-
+    fun showTitle(player: Player, subtitle: SStr? = null, fadeIn: Int = 10, stay: Int = 70, fadeOut: Int = 20){
+        if (isPaper()){
+            player.showTitle(
+                Title.title(
+                    toPaperComponent(),
+                    subtitle?.toPaperComponent()?:Component.empty(),
+                    Title.Times.of(Duration.ofMillis(fadeIn * 50L), Duration.ofMillis(stay * 50L), Duration.ofMillis(fadeOut * 50L))
+                )
+            )
+        } else {
+            player.sendTitle(
+                toString(),
+                subtitle?.toString()?: "",
+                fadeIn, stay, fadeOut
+            )
+        }
+    }
 
     enum class DisableOption {
         COLOR_CODE,

@@ -5,6 +5,8 @@ import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.arguments.ItemEnchantmentArgument
+import net.minecraft.network.chat.TranslatableComponent
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.block.Block
@@ -14,6 +16,7 @@ import tororo1066.nmsutils.SNms
 import tororo1066.nmsutils.command.AbstractCommandElement
 import tororo1066.nmsutils.command.ArgumentCommandElement
 import tororo1066.nmsutils.command.LiteralCommandElement
+import tororo1066.nmsutils.command.argument.EnchantArgument
 import tororo1066.nmsutils.command.argument.EntityArgument
 import tororo1066.nmsutils.v1_17_1.command.CommandArgumentsImpl
 
@@ -42,9 +45,13 @@ class SNmsImpl: SNms {
 
             builder.then(argumentBuilder)
 
+            (Bukkit.getServer() as CraftServer).server.vanillaCommandDispatcher.dispatcher.root.addChild(builder.build())
             (Bukkit.getServer() as CraftServer).server.resources.commands.dispatcher.register(builder)
         }
+    }
 
+    override fun translate(text: String, vararg variable: Any): Message {
+        return TranslatableComponent(text, *variable)
     }
 
     private fun convert(command: AbstractCommandElement<*>): ArgumentBuilder<CommandSourceStack, *> {
@@ -92,7 +99,7 @@ class SNmsImpl: SNms {
                     val arg = try {
                         context.getArgument(command.name, Any::class.java).toString()
                     } catch (e: Exception) { "" }
-                    if (it.text.startsWith(arg)) suggestionsBuilder.suggest(it.text, it.toolTip?.let { Message { it } })
+                    if (it.text.startsWith(arg)) suggestionsBuilder.suggest(it.text, it.toolTip)
                 }
 
                 suggestionsBuilder.buildFuture()
@@ -129,6 +136,7 @@ class SNmsImpl: SNms {
                 !type.playersOnly && type.singleTarget -> net.minecraft.commands.arguments.EntityArgument.entity()
                 else -> net.minecraft.commands.arguments.EntityArgument.entities()
             }
+            is EnchantArgument -> ItemEnchantmentArgument.enchantment()
             else -> type
         }
 

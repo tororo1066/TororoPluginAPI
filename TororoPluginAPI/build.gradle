@@ -30,7 +30,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
-    api 'me.lucko:commodore:2.0'
     api 'com.ezylang:EvalEx:3.0.5'
     api fileTree(dir: 'libs', include: '*.jar')
     compileOnly 'com.mojang:brigadier:1.0.18'

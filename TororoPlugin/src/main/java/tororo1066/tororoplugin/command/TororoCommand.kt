@@ -28,7 +28,7 @@ import java.util.*
 import kotlin.math.floor
 
 @Suppress("UNUSED")
-class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
+class TororoCommand: SCommand("tororo",TororoPlugin.prefixString, "tororo.op") {
 
     @SCommandBody
     val t = command().addArg(SCommandArg("t")).setPlayerFunction { sender, _, _, _ ->
@@ -36,14 +36,14 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
     }
 
     @SCommandBody
-    val sendToCommandLog = command().addArg(SCommandArg().addAllowString("commandLog")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))
+    val sendToCommandLog = command().addArg(SCommandArg().addAllowString("§ccommandLog")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))
         .setPlayerExecutor {
             if (it.args[1].toBoolean()){
                 TororoPlugin.commandLogPlayers[it.sender.uniqueId] = true
             } else {
                 TororoPlugin.commandLogPlayers.remove(it.sender.uniqueId)
             }
-            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+            it.sender.sendMessage(TororoPlugin.prefixString + "§a変更しました")
         }
 
     @SCommandBody
@@ -59,7 +59,7 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
             } else {
                 data.asArrayList<UUID>().add(p.uniqueId)
             }
-            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+            it.sender.sendMessage(TororoPlugin.prefixString + "§a変更しました")
         }
 
     @SCommandBody
@@ -75,46 +75,46 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
             } else {
                 data.asArrayList<UUID>().add(p.uniqueId)
             }
-            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+            it.sender.sendMessage(TororoPlugin.prefixString + "§a変更しました")
         }
 
     @SCommandBody
     val itemLore = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("lore")).addArg(SCommandArg().addAlias("lore(\\nで改行)"))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
-                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                it.sender.sendMessage(TororoPlugin.prefixString + "§c手にアイテムを持ってください")
                 return@setPlayerExecutor
             }
             val meta = it.sender.inventory.itemInMainHand.itemMeta!!
             meta.lore = it.args[2].replace("&","§").split("\\n")
             it.sender.inventory.itemInMainHand.itemMeta = meta
-            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+            it.sender.sendMessage(TororoPlugin.prefixString + "§a変更しました")
         }
 
     @SCommandBody
     val itemName = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("name")).addArg(SCommandArg().addAlias("name"))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
-                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                it.sender.sendMessage(TororoPlugin.prefixString + "§c手にアイテムを持ってください")
                 return@setPlayerExecutor
             }
             val meta = it.sender.inventory.itemInMainHand.itemMeta!!
             meta.setDisplayName(it.args[2].replace("&","§"))
             it.sender.inventory.itemInMainHand.itemMeta = meta
-            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+            it.sender.sendMessage(TororoPlugin.prefixString + "§a変更しました")
         }
 
     @SCommandBody
     val itemCmd = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("cmd")).addArg(SCommandArg().addAllowType(SCommandArgType.INT).addAlias("カスタムモデルデータ"))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
-                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                it.sender.sendMessage(TororoPlugin.prefixString + "§c手にアイテムを持ってください")
                 return@setPlayerExecutor
             }
             val meta = it.sender.inventory.itemInMainHand.itemMeta!!
             meta.setCustomModelData(it.args[2].toInt())
             it.sender.inventory.itemInMainHand.itemMeta = meta
-            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+            it.sender.sendMessage(TororoPlugin.prefixString + "§a変更しました")
         }
 
     @SCommandBody
@@ -123,11 +123,11 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
         .addArg(SCommandArg().addAllowType(SCommandArgType.INT).addAlias("level"))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
-                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                it.sender.sendMessage(TororoPlugin.prefixString + "§c手にアイテムを持ってください")
                 return@setPlayerExecutor
             }
             it.sender.inventory.itemInMainHand.addUnsafeEnchantment(Enchantment.getByKey(NamespacedKey.minecraft(it.args[2]))!!,it.args[3].toInt())
-            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+            it.sender.sendMessage(TororoPlugin.prefixString + "§a変更しました")
         }
 
     @SCommandBody
@@ -137,14 +137,14 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
         .addArg(SCommandArg().addAllowString(EquipmentSlot.values().map { it.name.lowercase() }.toTypedArray()))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
-                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                it.sender.sendMessage(TororoPlugin.prefixString + "§c手にアイテムを持ってください")
                 return@setPlayerExecutor
             }
             val meta = it.sender.inventory.itemInMainHand.itemMeta!!
             val uuid = UUID.randomUUID()
             meta.addAttributeModifier(Attribute.valueOf(it.args[2].uppercase()), AttributeModifier(uuid,uuid.toString(),it.args[3].toDouble(),AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.valueOf(it.args[4].uppercase())))
             it.sender.inventory.itemInMainHand.itemMeta = meta
-            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+            it.sender.sendMessage(TororoPlugin.prefixString + "§a変更しました")
         }
 
     @SCommandBody
@@ -152,13 +152,13 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
         .addArg(SCommandArg().addAllowString(ItemFlag.values().map { it.name.lowercase() }.toTypedArray()))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
-                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                it.sender.sendMessage(TororoPlugin.prefixString + "§c手にアイテムを持ってください")
                 return@setPlayerExecutor
             }
             val meta = it.sender.inventory.itemInMainHand.itemMeta!!
             meta.addItemFlags(ItemFlag.valueOf(it.args[2].uppercase()))
             it.sender.inventory.itemInMainHand.itemMeta = meta
-            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+            it.sender.sendMessage(TororoPlugin.prefixString + "§a変更しました")
         }
 
 
@@ -167,30 +167,30 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefix, "tororo.op") {
         .addArg(SCommandArg().addAllowType(SCommandArgType.INT).addAlias("耐久"))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
-                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                it.sender.sendMessage(TororoPlugin.prefixString + "§c手にアイテムを持ってください")
                 return@setPlayerExecutor
             }
             val meta = it.sender.inventory.itemInMainHand.itemMeta!!
             if (meta !is Damageable){
-                it.sender.sendMessage(TororoPlugin.prefix + "§cこのアイテムには耐久が存在しません")
+                it.sender.sendMessage(TororoPlugin.prefixString + "§cこのアイテムには耐久が存在しません")
                 return@setPlayerExecutor
             }
             meta.damage = it.sender.inventory.itemInMainHand.type.maxDurability.toInt() - it.args[2].toInt()
             it.sender.inventory.itemInMainHand.itemMeta = meta
-            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+            it.sender.sendMessage(TororoPlugin.prefixString + "§a変更しました")
         }
 
     @SCommandBody
     val itemUnbreakable = command().addArg(SCommandArg().addAllowString("item")).addArg(SCommandArg().addAllowString("unbreakable")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))
         .setPlayerExecutor {
             if (it.sender.inventory.itemInMainHand.type.isAir){
-                it.sender.sendMessage(TororoPlugin.prefix + "§c手にアイテムを持ってください")
+                it.sender.sendMessage(TororoPlugin.prefixString + "§c手にアイテムを持ってください")
                 return@setPlayerExecutor
             }
             val meta = it.sender.inventory.itemInMainHand.itemMeta!!
             meta.isUnbreakable = it.args[2].toBoolean()
             it.sender.inventory.itemInMainHand.itemMeta = meta
-            it.sender.sendMessage(TororoPlugin.prefix + "§a変更しました")
+            it.sender.sendMessage(TororoPlugin.prefixString + "§a変更しました")
         }
 
     @SCommandBody

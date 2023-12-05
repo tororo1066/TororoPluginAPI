@@ -1,5 +1,6 @@
 package tororo1066.nmsutils
 
+import com.mojang.brigadier.Message
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.block.Block
@@ -11,6 +12,8 @@ interface SNms {
     fun getMapColor(block: Block): Color
 
     fun registerCommands(command: LiteralCommandElement, vararg commands: AbstractCommandElement<*>)
+
+    fun translate(text: String, vararg variable: Any): Message
 
     companion object {
 

@@ -12,12 +12,15 @@ class IfAction: AbstractAction("if") {
             .withValues(scriptFile.publicVariables)
         if (expression.evaluate().booleanValue){
             val lines = scriptFile.lines.subList(lineIndex+1, scriptFile.lines.size).takeWhile {
-                it.separator == separator+1
+                it.separator > separator
             }
 
             lines.forEach {
                 if (scriptFile.returnFlag){
                     return
+                }
+                if (it.separator != separator+1){
+                    return@forEach
                 }
                 it.invoke()
             }
@@ -29,12 +32,15 @@ class IfAction: AbstractAction("if") {
             if ((elseFind.firstOrNull()?:return).action is IfAction)return
 
             val lines = scriptFile.lines.subList(elseFind.first().lineIndex+1, scriptFile.lines.size).takeWhile {
-                it.separator == separator+1
+                it.separator > separator
             }
 
             lines.forEach {
                 if (scriptFile.returnFlag){
                     return
+                }
+                if (it.separator != separator+1){
+                    return@forEach
                 }
                 it.invoke()
             }
