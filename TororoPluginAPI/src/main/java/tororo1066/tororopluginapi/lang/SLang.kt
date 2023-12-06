@@ -206,9 +206,9 @@ class SLang(private val plugin: JavaPlugin) {
                 return
             }
             downloading[lang] = true
-            try {
-                sender?.sendMessage("§aDownloading Minecraft Language File($lang)...")
-                es.execute {
+            sender?.sendMessage("§aDownloading Minecraft Language File($lang)...")
+            es.execute {
+                try {
                     val version = Bukkit.getMinecraftVersion()
                     val request = URL("https://launchermeta.mojang.com/mc/game/version_manifest.json").readText()
                     val json = Gson().fromJson(request,JsonObject::class.java)
@@ -233,13 +233,13 @@ class SLang(private val plugin: JavaPlugin) {
 
                     sender?.sendMessage("§aDownloaded Minecraft Language File($lang).")
                     callback(langJson)
+                } catch (e: Exception) {
+                    sender?.sendMessage("§cFailed to download Minecraft Language File($lang).")
+                    sender?.sendMessage("§cSee the console for details.")
+                    e.printStackTrace()
+                } finally {
+                    downloading[lang] = false
                 }
-            } catch (e: Exception) {
-                sender?.sendMessage("§cFailed to download Minecraft Language File($lang).")
-                sender?.sendMessage("§cSee the console for details.")
-                e.printStackTrace()
-            } finally {
-                downloading[lang] = false
             }
         }
     }

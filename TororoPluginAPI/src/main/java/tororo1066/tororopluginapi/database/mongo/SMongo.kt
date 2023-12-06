@@ -19,10 +19,6 @@ class SMongo: SDatabase {
     constructor(plugin: JavaPlugin): super(plugin)
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): super(plugin, configFile, configPath)
 
-    init {
-//        Loggers.USE_SLF4J = false
-    }
-
     override fun open(): Pair<MongoClient, MongoDatabase> {
         var url = this.url
 

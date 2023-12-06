@@ -1,5 +1,6 @@
 package tororo1066.tororoplugin.command
 
+import com.google.gson.JsonObject
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -7,7 +8,10 @@ import org.bukkit.command.CommandSender
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.Damageable
+import tororo1066.nmsutils.command.CommandArguments
 import tororo1066.nmsutils.command.ToolTip
 import tororo1066.tororoplugin.TororoPlugin
 import tororo1066.tororopluginapi.SStr
@@ -23,14 +27,20 @@ import tororo1066.tororopluginapi.sCommand.v2.argumentType.StringArg
 import tororo1066.tororopluginapi.utils.sendMessage
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.reflect.KClass
 
 class TororoCommandV2: SCommandV2("tororo") {
 
     val japaneseEnchantMap = HashMap<String, Enchantment>()
     val japaneseAttributeMap = HashMap<String, Attribute>()
 
+    var japanese: JsonObject? = null
+
     init {
         root.setPermission("tororo")
+        root.setFunctionExecutor { sender, _, _ ->
+            sender.sendMessage("TororoPlugin v${TororoPlugin.plugin.description.version}")
+        }
         SBukkit.registerSEvent(this)
 
 
@@ -41,6 +51,7 @@ class TororoCommandV2: SCommandV2("tororo") {
             Attribute.values().forEach {
                 japaneseAttributeMap[json[it.translationKey()].asString] = it
             }
+            japanese = json
         }
     }
 
@@ -61,44 +72,18 @@ class TororoCommandV2: SCommandV2("tororo") {
         sendMessage(TororoPlugin.prefix + msg)
     }
 
+    private fun CommandSender.sendCopyableMsg(msg: SStr, copyText: String) {
+        sendMessage(msg.hoverText("§6クリックでコピー").clickText(SStr.ClickAction.COPY_TO_CLIPBOARD, copyText))
+    }
+
+    private inline fun <reified T : Enum<T>> getValue(name: String): T? {
+        return enumValues<T>().find { it.name.equals(name, true) }
+    }
+
 
     @SCommandBody
     val tororo = command {
-        literal("test") {
-            setPlayerFunctionExecutor { sender, _, _ ->
-                val lang = SLang.getMcLangFile("ja_jp", sender)?:return@setPlayerFunctionExecutor
-                Enchantment.values().forEach {
-                    japaneseEnchantMap[lang[it.translationKey()].asString] = it
-                }
-                sender.updateCommands()
-            }
-        }
 
-        literal("send") {
-            setPermission("tororo.send")
-            argument("player", EntityArg.players()) {
-                argument("repeat", IntArg(1,10)) {
-
-                    suggest("3" toolTip "3回", "5" toolTip "5回", "10" toolTip "10回")
-
-                    argument("text", StringArg.greedyPhrase()) {
-
-                        suggest("Hello" toolTip "こんにちは", "Bye" toolTip "さようなら")
-
-                        setFunctionExecutor { sender, label, args ->
-                            val players = args.getEntities("player")
-                            val text = args.getArgument("text", String::class.java)
-                            val repeat = args.getArgument("repeat", Int::class.java)
-                            players.forEach { player ->
-                                repeat(repeat) {
-                                    player.sendMessage(text)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
 
@@ -110,6 +95,39 @@ class TororoCommandV2: SCommandV2("tororo") {
 
             literal("info") {
 
+                setPlayerFunctionExecutor { sender, _, _ ->
+                    val item = sender.itemInMainHand()?:return@setPlayerFunctionExecutor
+                    val meta = item.itemMeta?:return@setPlayerFunctionExecutor
+                    sender.sendCopyableMsg(SStr("&7Type: ${item.type.name}"), item.type.name)
+                    sender.sendCopyableMsg(SStr("&7DisplayName: ${meta.displayName}"), meta.displayName)
+                    sender.sendCopyableMsg(SStr("&7Lore: ${if (meta.lore.isNullOrEmpty()) "なし" else ""}"),"")
+                    meta.lore?.forEach {
+                        sender.sendCopyableMsg(SStr("  $it"), it)
+                    }
+                    sender.sendCopyableMsg(SStr("&7CustomModelData: ${if (meta.hasCustomModelData()) meta.customModelData else "なし"}"), "")
+                    sender.sendCopyableMsg(SStr("&7Enchantments: ${if (meta.enchants.isEmpty()) "なし" else ""}"), "")
+                    meta.enchants.forEach {
+                        sender.sendCopyableMsg(SStr(
+                            "  &7${japanese?.get(it.key.translationKey())?.asString?:it.key.key.key}: ${it.value}"
+                        ), it.key.key.key)
+                    }
+                    sender.sendCopyableMsg(SStr("&7Unbreakable: ${meta.isUnbreakable}"), meta.isUnbreakable.toString())
+                    if (meta is Damageable) {
+                        sender.sendCopyableMsg(SStr("&7Durability: ${item.type.maxDurability - meta.damage}"), "")
+                    }
+                    sender.sendCopyableMsg(SStr("&7AttributeModifiers: ${
+                        if (meta.attributeModifiers == null || meta.attributeModifiers!!.isEmpty) "なし" else ""
+                    }"), "")
+                    meta.attributeModifiers?.forEach { attribute, modifier ->
+                        sender.sendCopyableMsg(SStr(
+                            "  &7${japanese?.get(attribute.translationKey())?.asString?:attribute.key.key}: ${modifier.amount}"
+                        ), attribute.key.key)
+                    }
+                    sender.sendCopyableMsg(SStr("&7ItemFlags: ${if (meta.itemFlags.isEmpty()) "なし" else ""}"), "")
+                    meta.itemFlags.forEach {
+                        sender.sendCopyableMsg(SStr("  &7${it.name}"), it.name)
+                    }
+                }
             }
 
             literal("displayName") {
@@ -212,44 +230,98 @@ class TororoCommandV2: SCommandV2("tororo") {
                 }
             }
 
+            fun addAttribute(sender: Player, args: CommandArguments) {
+                val item = sender.itemInMainHand()?:return
+                val attribute = args.getArgument("attribute", String::class.java).let {
+                    if (japaneseAttributeMap.containsKey(it)) {
+                        japaneseAttributeMap[it]!!
+                    } else {
+                        getValue(it.replace(".", "_"))?:return
+                    }
+                }
+                val amount = args.getArgument("amount", Double::class.java)
+                val operation = args.getNullableArgument("operation", String::class.java)?.let {
+                    getValue<AttributeModifier.Operation>(it)?:return
+                }?:AttributeModifier.Operation.ADD_NUMBER
+                val slot = args.getNullableArgument("slot", String::class.java)?.let {
+                    getValue<EquipmentSlot>(it)?:return
+                }
+                val uuid = UUID.randomUUID()
+                item.itemMeta = item.itemMeta.apply {
+                    addAttributeModifier(attribute, AttributeModifier(uuid, uuid.toString(), amount, operation, slot))
+                }
+
+                sender.sendPrefixMsg(SStr("&aAttributeを追加しました"))
+            }
+
             literal("attribute") {
                 argument("attribute", StringArg.phrase()) {
                     suggest { _, _, _ ->
                         return@suggest Attribute.values().map { ToolTip(it.key.key, TororoPlugin.sNms.translate(it.translationKey())) }
                             .plus(japaneseAttributeMap.map { ToolTip("\"${it.key}\"") })
-
                     }
 
-                    argument("slot", StringArg.word()) {
-                        suggest(*EquipmentSlot.values().map { ToolTip(it.name.lowercase()) }.toTypedArray())
+                    argument("amount", DoubleArg()) {
+                        setPlayerFunctionExecutor { sender, _, args ->
+                            addAttribute(sender, args)
+                        }
 
-                        argument("amount", DoubleArg()) {
+                        argument("operation", StringArg.word()) {
+                            suggest(*AttributeModifier.Operation.values().map { ToolTip(it.name.lowercase()) }.toTypedArray())
+
                             setPlayerFunctionExecutor { sender, _, args ->
-                                val attribute = args.getArgument("attribute", String::class.java).let {
-                                    if (japaneseAttributeMap.containsKey(it)) {
-                                        japaneseAttributeMap[it]!!
-                                    } else {
-                                        UsefulUtility.sTry(
-                                            { Attribute.valueOf(it.replace(".", "_").uppercase()) },
-                                            { null }) ?: return@setPlayerFunctionExecutor
-                                    }
-                                }
-                                val amount = args.getArgument("amount", Double::class.java)
-                                val slot = args.getArgument("slot", String::class.java).let {
-                                    UsefulUtility.sTry(
-                                        { EquipmentSlot.valueOf(it.uppercase()) },
-                                        { null }) ?: return@setPlayerFunctionExecutor
-                                }
-                                val item = sender.itemInMainHand() ?: return@setPlayerFunctionExecutor
+                                addAttribute(sender, args)
+                            }
 
-                                val uuid = UUID.randomUUID()
-                                item.itemMeta = item.itemMeta.apply {
-                                    addAttributeModifier(attribute, AttributeModifier(uuid, uuid.toString(), amount, AttributeModifier.Operation.ADD_NUMBER, slot))
-                                }
+                            argument("slot", StringArg.word()) {
+                                suggest(*EquipmentSlot.values().map { ToolTip(it.name.lowercase()) }.toTypedArray())
 
-                                sender.sendPrefixMsg(SStr("&aAttributeを追加しました"))
+                                setPlayerFunctionExecutor { sender, _, args ->
+                                    addAttribute(sender, args)
+                                }
                             }
                         }
+                    }
+                }
+            }
+
+            literal("flags") {
+                argument("flag", StringArg.word()) {
+                    suggest { _, _, _ ->
+                        return@suggest ItemFlag.values().map { ToolTip(it.name.lowercase()) }
+                    }
+
+                    setPlayerFunctionExecutor { sender, _, args ->
+                        val flag = args.getArgument("flag", String::class.java).let {
+                            getValue<ItemFlag>(it)?:return@setPlayerFunctionExecutor
+                        }
+                        val item = sender.itemInMainHand()?:return@setPlayerFunctionExecutor
+                        val meta = item.itemMeta
+                        if (meta.hasItemFlag(flag)) {
+                            meta.removeItemFlags(flag)
+                            sender.sendPrefixMsg(SStr("&aフラグを削除しました"))
+                        } else {
+                            meta.addItemFlags(flag)
+                            sender.sendPrefixMsg(SStr("&aフラグを追加しました"))
+                        }
+                        item.itemMeta = meta
+                    }
+                }
+            }
+
+            literal("durability") {
+                argument("durability", IntArg(min = 0, max = 32767)) {
+                    setPlayerFunctionExecutor { sender, _, args ->
+                        val durability = args.getArgument("durability", Int::class.java)
+                        val item = sender.itemInMainHand()?:return@setPlayerFunctionExecutor
+                        val meta = item.itemMeta
+                        if (meta !is Damageable) {
+                            sender.sendPrefixMsg(SStr("&c耐久値を持たないアイテムです"))
+                            return@setPlayerFunctionExecutor
+                        }
+                        meta.damage = item.type.maxDurability - durability
+                        item.itemMeta = meta
+                        sender.sendPrefixMsg(SStr("&a耐久値を変更しました"))
                     }
                 }
             }

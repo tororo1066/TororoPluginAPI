@@ -96,8 +96,8 @@ class ScriptFile(val file: File) {
             ExpressionConfiguration.defaultConfiguration()
             .apply {
                 functionDictionary.apply {
-                    addFunction("func_now", DateFunc())
-                    addFunction("func_isOp", IsOp())
+                    addFunction("now()", DateFunc())
+                    addFunction("isOp()", IsOp())
                 }
 
             }

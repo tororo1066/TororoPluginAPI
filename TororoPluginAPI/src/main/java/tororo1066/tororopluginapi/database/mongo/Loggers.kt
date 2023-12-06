@@ -1,3 +1,4 @@
+//mongodbのLoggersを無効化する(クラスの上書き)
 package com.mongodb.internal.diagnostics.logging
 
 import org.bukkit.plugin.java.JavaPlugin

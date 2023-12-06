@@ -7,6 +7,7 @@ import tororo1066.tororoplugin.command.TororoCommand
 import tororo1066.tororoplugin.command.TororoCommandV2
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
+import tororo1066.tororopluginapi.database.SDatabase
 import tororo1066.tororopluginapi.otherClass.MultipleValueMap
 import java.util.*
 
@@ -26,7 +27,6 @@ class TororoPlugin: SJavaPlugin() {
         plugin = this
         sNms = SNms.newInstance()
         TororoCommandV2()
-        Bukkit.broadcast(Component.text("isPaper: " + SStr.isPaper()))
     }
 
 }

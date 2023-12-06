@@ -65,26 +65,30 @@ class SNmsImpl: SNms {
         }
     }
 
+    private fun applyCommand(command: AbstractCommandElement<*>, builder: ArgumentBuilder<CommandSourceStack, *>) {
+        if (command.onExecute.isNotEmpty()) {
+            builder.executes { context ->
+                val sender = context.source.entity?.getBukkitSender(context.source)?: context.source.bukkitSender
+                command.onExecute.forEach {
+                    it(sender, context.input.split(" ")[0], CommandArgumentsImpl(context))
+                }
+                return@executes 1
+            }
+        }
+
+        if (command.requirements.isNotEmpty()) {
+            builder.requires { source ->
+                val sender = source.entity?.getBukkitSender(source)?: source.bukkitSender
+                return@requires command.requirements.all {
+                    it(sender)
+                }
+            }
+        }
+    }
+
     private fun convertToBrigadier(command: LiteralCommandElement): LiteralArgumentBuilder<CommandSourceStack> {
         return LiteralArgumentBuilder.literal<CommandSourceStack>(command.literal).apply {
-            if (command.onExecute.isNotEmpty()) {
-                executes { context ->
-                    val sender = context.source.bukkitSender
-                    command.onExecute.forEach {
-                        it(sender, command.literal, CommandArgumentsImpl(context))
-                    }
-                    return@executes 1
-                }
-            }
-
-            if (command.requirements.isNotEmpty()) {
-                requires { source ->
-                    val sender = source.bukkitSender
-                    return@requires command.requirements.all {
-                        it(sender)
-                    }
-                }
-            }
+            applyCommand(command, this)
         }
     }
 
@@ -109,24 +113,7 @@ class SNmsImpl: SNms {
             }
         }
         builder.apply {
-            if (command.onExecute.isNotEmpty()) {
-                executes { context ->
-                    val sender = context.source.bukkitSender
-                    command.onExecute.forEach {
-                        it(sender, command.name, CommandArgumentsImpl(context))
-                    }
-                    return@executes 1
-                }
-            }
-
-            if (command.requirements.isNotEmpty()) {
-                requires { source ->
-                    val sender = source.bukkitSender
-                    return@requires command.requirements.all {
-                        it(sender)
-                    }
-                }
-            }
+            applyCommand(command, this)
         }
         return builder
     }

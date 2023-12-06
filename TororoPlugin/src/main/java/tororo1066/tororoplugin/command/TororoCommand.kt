@@ -36,7 +36,7 @@ class TororoCommand: SCommand("tororo",TororoPlugin.prefixString, "tororo.op") {
     }
 
     @SCommandBody
-    val sendToCommandLog = command().addArg(SCommandArg().addAllowString("§ccommandLog")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))
+    val sendToCommandLog = command().addArg(SCommandArg().addAllowString("commandLog")).addArg(SCommandArg().addAllowType(SCommandArgType.BOOLEAN))
         .setPlayerExecutor {
             if (it.args[1].toBoolean()){
                 TororoPlugin.commandLogPlayers[it.sender.uniqueId] = true
