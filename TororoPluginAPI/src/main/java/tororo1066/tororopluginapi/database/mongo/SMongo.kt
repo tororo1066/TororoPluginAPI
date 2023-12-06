@@ -3,11 +3,8 @@ package tororo1066.tororopluginapi.database.mongo
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
-import com.mongodb.client.model.Updates
-import com.mongodb.internal.diagnostics.logging.Loggers
 import org.bson.Document
 import org.bson.conversions.Bson
-import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.database.SDBResultSet
@@ -23,7 +20,7 @@ class SMongo: SDatabase {
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): super(plugin, configFile, configPath)
 
     init {
-        Loggers.USE_SLF4J = false
+//        Loggers.USE_SLF4J = false
     }
 
     override fun open(): Pair<MongoClient, MongoDatabase> {
