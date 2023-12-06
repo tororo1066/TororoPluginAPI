@@ -1,25 +1,22 @@
 package tororo1066.tororoplugin.command
 
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import net.kyori.adventure.translation.GlobalTranslator
-import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
+import org.bukkit.attribute.Attribute
+import org.bukkit.attribute.AttributeModifier
 import org.bukkit.command.CommandSender
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
-import tororo1066.nmsutils.SNms
 import tororo1066.nmsutils.command.ToolTip
 import tororo1066.tororoplugin.TororoPlugin
 import tororo1066.tororopluginapi.SStr
-import tororo1066.tororopluginapi.SStr.Companion.toSStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
-import tororo1066.tororopluginapi.annotation.SEventHandler
 import tororo1066.tororopluginapi.frombukkit.SBukkit
 import tororo1066.tororopluginapi.lang.SLang
+import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2
+import tororo1066.tororopluginapi.sCommand.v2.argumentType.DoubleArg
 import tororo1066.tororopluginapi.sCommand.v2.argumentType.EntityArg
 import tororo1066.tororopluginapi.sCommand.v2.argumentType.IntArg
 import tororo1066.tororopluginapi.sCommand.v2.argumentType.StringArg
@@ -29,13 +26,22 @@ import kotlin.collections.HashMap
 
 class TororoCommandV2: SCommandV2("tororo") {
 
-    val japaneseEnchantMap = HashMap<String, Enchantment>(mapOf("test" to Enchantment.DAMAGE_ALL))
+    val japaneseEnchantMap = HashMap<String, Enchantment>()
+    val japaneseAttributeMap = HashMap<String, Attribute>()
 
     init {
         root.setPermission("tororo")
         SBukkit.registerSEvent(this)
 
 
+        SLang.downloadMcLangFile("ja_jp") { json ->
+            Enchantment.values().forEach {
+                japaneseEnchantMap[json[it.translationKey()].asString] = it
+            }
+            Attribute.values().forEach {
+                japaneseAttributeMap[json[it.translationKey()].asString] = it
+            }
+        }
     }
 
     private fun Player.noMessageItemInMainHand() = if (inventory.itemInMainHand.type.isAir) {
@@ -184,6 +190,65 @@ class TororoCommandV2: SCommandV2("tororo") {
                             item.addUnsafeEnchantment(enchant, level)
 
                             sender.sendPrefixMsg(SStr("&aエンチャントを追加しました"))
+                        }
+                    }
+                }
+            }
+
+            literal("unbreakable") {
+                setPlayerFunctionExecutor { sender, _, _ ->
+                    val item = sender.itemInMainHand()?:return@setPlayerFunctionExecutor
+                    if (item.itemMeta.isUnbreakable) {
+                        item.itemMeta = item.itemMeta.apply {
+                            isUnbreakable = false
+                        }
+                        sender.sendPrefixMsg(SStr("&a不可解を解除しました"))
+                    } else {
+                        item.itemMeta = item.itemMeta.apply {
+                            isUnbreakable = true
+                        }
+                        sender.sendPrefixMsg(SStr("&a不可解にしました"))
+                    }
+                }
+            }
+
+            literal("attribute") {
+                argument("attribute", StringArg.phrase()) {
+                    suggest { _, _, _ ->
+                        return@suggest Attribute.values().map { ToolTip(it.key.key, TororoPlugin.sNms.translate(it.translationKey())) }
+                            .plus(japaneseAttributeMap.map { ToolTip("\"${it.key}\"") })
+
+                    }
+
+                    argument("slot", StringArg.word()) {
+                        suggest(*EquipmentSlot.values().map { ToolTip(it.name.lowercase()) }.toTypedArray())
+
+                        argument("amount", DoubleArg()) {
+                            setPlayerFunctionExecutor { sender, _, args ->
+                                val attribute = args.getArgument("attribute", String::class.java).let {
+                                    if (japaneseAttributeMap.containsKey(it)) {
+                                        japaneseAttributeMap[it]!!
+                                    } else {
+                                        UsefulUtility.sTry(
+                                            { Attribute.valueOf(it.replace(".", "_").uppercase()) },
+                                            { null }) ?: return@setPlayerFunctionExecutor
+                                    }
+                                }
+                                val amount = args.getArgument("amount", Double::class.java)
+                                val slot = args.getArgument("slot", String::class.java).let {
+                                    UsefulUtility.sTry(
+                                        { EquipmentSlot.valueOf(it.uppercase()) },
+                                        { null }) ?: return@setPlayerFunctionExecutor
+                                }
+                                val item = sender.itemInMainHand() ?: return@setPlayerFunctionExecutor
+
+                                val uuid = UUID.randomUUID()
+                                item.itemMeta = item.itemMeta.apply {
+                                    addAttributeModifier(attribute, AttributeModifier(uuid, uuid.toString(), amount, AttributeModifier.Operation.ADD_NUMBER, slot))
+                                }
+
+                                sender.sendPrefixMsg(SStr("&aAttributeを追加しました"))
+                            }
                         }
                     }
                 }

@@ -169,7 +169,7 @@ class SLang(private val plugin: JavaPlugin) {
         private fun mcLangInit(){
             mcLangFile.clear()
 
-            val mcLangFolder = File("plugins/TororoPluginAPI/lang/")
+            val mcLangFolder = File("plugins/TororoPluginAPI/lang/${Bukkit.getMinecraftVersion()}/")
             if (!mcLangFolder.exists())mcLangFolder.mkdirs()
             mcLangFolder.listFiles()?.let { files ->
                 files.filter { it?.extension == "json" }.forEach {
@@ -180,17 +180,33 @@ class SLang(private val plugin: JavaPlugin) {
             }
         }
 
-        fun getMcLangFile(lang: String, sender: CommandSender? = Bukkit.getConsoleSender(), downloadMain: Boolean = false): JsonObject? {
+        private var downloading = HashMap<String,Boolean>()
+
+        fun getMcLangFile(lang: String, sender: CommandSender? = Bukkit.getConsoleSender()): JsonObject? {
             if (mcLangFile.containsKey(lang)){
-                if (downloadMain){
-                    sender?.sendMessage("§aFound Minecraft Language File($lang).")
-                }
                 return mcLangFile[lang]
             }
+
+            sender?.sendMessage("§aMinecraft Language File($lang) Not Found.")
+
+            downloadMcLangFile(lang,sender) {
+                sender?.sendMessage("§aPlease Try Again.")
+            }
+
+            return null
+        }
+
+        fun downloadMcLangFile(lang: String, sender: CommandSender? = Bukkit.getConsoleSender(), callback: (JsonObject) -> Unit){
+            if (mcLangFile.containsKey(lang)){
+                callback(mcLangFile[lang]!!)
+                return
+            }
+            if (downloading[lang] == true){
+                sender?.sendMessage("§cAnother download is in progress. Try again later.")
+                return
+            }
+            downloading[lang] = true
             try {
-                if (!downloadMain){
-                    sender?.sendMessage("§cMinecraft Language File($lang) Not Found.")
-                }
                 sender?.sendMessage("§aDownloading Minecraft Language File($lang)...")
                 es.execute {
                     val version = Bukkit.getMinecraftVersion()
@@ -198,32 +214,33 @@ class SLang(private val plugin: JavaPlugin) {
                     val json = Gson().fromJson(request,JsonObject::class.java)
                     val versionList = json.getAsJsonArray("versions")
                     val url = versionList.first { it.asJsonObject.get("id").asString == version }.asJsonObject.get("url").asString
+
                     val versionJson = Gson().fromJson(URL(url).readText(),JsonObject::class.java)
                     val assetsUrl = versionJson.getAsJsonObject("assetIndex").get("url").asString
+
                     val assetsJson = Gson().fromJson(URL(assetsUrl).readText(),JsonObject::class.java)
                     val langHash = assetsJson.getAsJsonObject("objects").get("minecraft/lang/$lang.json").asJsonObject.get("hash").asString
+
                     val langContent = URL("https://resources.download.minecraft.net/${langHash.substring(0,2)}/${langHash}").readText()
                     val langJson = Gson().fromJson(langContent,JsonObject::class.java)
                     mcLangFile[lang] = langJson
-                    val file = File("plugins/TororoPluginAPI/lang/$lang.json")
+                    val file = File("plugins/TororoPluginAPI/lang/${version}/$lang.json")
                     if (!file.exists()){
-                        if (!file.parentFile.exists())file.parentFile.mkdirs()
+                        if (!file.parentFile.exists()) file.parentFile.mkdirs()
                         file.createNewFile()
                     }
                     file.writeText(Gson().toJson(langJson))
 
                     sender?.sendMessage("§aDownloaded Minecraft Language File($lang).")
-                    if (!downloadMain){
-                        sender?.sendMessage("§aPlease Try Again.")
-                    }
+                    callback(langJson)
                 }
             } catch (e: Exception) {
                 sender?.sendMessage("§cFailed to download Minecraft Language File($lang).")
                 sender?.sendMessage("§cSee the console for details.")
                 e.printStackTrace()
+            } finally {
+                downloading[lang] = false
             }
-
-            return null
         }
     }
 
