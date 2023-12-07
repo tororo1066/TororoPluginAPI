@@ -16,10 +16,6 @@ abstract class SCommandV2(val plugin: JavaPlugin, val command: String, val permi
     constructor(command: String, permission: String): this(SJavaPlugin.plugin, command, permission)
 
     init {
-        if (SNms.newNullableInstance() == null){
-            throw Exception("NMSUtils(or TororoPluginAPI) is not installed")
-        }
-
         Bukkit.getScheduler().runTaskLater(plugin, Runnable {
             loadAllCommands()
         }, 1)
