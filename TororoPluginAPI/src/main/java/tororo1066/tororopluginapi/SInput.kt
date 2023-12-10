@@ -29,7 +29,7 @@ class SInput(private val plugin: JavaPlugin) {
             cEvent.isCancelled = true
 
             if (cEvent.message == "/cancel"){
-                p.sendMessage("§a入力をキャンセルしました")
+                p.sendMessage("§aCancelled Input")
                 unit.unregister()
                 return@biRegister
             }

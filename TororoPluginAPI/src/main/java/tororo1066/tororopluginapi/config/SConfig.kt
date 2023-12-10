@@ -4,6 +4,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import java.io.File
+import java.util.concurrent.CompletableFuture
 
 /**
  * Config関連のクラス
@@ -108,6 +109,12 @@ class SConfig(val plugin: JavaPlugin) {
         configuration.save(file)
 
         return true
+    }
+
+    fun asyncSaveConfig(configuration: YamlConfiguration, path: String): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync {
+            saveConfig(configuration, path)
+        }
     }
 
     /**

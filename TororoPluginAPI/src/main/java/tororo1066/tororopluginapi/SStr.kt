@@ -5,12 +5,15 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.title.Title
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.ItemTag
 import net.md_5.bungee.api.chat.TranslatableComponent
+import net.md_5.bungee.api.chat.hover.content.Item
 import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
 import org.bukkit.Server
@@ -47,7 +50,12 @@ class SStr: Cloneable {
 
     private constructor(component: Component){
         componentBuilder.append(component)
-        md5ComponentBuilder.append(PlainTextComponentSerializer.plainText().serialize(component))
+        md5ComponentBuilder.append(BungeeComponentSerializer.get().serialize(component))
+    }
+
+    private constructor(component: Array<out BaseComponent>){
+        componentBuilder.append(BungeeComponentSerializer.get().deserialize(component))
+        md5ComponentBuilder.append(component)
     }
 
     private constructor(sStr: SStr){
@@ -175,14 +183,16 @@ class SStr: Cloneable {
                 Title.title(
                     toPaperComponent(),
                     subtitle?.toPaperComponent()?:Component.empty(),
-                    Title.Times.of(Duration.ofMillis(fadeIn * 50L), Duration.ofMillis(stay * 50L), Duration.ofMillis(fadeOut * 50L))
+                    Title.Times.times(Duration.ofMillis(fadeIn * 50L), Duration.ofMillis(stay * 50L), Duration.ofMillis(fadeOut * 50L))
                 )
             )
         } else {
-            player.sendTitle(
-                toString(),
-                subtitle?.toString()?: "",
-                fadeIn, stay, fadeOut
+            player.showTitle(
+                toBukkitComponent(),
+                subtitle?.toBukkitComponent()?:ComponentBuilder().create(),
+                fadeIn * 20,
+                stay * 20,
+                fadeOut * 20
             )
         }
     }

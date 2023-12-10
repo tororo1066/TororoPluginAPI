@@ -7,12 +7,15 @@ import org.bukkit.block.banner.Pattern
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BannerMeta
+import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
+import tororo1066.tororopluginapi.SStr
+import tororo1066.tororopluginapi.SStr.Companion.toSStr
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -137,6 +140,10 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
 
     }
 
+    private fun createMeta(): ItemMeta {
+        return Bukkit.getItemFactory().getItemMeta(this.type)
+    }
+
 
     open fun setItemAmount(amount: Int): SItem {
         this.amount = amount
@@ -148,8 +155,19 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun setDisplayName(name : String): SItem {
-        val meta = itemMeta
+        val meta = itemMeta?:createMeta()
         meta.setDisplayName(name)
+        itemMeta = meta
+        return this
+    }
+
+    open fun setSStrDisplayName(sStr: SStr): SItem {
+        val meta = itemMeta?:createMeta()
+        if (SStr.isPaper()){
+            meta.displayName(sStr.toPaperComponent())
+        } else {
+            meta.setDisplayNameComponent(sStr.toBukkitComponent())
+        }
         itemMeta = meta
         return this
     }
@@ -158,7 +176,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return アイテムの名前
      */
     fun getDisplayName(): String {
-        return itemMeta.displayName
+        return this.itemMeta?.displayName?:""
     }
 
     /**
@@ -166,8 +184,23 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun setLore(lore : List<String>): SItem {
-        val meta = itemMeta
+        val meta = itemMeta?:createMeta()
         meta.lore = lore
+        itemMeta = meta
+        return this
+    }
+
+    open fun setLore(vararg lore : String): SItem {
+        return setLore(lore.toList())
+    }
+
+    open fun setSStrLore(sStr: List<SStr>): SItem {
+        val meta = itemMeta?:createMeta()
+        if (SStr.isPaper()){
+            meta.lore(sStr.map { it.toPaperComponent() })
+        } else {
+            meta.loreComponents = sStr.map { it.toBukkitComponent() }
+        }
         itemMeta = meta
         return this
     }
@@ -176,7 +209,15 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return loreのリスト なければ空
      */
     fun getStringLore(): List<String> {
-        return this.itemMeta.lore?: listOf()
+        return this.itemMeta?.lore?: listOf()
+    }
+
+    fun getSStrLore(): List<SStr> {
+        return if (SStr.isPaper()){
+            this.itemMeta?.lore()?.map { it.toSStr() }?: listOf()
+        } else {
+            this.itemMeta?.loreComponents?.map { it.toSStr() }?: listOf()
+        }
     }
 
 
@@ -188,16 +229,16 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
         return setLore(getStringLore().toMutableList().apply { addAll(lore) })
     }
 
-    /**
-     * @param lore 追加するlore(単一)
-     * @return 変更したアイテム
-     */
-    open fun addLore(lore : String): SItem {
-        return addLore(mutableListOf(lore))
-    }
-
     open fun addLore(vararg lore : String): SItem {
         return addLore(lore.toList())
+    }
+
+    open fun addSStrLore(sStr: List<SStr>): SItem {
+        return setSStrLore(getSStrLore().toMutableList().apply { addAll(sStr) })
+    }
+
+    open fun addSStrLore(vararg sStr: SStr): SItem {
+        return addSStrLore(sStr.toList())
     }
 
 
@@ -206,7 +247,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun setCustomModelData(cmd : Int): SItem {
-        val meta = itemMeta
+        val meta = itemMeta?:createMeta()
         meta.setCustomModelData(cmd)
         itemMeta = meta
         return this
@@ -216,7 +257,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return カスタムモデルデータ
      */
     open fun getCustomModelData(): Int {
-        if (!this.itemMeta.hasCustomModelData())return 0
+        if (this.itemMeta?.hasCustomModelData() == false)return 0
         return itemMeta.customModelData
     }
 
@@ -228,7 +269,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun <T : Any, Z: Any> setCustomData(plugin: JavaPlugin, key: String, type : PersistentDataType<T,Z>, value: Z): SItem {
-        val meta = this.itemMeta
+        val meta = this.itemMeta?:createMeta()
         meta.persistentDataContainer[NamespacedKey(plugin,key),type] = value
         this.itemMeta = meta
         return this
@@ -241,7 +282,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return value
      */
     open fun <T : Any, Z: Any> getCustomData(plugin: JavaPlugin, key: String, type: PersistentDataType<T,Z>): Z? {
-        return itemMeta.persistentDataContainer.get(NamespacedKey(plugin, key), type)
+        return itemMeta?.persistentDataContainer?.get(NamespacedKey(plugin, key), type)
     }
 
 
@@ -256,20 +297,20 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     }
 
     open fun getEnchantment(enchantment: Enchantment): Int? {
-        val level = this.itemMeta.getEnchantLevel(enchantment)
+        val level = this.itemMeta?.getEnchantLevel(enchantment)
         if (level == 0)return null
         return level
     }
 
     open fun setSkullOwner(uuid: UUID): SItem {
-        val meta = itemMeta as SkullMeta
+        val meta = (itemMeta?:createMeta()) as SkullMeta
         meta.owningPlayer = Bukkit.getOfflinePlayer(uuid)
         itemMeta = meta
         return this
     }
 
     open fun addPattern(pattern: Pattern): SItem {
-        val meta = itemMeta as BannerMeta
+        val meta = (itemMeta?:createMeta()) as BannerMeta
         meta.addPattern(pattern)
         itemMeta = meta
         return this

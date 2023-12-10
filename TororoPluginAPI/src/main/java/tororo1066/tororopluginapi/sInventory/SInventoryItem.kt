@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.sItem.SItem
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -110,20 +111,36 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
         return super.setDisplayName(name) as SInventoryItem
     }
 
+    override fun setSStrDisplayName(sStr: SStr): SInventoryItem {
+        return super.setSStrDisplayName(sStr) as SInventoryItem
+    }
+
     override fun setLore(lore: List<String>): SInventoryItem {
         return super.setLore(lore) as SInventoryItem
+    }
+
+    override fun setLore(vararg lore: String): SInventoryItem {
+        return super.setLore(*lore) as SInventoryItem
+    }
+
+    override fun setSStrLore(sStr: List<SStr>): SInventoryItem {
+        return super.setSStrLore(sStr) as SInventoryItem
     }
 
     override fun addLore(lore: List<String>): SInventoryItem {
         return super.addLore(lore) as SInventoryItem
     }
 
-    override fun addLore(lore: String): SInventoryItem {
-        return super.addLore(lore) as SInventoryItem
-    }
-
     override fun addLore(vararg lore : String): SInventoryItem {
         return super.addLore(*lore) as SInventoryItem
+    }
+
+    override fun addSStrLore(sStr: List<SStr>): SInventoryItem {
+        return super.addSStrLore(sStr) as SInventoryItem
+    }
+
+    override fun addSStrLore(vararg sStr: SStr): SInventoryItem {
+        return super.addSStrLore(*sStr) as SInventoryItem
     }
 
     override fun setCustomModelData(cmd: Int): SInventoryItem {
