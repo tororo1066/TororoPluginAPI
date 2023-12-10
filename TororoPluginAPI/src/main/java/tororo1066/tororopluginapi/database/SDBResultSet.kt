@@ -51,6 +51,10 @@ class SDBResultSet(val result : HashMap<String,Any?>){
         return result[name] as ByteArray
     }
 
+    fun <T> getList(name: String): List<T> {
+        return result[name] as List<T>
+    }
+
     fun getDeepResult(name: String): SDBResultSet {
         return SDBResultSet(HashMap(result[name] as Document))
     }
@@ -98,6 +102,10 @@ class SDBResultSet(val result : HashMap<String,Any?>){
 
     fun getNullableDeepResult(name: String): SDBResultSet? {
         return result[name]?.let { SDBResultSet(HashMap(it as Document)) }
+    }
+
+    fun <T> getNullableList(name: String): List<T>? {
+        return result[name] as? List<T>
     }
 
 }
