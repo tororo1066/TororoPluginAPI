@@ -7,9 +7,11 @@ import tororo1066.tororopluginapi.database.mysql.SMySQL
 import tororo1066.tororopluginapi.database.sqlite.SSQLite
 import java.io.File
 import java.util.concurrent.Callable
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
+import java.util.function.Supplier
 
 abstract class SDatabase(val plugin: JavaPlugin) {
 
@@ -73,28 +75,28 @@ abstract class SDatabase(val plugin: JavaPlugin) {
 
     abstract fun query(query: String): List<SDBResultSet>
 
-    fun asyncCreateTable(table: String, map: Map<String, SDBVariable<*>>): Future<Boolean> {
-        return thread.submit(Callable { createTable(table, map) })
+    fun asyncCreateTable(table: String, map: Map<String, SDBVariable<*>>): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({ createTable(table, map) }, thread)
     }
 
-    fun asyncInsert(table: String, map: Map<String, Any>): Future<Boolean> {
-        return thread.submit(Callable { insert(table, map) })
+    fun asyncInsert(table: String, map: Map<String, Any>): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({ insert(table, map) }, thread)
     }
 
-    fun asyncSelect(table: String, condition: SDBCondition = SDBCondition.empty()): Future<List<SDBResultSet>> {
-        return thread.submit(Callable { select(table, condition) })
+    fun asyncSelect(table: String, condition: SDBCondition = SDBCondition.empty()): CompletableFuture<List<SDBResultSet>> {
+        return CompletableFuture.supplyAsync({ select(table, condition) }, thread)
     }
 
-    fun asyncUpdate(table: String, update: Any, condition: SDBCondition): Future<Boolean> {
-        return thread.submit(Callable { update(table, update, condition) })
+    fun asyncUpdate(table: String, update: Any, condition: SDBCondition): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({ update(table, update, condition) }, thread)
     }
 
-    fun asyncDelete(table: String, condition: SDBCondition = SDBCondition.empty()): Future<Boolean> {
-        return thread.submit(Callable { delete(table, condition) })
+    fun asyncDelete(table: String, condition: SDBCondition = SDBCondition.empty()): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({ delete(table, condition) }, thread)
     }
 
-    fun asyncQuery(query: String): Future<List<SDBResultSet>> {
-        return thread.submit(Callable { query(query) })
+    fun asyncQuery(query: String): CompletableFuture<List<SDBResultSet>> {
+        return CompletableFuture.supplyAsync({ query(query) }, thread)
     }
 
     fun backGroundCreateTable(table: String, map: Map<String, SDBVariable<*>>, callback: (Boolean) -> Unit = {}){
