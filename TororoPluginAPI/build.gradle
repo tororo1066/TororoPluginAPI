@@ -34,7 +34,6 @@ dependencies {
     api 'com.ezylang:EvalEx:3.0.5'
     api 'org.mongodb:mongodb-driver-sync:4.11.1'
     compileOnly 'com.mojang:brigadier:1.0.18'
-    compileOnly project(":NMSUtils:base")
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens

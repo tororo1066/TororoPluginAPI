@@ -4,12 +4,9 @@ import com.mojang.brigadier.context.CommandContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.ResourceArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
-import net.minecraft.core.Registry
-import net.minecraft.core.registries.Registries
-import org.bukkit.Bukkit
 import org.bukkit.enchantments.EnchantmentWrapper
 import org.bukkit.entity.Entity
-import tororo1066.nmsutils.command.CommandArguments
+import tororo1066.tororopluginapi.sCommand.v2.CommandArguments
 
 class CommandArgumentsImpl(val commandContext: CommandContext<CommandSourceStack>): CommandArguments {
 

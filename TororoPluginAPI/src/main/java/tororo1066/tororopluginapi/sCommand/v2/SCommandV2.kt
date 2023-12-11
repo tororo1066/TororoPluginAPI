@@ -2,9 +2,8 @@ package tororo1066.tororopluginapi.sCommand.v2
 
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
-import tororo1066.nmsutils.SNms
 import tororo1066.tororopluginapi.SJavaPlugin
-import tororo1066.tororopluginapi.annotation.SCommandBody
+import tororo1066.tororopluginapi.annotation.SCommandV2Body
 
 abstract class SCommandV2(val plugin: JavaPlugin, val command: String, val permission: String? = null) {
 
@@ -16,7 +15,7 @@ abstract class SCommandV2(val plugin: JavaPlugin, val command: String, val permi
     constructor(command: String, permission: String): this(SJavaPlugin.plugin, command, permission)
 
     init {
-        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, Runnable {
             loadAllCommands()
         }, 1)
     }
@@ -29,11 +28,16 @@ abstract class SCommandV2(val plugin: JavaPlugin, val command: String, val permi
 
     fun loadAllCommands(){
         javaClass.declaredFields.forEach {
-            if (it.isAnnotationPresent(SCommandBody::class.java) && it.type == SCommandV2Object::class.java){
+            if (it.isAnnotationPresent(SCommandV2Body::class.java) && it.type == SCommandV2Object::class.java){
                 it.isAccessible = true
                 val data = it.get(this) as SCommandV2Object
+                val annotation = it.getAnnotation(SCommandV2Body::class.java)
                 addCommand(data)
-                data.register(root)
+                if (annotation.asRoot){
+                    data.register()
+                } else {
+                    data.register(root)
+                }
             }
         }
 

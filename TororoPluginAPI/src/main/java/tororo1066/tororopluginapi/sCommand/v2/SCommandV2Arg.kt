@@ -1,10 +1,7 @@
 package tororo1066.tororopluginapi.sCommand.v2
 
-import com.mojang.brigadier.builder.ArgumentBuilder
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import tororo1066.nmsutils.command.AbstractCommandElement
-import tororo1066.nmsutils.command.CommandArguments
 
 typealias Requirement = (sender: CommandSender) -> Boolean
 typealias Executor = (SCommandV2Data) -> Unit
@@ -34,6 +31,11 @@ abstract class SCommandV2Arg {
         element.init()
         children.add(element)
         return element
+    }
+
+    fun arg(arg: SCommandV2Arg): SCommandV2Arg {
+        children.add(arg)
+        return this
     }
 
     fun setExecutor(executor: Executor): SCommandV2Arg {
@@ -67,6 +69,4 @@ abstract class SCommandV2Arg {
     fun setPermission(permission: String): SCommandV2Arg {
         return setRequirement { sender -> sender.hasPermission(permission) }
     }
-
-    internal abstract fun toElement(): AbstractCommandElement<*>
 }

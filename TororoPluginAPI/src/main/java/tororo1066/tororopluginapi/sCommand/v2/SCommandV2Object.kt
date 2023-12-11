@@ -1,16 +1,18 @@
 package tororo1066.tororopluginapi.sCommand.v2
 
 import com.mojang.brigadier.Message
-import tororo1066.nmsutils.SNms
-import tororo1066.nmsutils.command.LiteralCommandElement
-import tororo1066.nmsutils.command.ToolTip
+import org.bukkit.Bukkit
 
 class SCommandV2Object() {
 
     val args = ArrayList<SCommandV2Arg>()
 
+    companion object {
+        private val version = Bukkit.getServer().bukkitVersion.split("-")[0].replace(".","_")
+    }
+
     constructor(init: SCommandV2Object.() -> Unit) : this() {
-        init()
+        init.invoke(this)
     }
 
     fun addArg(arg: SCommandV2Arg): SCommandV2Object {
@@ -28,12 +30,22 @@ class SCommandV2Object() {
 
     infix fun String.toolTip(toolTip: String) = ToolTip(this, toolTip)
 
-    infix fun String.toolTip(toolTip: Message) = ToolTip(this, toolTip)
+    infix fun String.toolTip(toolTip: Message?) = ToolTip(this, toolTip)
 
     fun register(command: SCommandV2Literal) {
+        val clazz = Class.forName("tororo1066.nmsutils.v${version}.SNmsImpl")
+        val sNms = clazz.getConstructor().newInstance()
         args.forEach {
-            val sNms = SNms.newInstance()
-            sNms.registerCommands(command.toElement() as LiteralCommandElement, it.toElement())
+            command.children.add(it)
+            clazz.getMethod("registerCommand", SCommandV2Literal::class.java).invoke(sNms, command)
+        }
+    }
+
+    fun register() {
+        val clazz = Class.forName("tororo1066.nmsutils.v${version}.SNmsImpl")
+        val sNms = clazz.getConstructor().newInstance()
+        args.forEach {
+            clazz.getMethod("registerCommand", SCommandV2Literal::class.java).invoke(sNms, it)
         }
     }
 }

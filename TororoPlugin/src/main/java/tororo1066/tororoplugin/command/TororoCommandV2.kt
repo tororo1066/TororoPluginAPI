@@ -1,6 +1,7 @@
 package tororo1066.tororoplugin.command
 
 import com.google.gson.JsonObject
+import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -11,23 +12,19 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
-import tororo1066.nmsutils.command.CommandArguments
-import tororo1066.nmsutils.command.ToolTip
 import tororo1066.tororoplugin.TororoPlugin
 import tororo1066.tororopluginapi.SStr
-import tororo1066.tororopluginapi.annotation.SCommandBody
-import tororo1066.tororopluginapi.frombukkit.SBukkit
+import tororo1066.tororopluginapi.annotation.SCommandV2Body
 import tororo1066.tororopluginapi.lang.SLang
-import tororo1066.tororopluginapi.otherUtils.UsefulUtility
+import tororo1066.tororopluginapi.sCommand.v2.CommandArguments
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2
+import tororo1066.tororopluginapi.sCommand.v2.SCommandV2Arg
+import tororo1066.tororopluginapi.sCommand.v2.ToolTip
 import tororo1066.tororopluginapi.sCommand.v2.argumentType.DoubleArg
-import tororo1066.tororopluginapi.sCommand.v2.argumentType.EntityArg
 import tororo1066.tororopluginapi.sCommand.v2.argumentType.IntArg
 import tororo1066.tororopluginapi.sCommand.v2.argumentType.StringArg
 import tororo1066.tororopluginapi.utils.sendMessage
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.reflect.KClass
 
 class TororoCommandV2: SCommandV2("tororo") {
 
@@ -41,7 +38,6 @@ class TororoCommandV2: SCommandV2("tororo") {
         root.setFunctionExecutor { sender, _, _ ->
             sender.sendMessage("TororoPlugin v${TororoPlugin.plugin.description.version}")
         }
-        SBukkit.registerSEvent(this)
 
 
         SLang.downloadMcLangFile("ja_jp") { json ->
@@ -53,6 +49,10 @@ class TororoCommandV2: SCommandV2("tororo") {
             }
             japanese = json
         }
+
+        Bukkit.getScheduler().runTaskLater(TororoPlugin.plugin, Runnable {
+            Bukkit.broadcastMessage(test.executors.size.toString())
+        }, 200)
     }
 
     private fun Player.noMessageItemInMainHand() = if (inventory.itemInMainHand.type.isAir) {
@@ -81,14 +81,12 @@ class TororoCommandV2: SCommandV2("tororo") {
     }
 
 
-    @SCommandBody
-    val tororo = command {
-
-    }
 
 
+    lateinit var test: SCommandV2Arg
 
-    @SCommandBody
+
+    @SCommandV2Body
     val item = command {
         literal("item") {
             setPermission("tororo.item")
@@ -131,7 +129,7 @@ class TororoCommandV2: SCommandV2("tororo") {
             }
 
             literal("displayName") {
-                argument("name", StringArg.greedyPhrase()) {
+                test = argument("name", StringArg.greedyPhrase()) {
                     playerSuggest { sender, _, _ ->
                         val item = sender.noMessageItemInMainHand()?:return@playerSuggest emptyList()
                         listOf(item.itemMeta.displayName.replace("§","&") toolTip "現在の名前")
@@ -146,6 +144,7 @@ class TororoCommandV2: SCommandV2("tororo") {
                         sender.sendPrefixMsg(SStr("&a名前を変更しました"))
                     }
                 }
+                Bukkit.broadcastMessage(test.executors.size.toString())
             }
 
             literal("lore") {
@@ -325,6 +324,13 @@ class TororoCommandV2: SCommandV2("tororo") {
                     }
                 }
             }
+        }
+    }
+
+    @SCommandV2Body(asRoot = true)
+    val tororo = command {
+        literal("rename") {
+            arg(test)
         }
     }
 }

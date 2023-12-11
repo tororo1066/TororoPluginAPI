@@ -4,14 +4,13 @@ import com.mojang.brigadier.Message
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.block.Block
-import tororo1066.nmsutils.command.AbstractCommandElement
-import tororo1066.nmsutils.command.LiteralCommandElement
+import tororo1066.tororopluginapi.sCommand.v2.SCommandV2Literal
 
 interface SNms {
 
     fun getMapColor(block: Block): Color
 
-    fun registerCommands(command: LiteralCommandElement, vararg commands: AbstractCommandElement<*>)
+    fun registerCommand(command: SCommandV2Literal)
 
     fun translate(text: String, vararg variable: Any): Message
 
