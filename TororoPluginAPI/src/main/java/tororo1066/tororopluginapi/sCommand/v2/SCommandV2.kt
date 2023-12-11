@@ -17,7 +17,7 @@ abstract class SCommandV2(val plugin: JavaPlugin, val command: String, val permi
     init {
         Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, Runnable {
             loadAllCommands()
-        }, 50)
+        }, 1)
     }
 
     fun addCommand(sCommandObject: SCommandV2Object){

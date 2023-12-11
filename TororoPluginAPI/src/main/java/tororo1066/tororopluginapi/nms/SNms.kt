@@ -27,6 +27,7 @@ interface SNms {
                 val instance = clazz.getConstructor().newInstance() as SNms
                 instance
             } catch (e: Exception){
+                e.printStackTrace()
                 null
             }
         }
