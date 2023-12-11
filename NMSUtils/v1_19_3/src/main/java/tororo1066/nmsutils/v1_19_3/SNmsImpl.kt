@@ -17,8 +17,9 @@ import org.bukkit.Color
 import org.bukkit.block.Block
 import org.bukkit.craftbukkit.v1_19_R2.CraftServer
 import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock
-import tororo1066.nmsutils.SNms
+import tororo1066.nmsutils.SNms_A
 import tororo1066.nmsutils.v1_19_3.command.CommandArgumentsImpl
+import tororo1066.tororopluginapi.nms.SNms
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2Arg
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2Argument
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2Data

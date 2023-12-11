@@ -49,10 +49,6 @@ class TororoCommandV2: SCommandV2("tororo") {
             }
             japanese = json
         }
-
-        Bukkit.getScheduler().runTaskLater(TororoPlugin.plugin, Runnable {
-            Bukkit.broadcastMessage(test.executors.size.toString())
-        }, 200)
     }
 
     private fun Player.noMessageItemInMainHand() = if (inventory.itemInMainHand.type.isAir) {
@@ -144,7 +140,6 @@ class TororoCommandV2: SCommandV2("tororo") {
                         sender.sendPrefixMsg(SStr("&a名前を変更しました"))
                     }
                 }
-                Bukkit.broadcastMessage(test.executors.size.toString())
             }
 
             literal("lore") {
