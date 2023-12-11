@@ -16,7 +16,6 @@ import tororo1066.tororoplugin.TororoPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandV2Body
 import tororo1066.tororopluginapi.lang.SLang
-import tororo1066.tororopluginapi.nms.SNms
 import tororo1066.tororopluginapi.sCommand.v2.CommandArguments
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2Arg
@@ -81,21 +80,6 @@ class TororoCommandV2: SCommandV2("tororo") {
 
 
     lateinit var test: SCommandV2Arg
-
-    @SCommandV2Body
-    val test_ = command {
-        literal("test") {
-            setPlayerFunctionExecutor { sender, _, _ ->
-                try {
-                    val testA = Class.forName("tororo1066.nmsutils.v${Bukkit.getServer().bukkitVersion.split("-")[0].replace(".","_")}.SNmsImpl")
-                    val testB = testA.getConstructor().newInstance() as SNms
-                    sender.sendMessage("ok")
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-    }
 
     @SCommandV2Body
     val item = command {

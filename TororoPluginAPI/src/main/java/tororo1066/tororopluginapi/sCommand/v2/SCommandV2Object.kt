@@ -1,8 +1,7 @@
 package tororo1066.tororopluginapi.sCommand.v2
 
 import com.mojang.brigadier.Message
-import org.bukkit.Bukkit
-import tororo1066.tororopluginapi.nms.SNms
+import tororo1066.nmsutils.SNms
 
 class SCommandV2Object() {
 

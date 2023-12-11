@@ -9,6 +9,7 @@ pluginManagement {
 include("TororoPluginAPI")
 include("TororoPlugin")
 include("NMSUtils:base")
+include("NMSUtils:handler")
 include("NMSUtils:v1_17_1")
 include("NMSUtils:v1_19_2")
 include("NMSUtils:v1_19_3")

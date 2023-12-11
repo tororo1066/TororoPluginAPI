@@ -1,10 +1,9 @@
 package tororo1066.tororoplugin
 
-import tororo1066.nmsutils.SNms_A
+import tororo1066.nmsutils.SNms
 import tororo1066.tororoplugin.command.TororoCommandV2
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
-import tororo1066.tororopluginapi.nms.SNms
 import tororo1066.tororopluginapi.otherClass.MultipleValueMap
 import java.util.*
 
