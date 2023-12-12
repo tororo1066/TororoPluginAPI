@@ -71,11 +71,13 @@ jar {
     }
 }
 
-tasks.register("map", Copy) {
-    dependsOn("build")
-
-    from("build/libs") {
-        include("*.jar")
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId project.group
+            artifactId project.name
+            version project.version
+            from components.java
+        }
     }
-    into("../debug_server_1.19.3/plugins")
 }
