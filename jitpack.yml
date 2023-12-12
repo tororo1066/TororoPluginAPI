@@ -9,3 +9,4 @@ install:
   - chmod +x ./gradlew
   - ./gradlew TororoPluginAPI:publishToMavenLocal
   - ./gradlew NMSUtils:base:publishToMavenLocal
+  - ./gradlew CommandAPI:publishToMavenLocal
