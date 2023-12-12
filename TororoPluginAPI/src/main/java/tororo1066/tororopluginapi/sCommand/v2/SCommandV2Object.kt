@@ -1,8 +1,8 @@
 package tororo1066.tororopluginapi.sCommand.v2
 
 import com.mojang.brigadier.Message
-import org.bukkit.Bukkit
-import tororo1066.nmsutils.SNms
+import tororo1066.commandapi.*
+import tororo1066.tororopluginapi.SJavaPlugin
 
 class SCommandV2Object() {
 
@@ -30,7 +30,7 @@ class SCommandV2Object() {
     infix fun String.toolTip(toolTip: Message?) = ToolTip(this, toolTip)
 
     fun register(command: SCommandV2Literal) {
-        val sNms = SNms.newInstance()
+        val sNms = SJavaPlugin.getSNms()
         args.forEach {
             command.children.add(it)
             sNms.registerCommand(command)
@@ -38,7 +38,7 @@ class SCommandV2Object() {
     }
 
     fun register() {
-        val sNms = SNms.newInstance()
+        val sNms = SJavaPlugin.getSNms()
         args.forEach {
             sNms.registerCommand(it as SCommandV2Literal)
         }

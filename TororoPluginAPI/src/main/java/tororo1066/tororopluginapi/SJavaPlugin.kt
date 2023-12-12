@@ -1,9 +1,11 @@
 package tororo1066.tororopluginapi
 
+import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.nmsutils.SNms
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
 import tororo1066.tororopluginapi.config.SConfig
@@ -43,6 +45,17 @@ abstract class SJavaPlugin() : JavaPlugin() {
         lateinit var vault: SVault
         lateinit var sInput: SInput
         lateinit var plugin: SJavaPlugin
+
+        fun getSNms(): SNms {
+            val version = Bukkit.getBukkitVersion().split("-")[0].replace(".", "_")
+            return when(version) {
+                "1_17_1" -> tororo1066.nmsutils.v1_17_1.SNmsImpl()
+                "1_19_2" -> tororo1066.nmsutils.v1_19_2.SNmsImpl()
+                "1_19_3" -> tororo1066.nmsutils.v1_19_3.SNmsImpl()
+                "1_20_1" -> tororo1066.nmsutils.v1_20_1.SNmsImpl()
+                else -> throw UnsupportedOperationException("SNms is not supported in ${Bukkit.getMinecraftVersion()}.")
+            }
+        }
     }
 
     private val useOptions = ArrayList<UseOption>()

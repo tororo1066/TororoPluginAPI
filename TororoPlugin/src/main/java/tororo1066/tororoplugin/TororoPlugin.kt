@@ -21,7 +21,7 @@ class TororoPlugin: SJavaPlugin() {
     override fun onStart() {
         saveDefaultConfig()
         plugin = this
-        sNms = SNms.newInstance()
+        sNms = getSNms()
         TororoCommandV2()
     }
 

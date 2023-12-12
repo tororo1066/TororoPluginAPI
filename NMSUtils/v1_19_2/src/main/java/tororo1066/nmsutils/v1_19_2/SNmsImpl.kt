@@ -14,14 +14,14 @@ import org.bukkit.Color
 import org.bukkit.block.Block
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock
+import tororo1066.commandapi.SCommandV2Arg
+import tororo1066.commandapi.SCommandV2Argument
+import tororo1066.commandapi.SCommandV2Data
+import tororo1066.commandapi.SCommandV2Literal
+import tororo1066.commandapi.argumentType.bukkit.EnchantArgument
+import tororo1066.commandapi.argumentType.bukkit.EntityArgument
 import tororo1066.nmsutils.SNms
 import tororo1066.nmsutils.v1_19_2.command.CommandArgumentsImpl
-import tororo1066.tororopluginapi.sCommand.v2.SCommandV2Arg
-import tororo1066.tororopluginapi.sCommand.v2.SCommandV2Argument
-import tororo1066.tororopluginapi.sCommand.v2.SCommandV2Data
-import tororo1066.tororopluginapi.sCommand.v2.SCommandV2Literal
-import tororo1066.tororopluginapi.sCommand.v2.argumentType.bukkit.EnchantArgument
-import tororo1066.tororopluginapi.sCommand.v2.argumentType.bukkit.EntityArgument
 
 class SNmsImpl: SNms {
 

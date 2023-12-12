@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.sCommand.v2
 
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
+import tororo1066.commandapi.SCommandV2Literal
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.annotation.SCommandV2Body
 

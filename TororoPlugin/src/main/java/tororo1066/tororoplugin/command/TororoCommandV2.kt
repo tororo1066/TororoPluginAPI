@@ -1,7 +1,6 @@
 package tororo1066.tororoplugin.command
 
 import com.google.gson.JsonObject
-import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -12,17 +11,17 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
+import tororo1066.commandapi.CommandArguments
+import tororo1066.commandapi.SCommandV2Arg
+import tororo1066.commandapi.ToolTip
+import tororo1066.commandapi.argumentType.DoubleArg
+import tororo1066.commandapi.argumentType.IntArg
+import tororo1066.commandapi.argumentType.StringArg
 import tororo1066.tororoplugin.TororoPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandV2Body
 import tororo1066.tororopluginapi.lang.SLang
-import tororo1066.tororopluginapi.sCommand.v2.CommandArguments
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2
-import tororo1066.tororopluginapi.sCommand.v2.SCommandV2Arg
-import tororo1066.tororopluginapi.sCommand.v2.ToolTip
-import tororo1066.tororopluginapi.sCommand.v2.argumentType.DoubleArg
-import tororo1066.tororopluginapi.sCommand.v2.argumentType.IntArg
-import tororo1066.tororopluginapi.sCommand.v2.argumentType.StringArg
 import tororo1066.tororopluginapi.utils.sendMessage
 import java.util.*
 
