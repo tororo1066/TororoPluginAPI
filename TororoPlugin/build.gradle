@@ -18,12 +18,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     compileOnly 'com.mojang:brigadier:1.0.18'
 
     api project(":TororoPluginAPI")
-    compileOnly project(":NMSUtils")
+    compileOnly project(":NMSUtils:base")
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens

@@ -1,4 +1,0 @@
-database:
-  type: mongodb
-  url: mongodb://localhost:27017
-  database: test_db

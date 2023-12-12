@@ -1,5 +1,6 @@
 package tororo1066.tororoplugin
 
+import org.bukkit.plugin.java.PluginClassLoader
 import tororo1066.nmsutils.SNms
 import tororo1066.tororoplugin.command.TororoCommandV2
 import tororo1066.tororopluginapi.SJavaPlugin
@@ -19,6 +20,8 @@ class TororoPlugin: SJavaPlugin() {
     }
 
     override fun onStart() {
+        val test: (str: String) -> Unit = { println(it) }
+        test.invoke("test")
         saveDefaultConfig()
         plugin = this
         sNms = getSNms()

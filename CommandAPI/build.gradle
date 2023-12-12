@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     compileOnly 'com.mojang:brigadier:1.0.18'
 }
@@ -60,13 +60,7 @@ jar {
     from {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         configurations.runtimeClasspath.collect {
-            if (it.isDirectory()) {
-                it
-            } else {
-                zipTree(it).matching {
-                    exclude 'kotlin/**'
-                }
-            }
+            it.isDirectory() ? it : zipTree(it)
         }
     }
 }

@@ -1,6 +1,5 @@
 package tororo1066.tororopluginapi
 
-import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
@@ -46,21 +45,17 @@ abstract class SJavaPlugin() : JavaPlugin() {
         lateinit var sInput: SInput
         lateinit var plugin: SJavaPlugin
 
+        private lateinit var proxy: Proxy
+
         fun getSNms(): SNms {
-            val version = Bukkit.getBukkitVersion().split("-")[0].replace(".", "_")
-            return when(version) {
-                "1_17_1" -> tororo1066.nmsutils.v1_17_1.SNmsImpl()
-                "1_19_2" -> tororo1066.nmsutils.v1_19_2.SNmsImpl()
-                "1_19_3" -> tororo1066.nmsutils.v1_19_3.SNmsImpl()
-                "1_20_1" -> tororo1066.nmsutils.v1_20_1.SNmsImpl()
-                else -> throw UnsupportedOperationException("SNms is not supported in ${Bukkit.getMinecraftVersion()}.")
-            }
+            return proxy.getProxy(SNms::class.java)
         }
     }
 
     private val useOptions = ArrayList<UseOption>()
     private var folder = ""
     var deprecatedMode = false
+
 
     /**
      * SConfig、SMySQL、Vaultなどをオプションとして指定する
@@ -101,6 +96,7 @@ abstract class SJavaPlugin() : JavaPlugin() {
     @Suppress("UNCHECKED_CAST")
     override fun onEnable() {
         plugin = this
+        proxy = Proxy(this,"tororo1066.nmsutils")
         if (useOptions.contains(UseOption.SConfig)){
             saveDefaultConfig()
             sConfig = SConfig(this)
