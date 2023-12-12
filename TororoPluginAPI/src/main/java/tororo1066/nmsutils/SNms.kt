@@ -18,12 +18,17 @@ interface SNms {
         private val version = Bukkit.getBukkitVersion().split("-")[0].replace(".", "_")
 
         fun newInstance(): SNms {
-            return newNullableInstance() ?: throw IllegalStateException("NMSUtils is not supported in ${Bukkit.getMinecraftVersion()}.")
+            return newNullableInstance() ?: throw UnsupportedOperationException("SNms is not supported in ${Bukkit.getMinecraftVersion()}.")
         }
 
         fun newNullableInstance(): SNms? {
-            val clazz = Class.forName("tororo1066.nmsutils.v${version}.SNmsImpl")
-            return clazz.getConstructor().newInstance() as? SNms
+            return try {
+                val clazz = Class.forName("tororo1066.nmsutils.v${version}.SNmsImpl")
+                return clazz.getConstructor().newInstance() as SNms
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
     }
 }
