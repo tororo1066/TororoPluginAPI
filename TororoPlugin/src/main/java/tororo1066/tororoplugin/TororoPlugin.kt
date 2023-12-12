@@ -20,8 +20,6 @@ class TororoPlugin: SJavaPlugin() {
     }
 
     override fun onStart() {
-        val test: (str: String) -> Unit = { println(it) }
-        test.invoke("test")
         saveDefaultConfig()
         plugin = this
         sNms = getSNms()

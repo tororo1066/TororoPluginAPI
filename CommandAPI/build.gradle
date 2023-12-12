@@ -18,7 +18,6 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     compileOnly 'com.mojang:brigadier:1.0.18'
 }
@@ -29,15 +28,6 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(sourceSets.main.resources.srcDirs) {
         filter ReplaceTokens, tokens: [version: version]
-    }
-}
-buildscript {
-    ext.kotlin_version = '1.7.20'
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 compileKotlin {

@@ -23,7 +23,8 @@ dependencies {
     compileOnly 'com.mojang:brigadier:1.0.18'
 
     api project(":TororoPluginAPI")
-    compileOnly project(":NMSUtils:base")
+    api project(":NMSUtils")
+    api project(":CommandAPI")
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -63,13 +64,7 @@ jar {
     from {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         configurations.runtimeClasspath.collect {
-            if (it.isDirectory()) {
-                it
-            } else {
-                zipTree(it).matching {
-                    exclude 'kotlin/**'
-                }
-            }
+            it.isDirectory() ? it : zipTree(it)
         }
     }
 }
