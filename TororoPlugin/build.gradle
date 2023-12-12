@@ -18,12 +18,12 @@ repositories {
 }
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     compileOnly 'com.mojang:brigadier:1.0.18'
 
     api project(":TororoPluginAPI")
-    api project(":NMSUtils")
+    compileOnly project(":NMSUtils")
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -63,7 +63,13 @@ jar {
     from {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it)
+            if (it.isDirectory()) {
+                it
+            } else {
+                zipTree(it).matching {
+                    exclude 'kotlin/**'
+                }
+            }
         }
     }
 }

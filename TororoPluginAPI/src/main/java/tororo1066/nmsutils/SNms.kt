@@ -15,20 +15,15 @@ interface SNms {
     fun translate(text: String, vararg variable: Any): Message
 
     companion object {
+        private val version = Bukkit.getBukkitVersion().split("-")[0].replace(".", "_")
 
-        val version = Bukkit.getServer().bukkitVersion.split("-")[0].replace(".","_")
-        fun newInstance() : SNms {
-            return newNullableInstance() ?:throw UnsupportedOperationException("SNms not supported mc_version ${Bukkit.getServer().minecraftVersion}.")
+        fun newInstance(): SNms {
+            return newNullableInstance() ?: throw IllegalStateException("NMSUtils is not supported in ${Bukkit.getMinecraftVersion()}.")
         }
 
-        fun newNullableInstance() : SNms? {
-            return try {
-                val clazz = Class.forName("tororo1066.nmsutils.v$version.SNmsImpl")
-                val instance = clazz.getConstructor().newInstance() as SNms
-                instance
-            } catch (e: Exception){
-                null
-            }
+        fun newNullableInstance(): SNms? {
+            val clazz = Class.forName("tororo1066.nmsutils.v${version}.SNmsImpl")
+            return clazz.getConstructor().newInstance() as? SNms
         }
     }
 }

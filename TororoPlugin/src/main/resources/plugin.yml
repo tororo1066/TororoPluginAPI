@@ -4,6 +4,7 @@ main: tororo1066.tororoplugin.TororoPlugin
 api-version: 1.17
 softdepend:
   - Essentials
+  - NMSUtils
 
 permissions:
   tororo.op:
