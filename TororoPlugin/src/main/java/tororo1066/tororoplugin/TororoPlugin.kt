@@ -1,6 +1,5 @@
 package tororo1066.tororoplugin
 
-import org.bukkit.plugin.java.PluginClassLoader
 import tororo1066.nmsutils.SNms
 import tororo1066.tororoplugin.command.TororoCommandV2
 import tororo1066.tororopluginapi.SJavaPlugin
