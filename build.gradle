@@ -1,6 +1,9 @@
+apply plugin: 'com.github.johnrengelman.shadow'
+
 allprojects {
     apply plugin: 'kotlin'
     apply plugin: 'maven-publish'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
     group = 'tororo1066'
     version = '1.0-SNAPSHOT'
@@ -34,9 +37,11 @@ allprojects {
 buildscript {
     ext.kotlin_version = '1.7.20'
     repositories {
+        gradlePluginPortal()
         mavenCentral()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
     }
 }

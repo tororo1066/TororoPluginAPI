@@ -40,3 +40,12 @@ subprojects {
         compileOnly project(':CommandAPI')
     }
 }
+
+shadowJar {
+    relocate('kotlin', 'tororo1066.org.jetbrains.kotlin')
+    archiveFileName = "${project.name}-${project.version}.jar"
+}
+
+artifacts {
+    archives shadowJar
+}

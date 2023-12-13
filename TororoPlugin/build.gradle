@@ -77,3 +77,8 @@ tasks.register("map", Copy) {
     }
     into("../debug_server_1.19.3/plugins")
 }
+
+shadowJar {
+    relocate('kotlin', 'tororo1066.org.jetbrains.kotlin')
+    archiveFileName = "${project.name}-${project.version}.jar"
+}
