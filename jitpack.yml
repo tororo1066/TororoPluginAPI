@@ -7,6 +7,6 @@ before_install:
 
 install:
   - chmod +x ./gradlew
-  - ./gradlew TororoPluginAPI:publishToMavenLocal
-  - ./gradlew NMSUtils:base:publishToMavenLocal
-  - ./gradlew CommandAPI:publishToMavenLocal
+  - ./gradlew TororoPluginAPI:publishToMavenLocal -x shadowJar
+  - ./gradlew NMSUtils:base:publishToMavenLocal -x shadowJar
+  - ./gradlew CommandAPI:publishToMavenLocal -x shadowJar

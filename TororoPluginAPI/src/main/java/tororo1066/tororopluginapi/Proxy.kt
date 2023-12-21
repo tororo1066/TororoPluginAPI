@@ -13,6 +13,6 @@ class Proxy(val plugin: JavaPlugin, val packageName: String) {
         val instance = proxyClass.getDeclaredConstructor().newInstance()
         if (clazz.isAssignableFrom(proxyClass) && clazz.isInstance(instance)) {
             return clazz.cast(instance)
-        } else throw UnsupportedOperationException("${clazz.simpleName} is not supported in ${plugin.server.bukkitVersion}.")
+        } else throw UnsupportedOperationException("${clazz.simpleName} is not supported in ${plugin.server.minecraftVersion}.")
     }
 }

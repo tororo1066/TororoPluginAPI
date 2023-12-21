@@ -40,3 +40,8 @@ subprojects {
         compileOnly project(':CommandAPI')
     }
 }
+
+shadowJar {
+    relocate 'kotlin', 'tororo1066.libs.kotlin'
+    archiveFileName.set("${project.name}-${project.version}.jar")
+}

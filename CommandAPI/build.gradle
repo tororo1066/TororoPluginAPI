@@ -65,3 +65,7 @@ publishing {
         }
     }
 }
+
+shadowJar {
+    relocate 'kotlin', 'tororo1066.libs.kotlin'
+}

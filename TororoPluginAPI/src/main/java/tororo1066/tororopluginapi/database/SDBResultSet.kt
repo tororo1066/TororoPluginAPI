@@ -51,7 +51,15 @@ class SDBResultSet(val result : HashMap<String,Any?>){
         return result[name] as ByteArray
     }
 
-    fun <T> getList(name: String): List<T> {
+    inline fun <reified T> getList(name: String): List<T> {
+        if (T::class.java == SDBResultSet::class.java){
+            val list = result[name] as List<Document>
+            val resultList = ArrayList<SDBResultSet>()
+            for (document in list){
+                resultList.add(SDBResultSet(HashMap(document)))
+            }
+            return resultList as List<T>
+        }
         return result[name] as List<T>
     }
 
@@ -104,7 +112,15 @@ class SDBResultSet(val result : HashMap<String,Any?>){
         return result[name]?.let { SDBResultSet(HashMap(it as Document)) }
     }
 
-    fun <T> getNullableList(name: String): List<T>? {
+    inline fun <reified T> getNullableList(name: String): List<T>? {
+        if (T::class.java == SDBResultSet::class.java){
+            val list = result[name] as? List<Document> ?: return null
+            val resultList = ArrayList<SDBResultSet>()
+            for (document in list){
+                resultList.add(SDBResultSet(HashMap(document)))
+            }
+            return resultList as List<T>
+        }
         return result[name] as? List<T>
     }
 
