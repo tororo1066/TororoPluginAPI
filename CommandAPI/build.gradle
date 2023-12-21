@@ -66,6 +66,6 @@ publishing {
     }
 }
 
-shadowJar {
-    relocate 'kotlin', 'tororo1066.libs.kotlin'
-}
+//shadowJar {
+//    relocate 'kotlin', 'tororo1066.libs.kotlin'
+//}
