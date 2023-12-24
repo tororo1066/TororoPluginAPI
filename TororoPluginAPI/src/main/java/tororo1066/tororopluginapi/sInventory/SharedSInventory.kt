@@ -69,13 +69,6 @@ abstract class SharedSInventory(plugin : JavaPlugin, name : String, row : Int): 
                 p.sendMessage("§4You are entering some information.")
                 return@Runnable
             }
-            val saveItems = HashMap<Int, ItemStack>()
-            if (savePlaceItems){
-                (0 until row).forEach {
-                    if (items.containsKey(it))return@forEach
-                    saveItems[it] = inv.getItem(it)?:return@forEach
-                }
-            }
             if (inv.viewers.isEmpty()){
                 if (!renderMenu()) return@Runnable
                 afterRenderMenu()

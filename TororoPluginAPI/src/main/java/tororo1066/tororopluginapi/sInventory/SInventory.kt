@@ -431,88 +431,76 @@ abstract class SInventory(val plugin: JavaPlugin) {
         afterRenderMenu()
     }
 
-    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: BiConsumer<T,Player>, errorMsg: (String) -> String, clickType: List<ClickType>, invOpenCancel: Boolean): SInventoryItem {
+    private fun createInputItem0(
+        item: SItem,
+        type: Class<*>,
+        message: String = "§a/<入れるデータ(§d${type.simpleName}§a)>",
+        action: BiConsumer<String,Player>,
+        clickType: List<ClickType> = listOf(),
+        invOpenCancel: Boolean = false
+    ): SInventoryItem {
         return SInventoryItem(item).setCanClick(false).setClickEvent {
-            if (clickType.isNotEmpty() && !clickType.contains(it.click))return@setClickEvent
+            if (clickType.isNotEmpty() && !clickType.contains(it.click)) return@setClickEvent
             val p = it.whoClicked as Player
             p.sendMessage(message)
             throughClose(p)
             inputNow.add(p.uniqueId)
             SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
-                if (cEvent.player.uniqueId != p.uniqueId)return@biRegister
+                if (cEvent.player.uniqueId != p.uniqueId) return@biRegister
                 cEvent.isCancelled = true
 
-                if (cEvent.message == "/cancel"){
+                if (cEvent.message == "/cancel") {
                     cEvent.player.sendMessage("§a入力をキャンセルしました")
                     unit.unregister()
                     inputNow.remove(cEvent.player.uniqueId)
                     if (!invOpenCancel) open(cEvent.player)
                     return@biRegister
                 }
-                val msg = cEvent.message.replaceFirst("/","")
-                val modifyValue = SInput.modifyClassValue(type,msg)
-                if (modifyValue == null){
-                    cEvent.player.sendMessage(errorMsg.invoke(msg))
-                    return@biRegister
-                }
 
-                action.accept(modifyValue,cEvent.player)
+                action.accept(cEvent.message.replaceFirst("/", ""), cEvent.player)
 
-                unit.unregister()
-                inputNow.remove(cEvent.player.uniqueId)
-                if (!invOpenCancel) open(cEvent.player)
             }
         }
     }
 
-    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, clickType: List<ClickType>, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"},clickType, false)
+
+    fun <T> createNullableInputItem(
+        item: SItem,
+        type: Class<T>,
+        message: String = "§a/<入れるデータ(§d${type.simpleName}§a)>",
+        action: BiConsumer<T?,Player>,
+        errorMsg: (String) -> String = {"§d${it}§4は§d${type.simpleName}§4ではありません"},
+        clickType: List<ClickType> = listOf(),
+        invOpenCancel: Boolean = false
+    ): SInventoryItem {
+        return createInputItem0(item, type, message, BiConsumer { msg, p ->
+            val (blank, value) = SInput.modifyClassValue(type, msg, allowEmpty = true)
+            if (!blank && value == null) {
+                p.sendMessage(errorMsg.invoke(msg))
+                return@BiConsumer
+            }
+            action.accept(value, p)
+        }, clickType, invOpenCancel)
     }
 
-    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, clickType: List<ClickType>, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"},clickType, invOpenCancel)
+    fun <T> createInputItem(
+        item: SItem,
+        type: Class<T>,
+        message: String = "§a/<入れるデータ(§d${type.simpleName}§a)>",
+        action: BiConsumer<T,Player>,
+        errorMsg: (String) -> String = {"§d${it}§4は§d${type.simpleName}§4ではありません"},
+        clickType: List<ClickType> = listOf(),
+        invOpenCancel: Boolean = false
+    ): SInventoryItem {
+        return createInputItem0(item, type, message, BiConsumer { msg, p ->
+            val (_, value) = SInput.modifyClassValue(type, msg)
+            if (value == null) {
+                p.sendMessage(errorMsg.invoke(msg))
+                return@BiConsumer
+            }
+            action.accept(value, p)
+        }, clickType, invOpenCancel)
     }
-
-    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, clickType: ClickType, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"}, listOf(clickType), false)
-    }
-
-    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, clickType: ClickType, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"}, listOf(clickType), invOpenCancel)
-    }
-
-    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"}, listOf(), false)
-    }
-
-    fun <T>createInputItem(item: SItem, type: Class<T>, message: String, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, message, action,{"§d${it}§4は§d${type.simpleName}§4ではありません"}, listOf(), invOpenCancel)
-    }
-
-    fun <T>createInputItem(item: SItem, type: Class<T>, clickType: List<ClickType>, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", clickType, action)
-    }
-
-    fun <T>createInputItem(item: SItem, type: Class<T>, clickType: List<ClickType>, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", clickType, invOpenCancel, action)
-    }
-
-    fun <T>createInputItem(item: SItem, type: Class<T>, clickType: ClickType, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", listOf(clickType), action)
-    }
-
-    fun <T>createInputItem(item: SItem, type: Class<T>, clickType: ClickType, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", listOf(clickType), invOpenCancel, action)
-    }
-
-    fun <T>createInputItem(item: SItem, type: Class<T>, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", listOf(), action)
-    }
-
-    fun <T>createInputItem(item: SItem, type: Class<T>, invOpenCancel: Boolean, action: BiConsumer<T,Player>): SInventoryItem {
-        return createInputItem(item, type, "§a/<入れるデータ(§d${type.simpleName}§a)>", listOf(), invOpenCancel, action)
-    }
-
 
 
 }

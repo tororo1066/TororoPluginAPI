@@ -22,7 +22,11 @@ import kotlin.random.Random
 
 class SInput(private val plugin: JavaPlugin) {
 
-    fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: Consumer<T>, errorMsg: (String) -> String) {
+    private fun sendInputCUI0(
+        p: Player,
+        type: Class<*>,
+        message: String = "§a/<入れるデータ(${type.simpleName})>\n§a/cancelでキャンセル",
+        action: Consumer<String>) {
         p.sendMessage(message)
         SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
             if (cEvent.player != p) return@biRegister
@@ -34,15 +38,42 @@ class SInput(private val plugin: JavaPlugin) {
                 return@biRegister
             }
             val msg = cEvent.message.replaceFirst("/", "")
-            val modifyValue = modifyClassValue(type, msg)
-            if (modifyValue == null) {
-                p.sendMessage(errorMsg.invoke(msg))
-                return@biRegister
-            }
+            action.accept(msg)
 
-            action.accept(modifyValue)
             unit.unregister()
         }
+    }
+
+    fun <T>sendNullableInputCUI(
+        p: Player,
+        type: Class<T>,
+        message: String = "§a/<入れるデータ(${type.simpleName})>\n§a/cancelでキャンセル",
+        action: Consumer<T?>,
+        errorMsg: (String) -> String = { "§d${it}§4は§d${type.simpleName}§4ではありません" }) {
+        sendInputCUI0(p, type, message, Consumer {
+            val (blank, value) = modifyClassValue(type, it, allowEmpty = true)
+            if (!blank && value == null) {
+                p.sendMessage(errorMsg.invoke(it))
+                return@Consumer
+            }
+            action.accept(value)
+        })
+    }
+
+    fun <T>sendInputCUI(
+        p: Player,
+        type: Class<T>,
+        message: String = "§a/<入れるデータ(${type.simpleName})>\n§a/cancelでキャンセル",
+        action: Consumer<T>,
+        errorMsg: (String) -> String = { "§d${it}§4は§d${type.simpleName}§4ではありません" }) {
+        sendInputCUI0(p, type, message, Consumer {
+            val (_, value) = modifyClassValue(type, it)
+            if (value == null) {
+                p.sendMessage(errorMsg.invoke(it))
+                return@Consumer
+            }
+            action.accept(value)
+        })
     }
 
     fun clickAccept(p: Player, message: String, action: ()->Unit, fail: ()->Unit, timeSecond: Int){
@@ -64,83 +95,79 @@ class SInput(private val plugin: JavaPlugin) {
         },timeSecond * 20L)
     }
 
-    fun <T>sendInputCUI(p: Player, type: Class<T>, message: String, action: Consumer<T>) {
-        sendInputCUI(p, type, message, action) { "§d${it}§4は§d${type.simpleName}§4ではありません" }
-    }
-
-    fun <T>sendInputCUI(p: Player, type: Class<T>, action: Consumer<T>) {
-        sendInputCUI(p, type, "§a/<入れるデータ(${type.simpleName})>\n§a/cancelでキャンセル", action)
-    }
-
 
     companion object{
         @Suppress("UNCHECKED_CAST")
-        fun <T>modifyClassValue(clazz: Class<T>, value: String) : T?{
+        fun <T>modifyClassValue(clazz: Class<T>, value: String, allowEmpty: Boolean = false) : Pair<Boolean, T?> {
+
+            fun returnNull(): Pair<Boolean, T?> {
+                return false to null
+            }
+
+            if (allowEmpty && value.isBlank())return true to null
             when(clazz){
                 String::class.java,java.lang.String::class.java -> {
-                    if (value.isBlank())return null
-                    return clazz.cast(value)
+                    return true to clazz.cast(value)
                 }
                 SStr::class.java-> {
-                    if (value.isBlank())return null
-                    return clazz.cast(SStr(value)) as T
+                    return true to clazz.cast(SStr(value)) as T
                 }
                 Int::class.java,java.lang.Integer::class.java -> {
-                    val int = value.toIntOrNull()?:return null
-                    return int as T
+                    val int = value.toIntOrNull()?:return returnNull()
+                    return true to int as T
                 }
                 Double::class.java,java.lang.Double::class.java -> {
-                    val double = value.toDoubleOrNull()?:return null
-                    return double as T
+                    val double = value.toDoubleOrNull()?:return returnNull()
+                    return true to double as T
                 }
                 Long::class.java,java.lang.Long::class.java -> {
-                    val long = value.toLongOrNull()?:return null
-                    return long as T
+                    val long = value.toLongOrNull()?:return returnNull()
+                    return true to long as T
                 }
                 Boolean::class.java,java.lang.Boolean::class.java->{
-                    if (value != "true" && value != "false")return null
-                    return value.toBoolean() as T
+                    if (value != "true" && value != "false")return returnNull()
+                    return true to value.toBoolean() as T
                 }
                 Player::class.java -> {
-                    val player = Bukkit.getPlayer(value)?:return null
-                    return clazz.cast(player) as T
+                    val player = Bukkit.getPlayer(value)?:return returnNull()
+                    return true to player as T
                 }
                 Location::class.java -> {
                     val split = value.split(" ")
 
                     return when(split.size){
                         3->{
-                            clazz.cast(Location(null,split[0].toDoubleOrNull()?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null)) as T
+                            true to clazz.cast(Location(null,split[0].toDoubleOrNull()?:return returnNull(),split[1].toDoubleOrNull()?:return returnNull(),split[2].toDoubleOrNull()?:return returnNull())) as T
                         }
 
                         4->{
-                            clazz.cast(Location(Bukkit.getWorld(split[0])?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null,split[3].toDoubleOrNull()?:return null)) as T
+                            true to clazz.cast(Location(Bukkit.getWorld(split[0])?:return returnNull(),split[1].toDoubleOrNull()?:return returnNull(),split[2].toDoubleOrNull()?:return returnNull(),split[3].toDoubleOrNull()?:return returnNull())) as T
                         }
 
                         5->{
-                            clazz.cast(Location(null,split[0].toDoubleOrNull()?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null,split[3].toFloatOrNull()?:return null,split[4].toFloatOrNull()?:return null)) as T
+                            true to clazz.cast(Location(null,split[0].toDoubleOrNull()?:return returnNull(),split[1].toDoubleOrNull()?:return returnNull(),split[2].toDoubleOrNull()?:return returnNull(),split[3].toFloatOrNull()?:return returnNull(),split[4].toFloatOrNull()?:return returnNull())) as T
                         }
 
                         6->{
-                            clazz.cast(Location(Bukkit.getWorld(split[0])?:return null,split[1].toDoubleOrNull()?:return null,split[2].toDoubleOrNull()?:return null,split[3].toDoubleOrNull()?:return null,split[4].toFloatOrNull()?:return null,split[5].toFloatOrNull()?:return null)) as T
+                            true to clazz.cast(Location(Bukkit.getWorld(split[0])?:return returnNull(),split[1].toDoubleOrNull()?:return returnNull(),split[2].toDoubleOrNull()?:return returnNull(),split[3].toDoubleOrNull()?:return returnNull(),split[4].toFloatOrNull()?:return returnNull(),split[5].toFloatOrNull()?:return returnNull())) as T
                         }
 
                         else->{
-                            null
+                            returnNull()
                         }
                     }
                 }
                 PlusInt::class.java -> {
-                    val int = value.toPlusInt()?:return null
-                    return clazz.cast(int) as T
+                    val int = value.toPlusInt()?:return returnNull()
+                    return true to clazz.cast(int) as T
                 }
                 BlockFace::class.java -> {
-                    val face = UsefulUtility.sTry({BlockFace.valueOf(value.uppercase())}) { null } ?:return null
-                    return clazz.cast(face) as T
+                    val face = UsefulUtility.sTry({BlockFace.valueOf(value.uppercase())}) { null } ?:return returnNull()
+                    return true to clazz.cast(face) as T
                 }
                 World::class.java -> {
-                    val world = Bukkit.getWorld(value)?:return null
-                    return world as T
+                    val world = Bukkit.getWorld(value)?:return returnNull()
+                    return true to world as T
                 }
                 Date::class.java->{
                     val date = UsefulUtility.sTry({SimpleDateFormat("yyyy/MM/dd kk:mm:ss").parse(value)},{
@@ -156,14 +183,14 @@ class SInput(private val plugin: JavaPlugin) {
                             }
                         }
                     })
-                    return date as? T
+                    return (date as? T)?.let { true to it }?:returnNull()
                 }
                 IntProgression::class.java->{
-                    return value.toIntProgressionOrNull() as? T
+                    return (value.toIntProgressionOrNull() as? T)?.let { true to it }?:returnNull()
                 }
                 StrExcludeFileIllegalCharacter::class.java->{
-                    if (value.matches(Regex("[(<|>:?\"/\\\\)*]")))return null
-                    return StrExcludeFileIllegalCharacter(value) as T
+                    if (value.matches(Regex("[(<|>:?\"/\\\\)*]")))return returnNull()
+                    return true to StrExcludeFileIllegalCharacter(value) as T
                 }
 
             }
@@ -174,9 +201,9 @@ class SInput(private val plugin: JavaPlugin) {
                         null
                     }
                 })
-                return enum as? T
+                return (enum as? T)?.let { true to it }?:returnNull()
             }
-            return null
+            return returnNull()
         }
     }
 }
