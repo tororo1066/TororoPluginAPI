@@ -82,7 +82,8 @@ class ConfigEditor(plugin: JavaPlugin): LargeSInventory(plugin,"ConfigEditor") {
                 }
             }
         }
-        val item = inv.createInputItem(SItem(Material.WRITTEN_BOOK).setDisplayName("§r${path}:${value}").addLore("§eType: ${type.simpleName}"),type,ClickType.LEFT){ variable, _ ->
+        val item = inv.createInputItem(SItem(Material.WRITTEN_BOOK).setDisplayName("§r${path}:${value}").addLore("§eType: ${type.simpleName}"),type,
+            clickType =  listOf(ClickType.LEFT)){ variable, _ ->
             section.set(path,variable)
             yaml.save(file)
         }.setClickEvent {
@@ -190,7 +191,7 @@ class ConfigEditor(plugin: JavaPlugin): LargeSInventory(plugin,"ConfigEditor") {
             inv.open(p)
         }
 
-        val item = inv.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aAdd Value").addLore(listOf("§bTypes","§cString","§1Int","§bDouble","§eList","§6Location","§aItemStack")),String::class.java,"/<path>",true) { str, p ->
+        val item = inv.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aAdd Value").addLore(listOf("§bTypes","§cString","§1Int","§bDouble","§eList","§6Location","§aItemStack")),String::class.java,"/<path>", invOpenCancel = true) { str, p ->
             if (str.matches(Regex("[(<|>:?\"/\\\\)*]"))){
                 p.sendMessage("Don't use illegal character. Action cancelled.")
                 return@createInputItem
@@ -201,7 +202,7 @@ class ConfigEditor(plugin: JavaPlugin): LargeSInventory(plugin,"ConfigEditor") {
                 val newInv = object : LargeSInventory(plugin,"§aSelect Type §7(Path: ${str})"){
                     override fun renderMenu(): Boolean {
                         val items = arrayListOf(
-                            createInputItem(SItem(Material.REDSTONE_BLOCK).setDisplayName("§cString"),String::class.java,"/<value(String)>",false) { value, _->
+                            createInputItem(SItem(Material.REDSTONE_BLOCK).setDisplayName("§cString"),String::class.java,"/<value(String)>") { value, _->
                                 if (isList){
                                     section.set(str,listOf(value))
                                 } else {
@@ -209,7 +210,7 @@ class ConfigEditor(plugin: JavaPlugin): LargeSInventory(plugin,"ConfigEditor") {
                                 }
                                 saveAndBack(p)
                             },
-                            createInputItem(SItem(Material.LAPIS_BLOCK).setDisplayName("§1Int"),Int::class.java,"/<value(Int)>",false) { value, _->
+                            createInputItem(SItem(Material.LAPIS_BLOCK).setDisplayName("§1Int"),Int::class.java,"/<value(Int)>") { value, _->
                                 if (isList){
                                     section.set(str,listOf(value))
                                 } else {
@@ -217,7 +218,7 @@ class ConfigEditor(plugin: JavaPlugin): LargeSInventory(plugin,"ConfigEditor") {
                                 }
                                 saveAndBack(p)
                             },
-                            createInputItem(SItem(Material.DIAMOND_BLOCK).setDisplayName("§bDouble"),Double::class.java,"/<value(Double)>",false) { value, _->
+                            createInputItem(SItem(Material.DIAMOND_BLOCK).setDisplayName("§bDouble"),Double::class.java,"/<value(Double)>") { value, _->
                                 if (isList){
                                     section.set(str,listOf(value))
                                 } else {
@@ -225,7 +226,7 @@ class ConfigEditor(plugin: JavaPlugin): LargeSInventory(plugin,"ConfigEditor") {
                                 }
                                 saveAndBack(p)
                             },
-                            createInputItem(SItem(Material.GOLD_BLOCK).setDisplayName("§6Location"),Location::class.java,"/<world> <x> <y> <z> (yaw) (pitch)",false) { value, _->
+                            createInputItem(SItem(Material.GOLD_BLOCK).setDisplayName("§6Location"),Location::class.java,"/<world> <x> <y> <z> (yaw) (pitch)") { value, _->
                                 if (isList){
                                     section.set(str,listOf(value))
                                 } else {
@@ -233,7 +234,7 @@ class ConfigEditor(plugin: JavaPlugin): LargeSInventory(plugin,"ConfigEditor") {
                                 }
                                 saveAndBack(p)
                             },
-                            createInputItem(SItem(Material.COAL_BLOCK).setDisplayName("§dBoolean"),Boolean::class.java,"/<value(Boolean)>",false) { value, _ ->
+                            createInputItem(SItem(Material.COAL_BLOCK).setDisplayName("§dBoolean"),Boolean::class.java,"/<value(Boolean)>") { value, _ ->
                                 if (isList){
                                     section.set(str,listOf(value))
                                 } else {

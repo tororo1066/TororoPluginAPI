@@ -35,7 +35,7 @@ class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
                                 items.add(createGotoNextMenuItem(this,yaml,it,yaml,str))
                             }
                         }
-                        items.add(this.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aNew Insert"),String::class.java,"Please enter path.",true){ include, _ ->
+                        items.add(this.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aNew Insert"),String::class.java,"Please enter path.", invOpenCancel = true){ include, _ ->
                             SInput(plugin).sendInputCUI(p,String::class.java,"Please enter translated message.") { message ->
                                 yaml.set(include,message)
                                 yaml.save(File(plugin.dataFolder.path + "/LangFolder/${str}.yml"))
@@ -78,7 +78,7 @@ class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
                         }
                     }
 
-                    items.add(this.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aNew Insert"),String::class.java,"Please enter path.",true){ str, _ ->
+                    items.add(this.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aNew Insert"),String::class.java,"Please enter path.", invOpenCancel = true){ str, _ ->
                         SInput(plugin).sendInputCUI(p,String::class.java,"Please enter translated message.") {
                             section.set("$path.$str",it)
                             yaml.save(File(plugin.dataFolder.path + "/LangFolder/${fileName}.yml"))

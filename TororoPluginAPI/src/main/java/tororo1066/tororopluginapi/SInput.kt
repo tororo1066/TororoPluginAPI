@@ -48,8 +48,9 @@ class SInput(private val plugin: JavaPlugin) {
         p: Player,
         type: Class<T>,
         message: String = "§a/<入れるデータ(${type.simpleName})>\n§a/cancelでキャンセル",
-        action: Consumer<T?>,
-        errorMsg: (String) -> String = { "§d${it}§4は§d${type.simpleName}§4ではありません" }) {
+        errorMsg: (String) -> String = { "§d${it}§4は§d${type.simpleName}§4ではありません" },
+        action: Consumer<T?>
+    ) {
         sendInputCUI0(p, type, message, Consumer {
             val (blank, value) = modifyClassValue(type, it, allowEmpty = true)
             if (!blank && value == null) {
@@ -64,8 +65,9 @@ class SInput(private val plugin: JavaPlugin) {
         p: Player,
         type: Class<T>,
         message: String = "§a/<入れるデータ(${type.simpleName})>\n§a/cancelでキャンセル",
-        action: Consumer<T>,
-        errorMsg: (String) -> String = { "§d${it}§4は§d${type.simpleName}§4ではありません" }) {
+        errorMsg: (String) -> String = { "§d${it}§4は§d${type.simpleName}§4ではありません" },
+        action: Consumer<T>
+    ) {
         sendInputCUI0(p, type, message, Consumer {
             val (_, value) = modifyClassValue(type, it)
             if (value == null) {

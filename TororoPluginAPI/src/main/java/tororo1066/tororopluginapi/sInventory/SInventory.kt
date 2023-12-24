@@ -468,10 +468,10 @@ abstract class SInventory(val plugin: JavaPlugin) {
         item: SItem,
         type: Class<T>,
         message: String = "§a/<入れるデータ(§d${type.simpleName}§a)>",
-        action: BiConsumer<T?,Player>,
         errorMsg: (String) -> String = {"§d${it}§4は§d${type.simpleName}§4ではありません"},
         clickType: List<ClickType> = listOf(),
-        invOpenCancel: Boolean = false
+        invOpenCancel: Boolean = false,
+        action: BiConsumer<T?,Player>,
     ): SInventoryItem {
         return createInputItem0(item, type, message, BiConsumer { msg, p ->
             val (blank, value) = SInput.modifyClassValue(type, msg, allowEmpty = true)
@@ -487,10 +487,10 @@ abstract class SInventory(val plugin: JavaPlugin) {
         item: SItem,
         type: Class<T>,
         message: String = "§a/<入れるデータ(§d${type.simpleName}§a)>",
-        action: BiConsumer<T,Player>,
         errorMsg: (String) -> String = {"§d${it}§4は§d${type.simpleName}§4ではありません"},
         clickType: List<ClickType> = listOf(),
-        invOpenCancel: Boolean = false
+        invOpenCancel: Boolean = false,
+        action: BiConsumer<T,Player>
     ): SInventoryItem {
         return createInputItem0(item, type, message, BiConsumer { msg, p ->
             val (_, value) = SInput.modifyClassValue(type, msg)
