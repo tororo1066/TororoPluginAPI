@@ -22,6 +22,7 @@ import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandV2Body
 import tororo1066.tororopluginapi.lang.SLang
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2
+import tororo1066.tororopluginapi.sItem.SItem
 import tororo1066.tororopluginapi.utils.sendMessage
 import java.util.*
 
@@ -118,6 +119,21 @@ class TororoCommandV2: SCommandV2("tororo") {
                     sender.sendCopyableMsg(SStr("&7ItemFlags: ${if (meta.itemFlags.isEmpty()) "なし" else ""}"), "")
                     meta.itemFlags.forEach {
                         sender.sendCopyableMsg(SStr("  &7${it.name}"), it.name)
+                    }
+                }
+            }
+
+            literal("fromBase64") {
+                argument("base64", StringArg.greedyPhrase()) {
+                    setPlayerFunctionExecutor { sender, _, args ->
+                        val base64 = args.getArgument("base64", String::class.java)
+                        val item = SItem.fromBase64(base64)
+                        if (item == null) {
+                            sender.sendPrefixMsg(SStr("&c不正なBase64です"))
+                            return@setPlayerFunctionExecutor
+                        }
+                        sender.inventory.addItem(item)
+                        sender.sendPrefixMsg(SStr("&aアイテムを付与しました"))
                     }
                 }
             }

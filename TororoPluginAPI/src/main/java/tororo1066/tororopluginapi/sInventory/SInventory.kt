@@ -20,6 +20,7 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.BiConsumer
+import java.util.function.BiPredicate
 import java.util.function.Consumer
 import kotlin.collections.HashMap
 
@@ -435,7 +436,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
         item: SItem,
         type: Class<*>,
         message: String = "§a/<入れるデータ(§d${type.simpleName}§a)>",
-        action: BiConsumer<String,Player>,
+        action: BiPredicate<String,Player>,
         clickType: List<ClickType> = listOf(),
         invOpenCancel: Boolean = false
     ): SInventoryItem {
@@ -457,8 +458,13 @@ abstract class SInventory(val plugin: JavaPlugin) {
                     return@biRegister
                 }
 
-                action.accept(cEvent.message.replaceFirst("/", ""), cEvent.player)
+                if (!action.test(cEvent.message.replaceFirst("/", ""), cEvent.player)) {
+                    return@biRegister
+                }
 
+                unit.unregister()
+                inputNow.remove(cEvent.player.uniqueId)
+                if (!invOpenCancel) open(cEvent.player)
             }
         }
     }
@@ -473,13 +479,14 @@ abstract class SInventory(val plugin: JavaPlugin) {
         invOpenCancel: Boolean = false,
         action: BiConsumer<T?,Player>,
     ): SInventoryItem {
-        return createInputItem0(item, type, message, BiConsumer { msg, p ->
+        return createInputItem0(item, type, message, BiPredicate { msg, p ->
             val (blank, value) = SInput.modifyClassValue(type, msg, allowEmpty = true)
             if (!blank && value == null) {
                 p.sendMessage(errorMsg.invoke(msg))
-                return@BiConsumer
+                return@BiPredicate false
             }
             action.accept(value, p)
+            return@BiPredicate true
         }, clickType, invOpenCancel)
     }
 
@@ -492,13 +499,14 @@ abstract class SInventory(val plugin: JavaPlugin) {
         invOpenCancel: Boolean = false,
         action: BiConsumer<T,Player>
     ): SInventoryItem {
-        return createInputItem0(item, type, message, BiConsumer { msg, p ->
+        return createInputItem0(item, type, message, BiPredicate { msg, p ->
             val (_, value) = SInput.modifyClassValue(type, msg)
             if (value == null) {
                 p.sendMessage(errorMsg.invoke(msg))
-                return@BiConsumer
+                return@BiPredicate false
             }
             action.accept(value, p)
+            return@BiPredicate true
         }, clickType, invOpenCancel)
     }
 

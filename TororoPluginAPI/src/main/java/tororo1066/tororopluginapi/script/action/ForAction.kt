@@ -31,6 +31,9 @@ class ForAction: AbstractAction("for") {
                     if (scriptFile.breakFunction[format] == true){
                         break
                     }
+                    if (action.separator != separator+1){
+                        continue
+                    }
                     action.invoke()
                 }
                 if (scriptFile.breakFunction[format] == true){
@@ -50,7 +53,7 @@ class ForAction: AbstractAction("for") {
 
 
 
-            else-> {
+            else -> {
                 throw NullPointerException("$ruleStr is not loopRule.")
             }
         }

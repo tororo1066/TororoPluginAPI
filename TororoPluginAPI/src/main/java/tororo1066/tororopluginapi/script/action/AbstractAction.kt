@@ -20,9 +20,6 @@ abstract class AbstractAction(val internalName: String) {
                 if (it.separator < separator+1){
                     return@run
                 }
-                if (it.separator > separator+1){
-                    return@forEach
-                }
                 loadLine.add(it)
             }
         }

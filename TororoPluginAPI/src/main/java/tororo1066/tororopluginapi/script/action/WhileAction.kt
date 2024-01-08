@@ -25,6 +25,9 @@ class WhileAction: AbstractAction("while") {
                 if (scriptFile.breakFunction[format] == true){
                     break
                 }
+                if (action.separator != separator+1){
+                    continue
+                }
                 action.invoke()
             }
             if (scriptFile.breakFunction[format] == true){
