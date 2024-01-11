@@ -11,6 +11,8 @@ import net.minecraft.world.entity.MoverType
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.phys.Vec3
+import net.minecraft.world.scores.Scoreboard
+import net.minecraft.world.scores.criteria.ObjectiveCriteria
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
 import org.bukkit.Location
@@ -21,6 +23,7 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_17_R1.scoreboard.CraftScoreboard
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
@@ -174,6 +177,22 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
 
     override fun move(x: Double, y: Double, z: Double) {
         handle.move(MoverType.PLAYER, Vec3(x,y,z))
+    }
+
+    override fun sendObjective(
+        scoreboard: org.bukkit.scoreboard.Scoreboard,
+        objectiveName: String,
+        displayName: String
+    ) {
+        val board = (scoreboard as CraftScoreboard).handle
+        var objective = board.getObjective(objectiveName)
+        if (objective != null) {
+            objective.setDisplayName(Component.nullToEmpty(displayName))
+        } else {
+            objective = board.addObjective(objectiveName, ObjectiveCriteria.DUMMY, Component.nullToEmpty(displayName), ObjectiveCriteria.RenderType.INTEGER)
+        }
+        val packet = ClientboundSetDisplayObjectivePacket(ServerScoreboard.DISPLAY_SLOT_SIDEBAR, objective)
+        handle.connection.send(packet)
     }
 
     override fun sendScore(objectiveName: String, vararg scores: kotlin.Pair<Int, String>) {

@@ -41,7 +41,7 @@ subprojects {
     }
 }
 
-//shadowJar {
-//    relocate 'kotlin', 'tororo1066.libs.kotlin'
-//    archiveFileName.set("${project.name}-${project.version}.jar")
-//}
+shadowJar {
+    relocate 'kotlin', 'tororo1066.libs.kotlin'
+    archiveFileName.set("${project.name}-${project.version}.jar")
+}

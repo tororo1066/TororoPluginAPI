@@ -9,6 +9,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scoreboard.Scoreboard
 import java.util.UUID
 
 interface SPlayer {
@@ -38,6 +39,8 @@ interface SPlayer {
     fun setFakeItem(slot: EquipmentSlot, item: ItemStack)
 
     fun move(x: Double, y: Double, z: Double)
+
+    fun sendObjective(scoreboard: Scoreboard, objectiveName: String, displayName: String)
 
     fun sendScore(objectiveName: String, vararg scores: Pair<Int,String>)
 
