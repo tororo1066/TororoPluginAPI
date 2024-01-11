@@ -5,6 +5,7 @@ import net.minecraft.core.Rotations
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.*
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.ServerScoreboard
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.MoverType
 import net.minecraft.world.entity.decoration.ArmorStand
@@ -26,6 +27,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scoreboard.Scoreboard
 import tororo1066.nmsutils.SPlayer
 import tororo1066.nmsutils.SPlayer.Companion.hiddenEntities
 
@@ -173,5 +175,17 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
 
     override fun move(x: Double, y: Double, z: Double) {
         handle.move(MoverType.PLAYER, Vec3(x,y,z))
+    }
+
+    override fun sendScore(objectiveName: String, scores: List<kotlin.Pair<String, Int>>) {
+        scores.forEach { (name, score) ->
+            val packet = ClientboundSetScorePacket(
+                ServerScoreboard.Method.CHANGE,
+                objectiveName,
+                name,
+                score
+            )
+            handle.connection.send(packet)
+        }
     }
 }

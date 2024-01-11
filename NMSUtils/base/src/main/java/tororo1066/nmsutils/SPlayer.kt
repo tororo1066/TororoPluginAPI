@@ -39,6 +39,8 @@ interface SPlayer {
 
     fun move(x: Double, y: Double, z: Double)
 
+    fun sendScore(objectiveName: String, scores: List<Pair<String,Int>>)
+
     companion object{
         fun getSPlayer(p: Player): SPlayer {
             return fromPlayer(p) ?:throw UnsupportedOperationException("SPlayer not supported mc_version ${Bukkit.getServer().minecraftVersion}.")
