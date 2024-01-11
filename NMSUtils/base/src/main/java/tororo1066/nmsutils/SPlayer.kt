@@ -39,7 +39,7 @@ interface SPlayer {
 
     fun move(x: Double, y: Double, z: Double)
 
-    fun sendScore(objectiveName: String, scores: List<Pair<String,Int>>)
+    fun sendScore(objectiveName: String, vararg scores: Pair<Int,String>)
 
     companion object{
         fun getSPlayer(p: Player): SPlayer {

@@ -178,8 +178,8 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
         handle.move(MoverType.PLAYER, Vec3(x,y,z))
     }
 
-    override fun sendScore(objectiveName: String, scores: List<kotlin.Pair<String, Int>>) {
-        scores.forEach { (name, score) ->
+    override fun sendScore(objectiveName: String, vararg scores: kotlin.Pair<Int, String>) {
+        scores.forEach { (score, name) ->
             val packet = ClientboundSetScorePacket(
                 ServerScoreboard.Method.CHANGE,
                 objectiveName,
