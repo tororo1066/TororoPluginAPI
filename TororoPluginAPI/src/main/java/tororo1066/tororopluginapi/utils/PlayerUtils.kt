@@ -1,6 +1,7 @@
 package tororo1066.tororopluginapi.utils
 
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -61,4 +62,24 @@ fun Player.returnItem(itemStack: ItemStack){
             }
         }
     }
+}
+
+fun Player.getAllItem(): Array<ItemStack> {
+    val list = mutableListOf<ItemStack>()
+    this.inventory.contents.forEach {
+        if (it != null && it.type != Material.AIR){
+            list.add(it)
+        }
+    }
+    this.inventory.armorContents.forEach {
+        if (it.type != Material.AIR){
+            list.add(it)
+        }
+    }
+    this.itemOnCursor.let {
+        if (it.type != Material.AIR){
+            list.add(it)
+        }
+    }
+    return list.toTypedArray()
 }

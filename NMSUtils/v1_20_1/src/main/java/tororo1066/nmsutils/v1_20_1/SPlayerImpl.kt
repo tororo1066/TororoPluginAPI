@@ -12,6 +12,7 @@ import net.minecraft.world.entity.RelativeMovement
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.phys.Vec3
+import net.minecraft.world.scores.Objective
 import net.minecraft.world.scores.criteria.ObjectiveCriteria
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
@@ -185,14 +186,13 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
         displayName: String
     ) {
         val board = (scoreboard as CraftScoreboard).handle
-        var objective = board.getObjective(objectiveName)
-        if (objective != null) {
-            objective.setDisplayName(Component.nullToEmpty(displayName))
-        } else {
-            objective = board.addObjective(objectiveName, ObjectiveCriteria.DUMMY, Component.nullToEmpty(displayName), ObjectiveCriteria.RenderType.INTEGER)
-        }
-        val packet = ClientboundSetDisplayObjectivePacket(ServerScoreboard.DISPLAY_SLOT_SIDEBAR, objective)
+        val objective = Objective(board, objectiveName, ObjectiveCriteria.DUMMY, Component.nullToEmpty(displayName), ObjectiveCriteria.RenderType.INTEGER)
+        val packet = ClientboundSetObjectivePacket(objective, ClientboundSetObjectivePacket.METHOD_REMOVE)
         handle.connection.send(packet)
+        val packet1 = ClientboundSetObjectivePacket(objective, ClientboundSetObjectivePacket.METHOD_ADD)
+        handle.connection.send(packet1)
+        val packet2 = ClientboundSetDisplayObjectivePacket(ServerScoreboard.DISPLAY_SLOT_SIDEBAR, objective)
+        handle.connection.send(packet2)
     }
 
     override fun sendScore(objectiveName: String, vararg scores: kotlin.Pair<Int, String>) {
