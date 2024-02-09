@@ -92,7 +92,7 @@ publishing {
         maven(MavenPublication) {
             groupId project.group
             artifactId project.name.toLowerCase()
-            version System.getenv('VERSION').substring(0, 6)
+            version System.getenv('VERSION')
             from components.java
         }
     }
