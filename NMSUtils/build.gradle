@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 apply plugin: 'kotlin'
 
 tasks {
@@ -41,7 +43,16 @@ subprojects {
     }
 }
 
-//shadowJar {
-//    relocate 'kotlin', 'tororo1066.libs.kotlin'
-//    archiveFileName.set("${project.name}-${project.version}.jar")
-//}
+shadowJar {
+    exclude 'kotlin/**'
+    archiveFileName.set("${project.name}-${project.version}.jar")
+}
+
+tasks.register('shadowJarForBuild') {
+    dependsOn(
+            shadowJar {
+                relocate 'kotlin', 'tororo1066.libs.kotlin'
+                archiveFileName.set("${project.name}-${project.version}.jar")
+            }
+    )
+}
