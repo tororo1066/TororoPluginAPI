@@ -42,3 +42,4 @@ jobs:
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.TOKEN }}
+        VERSION: ${{ github.sha }}
