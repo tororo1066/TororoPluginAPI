@@ -93,7 +93,7 @@ publishing {
             groupId project.group
             artifactId project.name.toLowerCase()
             //1から7文字目までを取得
-            version System.getenv('VERSION').substring(0, 7)
+            version System.getenv('VERSION')
             from components.java
         }
     }
