@@ -35,12 +35,20 @@ jobs:
     - name: Give Permission
       run: chmod +x ./gradlew
     - name: Build with Gradle
+      run: ./gradlew NMSUtils:build
+    - name: Build with Gradle
       run: ./gradlew TororoPluginAPI:build
 
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
     - name: Publish to GitHub Packages
       run: ./gradlew TororoPluginAPI:publish
+      env:
+        USERNAME: ${{ github.actor }}
+        TOKEN: ${{ secrets.TOKEN }}
+        VERSION: ${{ env.SHORT_SHA }}
+    - name: Publish to GitHub Packages
+      run: ./gradlew NMSUtils:publish
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.TOKEN }}
