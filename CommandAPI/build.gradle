@@ -22,6 +22,8 @@ dependencies {
     compileOnly 'com.mojang:brigadier:1.0.18'
 }
 
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 
 processResources {
@@ -56,16 +58,34 @@ jar {
 }
 
 publishing {
+    repositories {
+        maven {
+            name = 'GitHubPackages'
+            url = uri('https://maven.pkg.github.com/tororo1066/TororoPluginAPI')
+            credentials {
+                username = System.getenv('USERNAME')
+                password = System.getenv('TOKEN')
+            }
+        }
+    }
     publications {
         maven(MavenPublication) {
             groupId project.group
-            artifactId project.name
-            version project.version
+            artifactId project.name.toLowerCase()
+            //1から7文字目までを取得
+            version System.getenv('VERSION')
             from components.java
         }
     }
 }
 
+
 //shadowJar {
 //    relocate 'kotlin', 'tororo1066.libs.kotlin'
 //}
+
+tasks.register("shadowJarForBuild", ShadowJar) {
+    dependsOn(shadowJar {
+        relocate 'kotlin', 'tororo1066.libs.kotlin'
+    })
+}
