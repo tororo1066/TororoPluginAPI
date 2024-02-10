@@ -35,7 +35,7 @@ jobs:
     - name: Give Permission
       run: chmod +x ./gradlew
     - name: Build with Gradle
-      run: ./gradlew NMSUtils:build
+      run: ./gradlew NMSUtils:base:build
     - name: Build with Gradle
       run: ./gradlew TororoPluginAPI:build
 
@@ -48,7 +48,7 @@ jobs:
         TOKEN: ${{ secrets.TOKEN }}
         VERSION: ${{ env.SHORT_SHA }}
     - name: Publish to GitHub Packages
-      run: ./gradlew NMSUtils:publish
+      run: ./gradlew NMSUtils:base:publish
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.TOKEN }}
