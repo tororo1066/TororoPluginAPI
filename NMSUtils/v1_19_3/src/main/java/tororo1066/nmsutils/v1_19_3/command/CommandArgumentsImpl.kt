@@ -4,6 +4,7 @@ import com.mojang.brigadier.context.CommandContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.ResourceArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.enchantments.EnchantmentWrapper
 import org.bukkit.entity.Entity
 import tororo1066.commandapi.CommandArguments
@@ -19,7 +20,7 @@ class CommandArgumentsImpl(val commandContext: CommandContext<CommandSourceStack
             .map { it.bukkitEntity }
     }
 
-    override fun getEnchantment(name: String): EnchantmentWrapper {
+    override fun getEnchantment(name: String): Enchantment {
         val enchantment = ResourceArgument.getEnchantment(commandContext, name)
         return EnchantmentWrapper(enchantment.key().location().path)
     }

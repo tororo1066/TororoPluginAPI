@@ -1,12 +1,12 @@
-package tororo1066.nmsutils.v1_17_1.command
+package tororo1066.nmsutils.v1_20_1.command
 
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.commands.CommandSourceStack
-import net.minecraft.commands.arguments.ItemEnchantmentArgument
+import net.minecraft.commands.arguments.ResourceArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
-import net.minecraft.core.Registry
+import org.bukkit.Registry
+import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.enchantments.EnchantmentWrapper
 import org.bukkit.entity.Entity
 import tororo1066.commandapi.CommandArguments
 
@@ -22,8 +22,7 @@ class CommandArgumentsImpl(val commandContext: CommandContext<CommandSourceStack
     }
 
     override fun getEnchantment(name: String): Enchantment {
-        val enchantment = ItemEnchantmentArgument.getEnchantment(commandContext, name)
-        val location = Registry.ENCHANTMENT.getKey(enchantment)?.path ?: throw IllegalArgumentException("Unknown enchantment in command context($name)")
-        return EnchantmentWrapper(location)
+        val enchantment = ResourceArgument.getEnchantment(commandContext, name)
+        return Registry.ENCHANTMENT.get(CraftNamespacedKey.fromMinecraft(enchantment.key().location()))!!
     }
 }

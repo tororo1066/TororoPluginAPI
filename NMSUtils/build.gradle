@@ -1,28 +1,18 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 apply plugin: 'kotlin'
 
 tasks {
-    jar {
+    shadowJar {
         dependsOn("base:build")
         dependsOn("v1_17_1:build")
         dependsOn("v1_19_2:build")
         dependsOn("v1_19_3:build")
         dependsOn("v1_20_1:build")
+        dependsOn("v1_20_4:build")
     }
 }
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(16))
-}
-
-jar {
-    from {
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
 }
 
 dependencies {
@@ -31,6 +21,7 @@ dependencies {
     implementation files('v1_19_2/build/libs/v1_19_2-1.0-SNAPSHOT.jar')
     implementation files('v1_19_3/build/libs/v1_19_3-1.0-SNAPSHOT.jar')
     implementation files('v1_20_1/build/libs/v1_20_1-1.0-SNAPSHOT.jar')
+    implementation files('v1_20_4/build/libs/v1_20_4-1.0-SNAPSHOT.jar')
     implementation files('base/build/libs/base-1.0-SNAPSHOT.jar')
     api project(":CommandAPI")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -44,15 +35,8 @@ subprojects {
 }
 
 shadowJar {
-    exclude 'kotlin/**'
+    relocate('kotlin', 'tororo1066.libs.kotlin')
+    relocate('org.jetbrains.kotlin', 'tororo1066.libs.kotlin.org.jetbrains.kotlin')
+    relocate('org.jetbrains.annotations', 'tororo1066.libs.kotlin.org.jetbrains.annotations')
     archiveFileName.set("${project.name}-${project.version}.jar")
-}
-
-tasks.register('shadowJarForBuild') {
-    dependsOn(
-            shadowJar {
-                relocate 'kotlin', 'tororo1066.libs.kotlin'
-                archiveFileName.set("${project.name}-${project.version}.jar")
-            }
-    )
 }

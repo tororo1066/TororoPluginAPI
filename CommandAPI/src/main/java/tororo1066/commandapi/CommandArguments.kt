@@ -1,5 +1,6 @@
 package tororo1066.commandapi
 
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.enchantments.EnchantmentWrapper
 import org.bukkit.entity.Entity
 
@@ -16,5 +17,5 @@ interface CommandArguments {
     }
     fun getEntities(name: String): Collection<Entity>
 
-    fun getEnchantment(name: String): EnchantmentWrapper
+    fun getEnchantment(name: String): Enchantment
 }
