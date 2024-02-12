@@ -30,7 +30,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
-    api 'net.kyori:adventure-text-serializer-bungeecord:4.3.1'
+    api 'net.kyori:adventure-text-serializer-bungeecord:4.0.1'
     api 'com.ezylang:EvalEx:3.0.5'
     api 'org.mongodb:mongodb-driver-sync:4.11.1'
     compileOnly 'com.mojang:brigadier:1.0.18'
