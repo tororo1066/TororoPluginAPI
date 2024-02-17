@@ -3,7 +3,7 @@ package tororo1066.tororopluginapi
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.IdentityHashMap
 
-class Proxy(val plugin: JavaPlugin, val packageName: String) {
+class Proxy(val plugin: JavaPlugin, private val packageName: String) {
     private val version = plugin.server.bukkitVersion.split("-")[0].replace(".", "_")
     private val cache = IdentityHashMap<Class<out Any>, Any>()
 

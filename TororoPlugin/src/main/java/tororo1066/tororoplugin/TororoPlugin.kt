@@ -1,10 +1,12 @@
 package tororo1066.tororoplugin
 
 import tororo1066.nmsutils.SNms
+import tororo1066.tororoplugin.command.TororoCommand
 import tororo1066.tororoplugin.command.TororoCommandV2
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.otherClass.MultipleValueMap
+import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import java.util.*
 
 
@@ -21,8 +23,12 @@ class TororoPlugin: SJavaPlugin() {
     override fun onStart() {
         saveDefaultConfig()
         plugin = this
-        sNms = getSNms()
-        TororoCommandV2()
+        if (UsefulUtility.sTry( { Class.forName("tororo1066.nmsutils.SNms") }, { null }) == null) {
+            TororoCommand()
+        } else {
+            sNms = getSNms()
+            TororoCommandV2()
+        }
     }
 
 }

@@ -43,6 +43,7 @@ abstract class SJavaPlugin() : JavaPlugin() {
         lateinit var mysql: SMySQL
         lateinit var vault: SVault
         lateinit var sInput: SInput
+        lateinit var util: UsefulUtility
         lateinit var plugin: SJavaPlugin
 
         private lateinit var proxy: Proxy
@@ -109,6 +110,9 @@ abstract class SJavaPlugin() : JavaPlugin() {
         }
         if (useOptions.contains(UseOption.SInput)){
             sInput = SInput(this)
+        }
+        if (useOptions.contains(UseOption.Utility)){
+            util = UsefulUtility(this)
         }
 
         onStart()
@@ -201,7 +205,12 @@ abstract class SJavaPlugin() : JavaPlugin() {
         /**
          * 入力システムを使う
          */
-        SInput
+        SInput,
+
+        /**
+         * 便利機能を使う
+         */
+        Utility
     }
 
 

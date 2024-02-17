@@ -138,6 +138,14 @@ class TororoCommandV2: SCommandV2("tororo") {
                 }
             }
 
+            literal("toBase64") {
+                setPlayerFunctionExecutor { sender, _, _ ->
+                    val item = sender.itemInMainHand()?:return@setPlayerFunctionExecutor
+                    val base64 = SItem(item).toBase64()
+                    sender.sendCopyableMsg(SStr("&a[ここをクリックでコピー]"), base64)
+                }
+            }
+
             literal("displayName") {
                 test = argument("name", StringArg.greedyPhrase()) {
                     playerSuggest { sender, _, _ ->

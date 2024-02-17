@@ -24,6 +24,7 @@ dependencies {
 
     api project(":TororoPluginAPI")
     api project(":NMSUtils")
+    api project(":NMSUtils:base")
     api project(":CommandAPI")
 }
 

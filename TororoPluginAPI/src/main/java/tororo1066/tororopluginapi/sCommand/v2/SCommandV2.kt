@@ -27,7 +27,8 @@ abstract class SCommandV2(val plugin: JavaPlugin, val command: String, val permi
 
     protected fun command(init: SCommandV2Object.() -> Unit) = SCommandV2Object(init)
 
-    fun loadAllCommands(){
+    fun loadAllCommands() {
+        commands.clear()
         javaClass.declaredFields.forEach {
             if (it.isAnnotationPresent(SCommandV2Body::class.java) && it.type == SCommandV2Object::class.java){
                 it.isAccessible = true

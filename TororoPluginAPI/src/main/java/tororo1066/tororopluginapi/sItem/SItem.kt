@@ -140,8 +140,8 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
 
     }
 
-    private fun createMeta(): ItemMeta {
-        return Bukkit.getItemFactory().getItemMeta(this.type)
+    private fun getMeta(): ItemMeta {
+        return if (hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
     }
 
 
@@ -155,14 +155,14 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun setDisplayName(name : String): SItem {
-        val meta = itemMeta?:createMeta()
+        val meta = getMeta()
         meta.setDisplayName(name)
         itemMeta = meta
         return this
     }
 
     open fun setSStrDisplayName(sStr: SStr): SItem {
-        val meta = itemMeta?:createMeta()
+        val meta = getMeta()
         if (SStr.isPaper()){
             meta.displayName(sStr.toPaperComponent())
         } else {
@@ -176,7 +176,8 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return アイテムの名前
      */
     fun getDisplayName(): String {
-        return this.itemMeta?.displayName?:""
+        val meta = getMeta()
+        return if (meta.hasDisplayName()) meta.displayName else ""
     }
 
     /**
@@ -184,7 +185,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun setLore(lore : List<String>): SItem {
-        val meta = itemMeta?:createMeta()
+        val meta = getMeta()
         meta.lore = lore
         itemMeta = meta
         return this
@@ -195,7 +196,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     }
 
     open fun setSStrLore(sStr: List<SStr>): SItem {
-        val meta = itemMeta?:createMeta()
+        val meta = getMeta()
         if (SStr.isPaper()){
             meta.lore(sStr.map { it.toPaperComponent() })
         } else {
@@ -209,14 +210,15 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return loreのリスト なければ空
      */
     fun getStringLore(): List<String> {
-        return this.itemMeta?.lore?: listOf()
+        val meta = getMeta()
+        return if (meta.hasLore()) meta.lore?: listOf() else listOf()
     }
 
     fun getSStrLore(): List<SStr> {
         return if (SStr.isPaper()){
-            this.itemMeta?.lore()?.map { it.toSStr() }?: listOf()
+            this.getMeta().lore()?.map { it.toSStr() }?: listOf()
         } else {
-            this.itemMeta?.loreComponents?.map { it.toSStr() }?: listOf()
+            this.getMeta().loreComponents?.map { it.toSStr() }?: listOf()
         }
     }
 
@@ -247,7 +249,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun setCustomModelData(cmd : Int): SItem {
-        val meta = itemMeta?:createMeta()
+        val meta = getMeta()
         meta.setCustomModelData(cmd)
         itemMeta = meta
         return this
@@ -257,8 +259,9 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return カスタムモデルデータ
      */
     open fun getCustomModelData(): Int {
-        if (this.itemMeta?.hasCustomModelData() == false)return 0
-        return itemMeta.customModelData
+        val meta = getMeta()
+        if (!meta.hasCustomModelData())return 0
+        return meta.customModelData
     }
 
     /**
@@ -269,7 +272,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun <T : Any, Z: Any> setCustomData(plugin: JavaPlugin, key: String, type : PersistentDataType<T,Z>, value: Z): SItem {
-        val meta = this.itemMeta?:createMeta()
+        val meta = this.getMeta()
         meta.persistentDataContainer[NamespacedKey(plugin,key),type] = value
         this.itemMeta = meta
         return this
@@ -282,7 +285,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return value
      */
     open fun <T : Any, Z: Any> getCustomData(plugin: JavaPlugin, key: String, type: PersistentDataType<T,Z>): Z? {
-        return itemMeta?.persistentDataContainer?.get(NamespacedKey(plugin, key), type)
+        return getMeta().persistentDataContainer.get(NamespacedKey(plugin, key), type)
     }
 
 
@@ -297,20 +300,20 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     }
 
     open fun getEnchantment(enchantment: Enchantment): Int? {
-        val level = this.itemMeta?.getEnchantLevel(enchantment)
+        val level = getMeta().getEnchantLevel(enchantment)
         if (level == 0)return null
         return level
     }
 
     open fun setSkullOwner(uuid: UUID): SItem {
-        val meta = (itemMeta?:createMeta()) as SkullMeta
+        val meta = (getMeta()) as SkullMeta
         meta.owningPlayer = Bukkit.getOfflinePlayer(uuid)
         itemMeta = meta
         return this
     }
 
     open fun addPattern(pattern: Pattern): SItem {
-        val meta = (itemMeta?:createMeta()) as BannerMeta
+        val meta = (getMeta()) as BannerMeta
         meta.addPattern(pattern)
         itemMeta = meta
         return this
