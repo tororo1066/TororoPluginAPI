@@ -38,6 +38,8 @@ jobs:
 
     - name: Give Permission
       run: chmod +x ./gradlew
+    - name: Build CommandAPI
+      run: ./gradlew CommandAPI:build
     - name: Build NMSUtils
       run: ./gradlew NMSUtils:base:build
     - name: Build TororoPluginAPI
@@ -53,6 +55,12 @@ jobs:
         VERSION: ${{ env.SHORT_SHA }}
     - name: NMSUtils Publish to GitHub Packages
       run: ./gradlew NMSUtils:base:publish
+      env:
+        USERNAME: ${{ github.actor }}
+        TOKEN: ${{ secrets.TOKEN }}
+        VERSION: ${{ env.SHORT_SHA }}
+    - name: CommandAPI Publish to GitHub Packages
+      run: ./gradlew CommandAPI:publish
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.TOKEN }}
