@@ -15,6 +15,7 @@ import tororo1066.tororopluginapi.otherClass.StrExcludeFileIllegalCharacter
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.sEvent.SEvent
 import tororo1066.tororopluginapi.utils.toIntProgressionOrNull
+import tororo1066.tororopluginapi.utils.toIntRangeOrNull
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.function.Consumer
@@ -186,6 +187,9 @@ class SInput(private val plugin: JavaPlugin) {
                         }
                     })
                     return (date as? T)?.let { true to it }?:returnNull()
+                }
+                IntRange::class.java -> {
+                    return (value.toIntRangeOrNull() as? T)?.let { true to it }?:returnNull()
                 }
                 IntProgression::class.java->{
                     return (value.toIntProgressionOrNull() as? T)?.let { true to it }?:returnNull()

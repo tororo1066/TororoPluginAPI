@@ -18,14 +18,14 @@ repositories {
 }
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     compileOnly 'com.mojang:brigadier:1.0.18'
 
-    api project(":TororoPluginAPI")
-    api project(":NMSUtils")
-    api project(":NMSUtils:base")
-    api project(":CommandAPI")
+    implementation project(":TororoPluginAPI")
+    implementation project(":NMSUtils")
+    implementation project(":NMSUtils:base")
+    implementation project(":CommandAPI")
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -61,15 +61,6 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-jar {
-    from {
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-}
-
 tasks.register("map", Copy) {
     dependsOn("build")
 
@@ -80,6 +71,8 @@ tasks.register("map", Copy) {
 }
 
 shadowJar {
-    relocate('kotlin', 'tororo1066.org.jetbrains.kotlin')
+    relocate("tororo1066.nmsutils", "tororo1066.tororopluginapi.nmsutils")
+    relocate("tororo1066.commandapi", "tororo1066.tororopluginapi.commandapi")
+    relocate('kotlin', 'tororo1066.tororopluginapi.org.jetbrains.kotlin')
     archiveFileName = "${project.name}-${project.version}.jar"
 }
