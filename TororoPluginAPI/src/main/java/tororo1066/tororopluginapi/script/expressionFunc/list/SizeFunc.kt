@@ -1,4 +1,4 @@
-package tororo1066.tororopluginapi.script.expressionFunc
+package tororo1066.tororopluginapi.script.expressionFunc.list
 
 import com.ezylang.evalex.Expression
 import com.ezylang.evalex.data.EvaluationValue

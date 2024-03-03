@@ -8,7 +8,8 @@ import tororo1066.tororopluginapi.script.action.hidden.ElseAction
 import tororo1066.tororopluginapi.script.action.inline.MathAction
 import tororo1066.tororopluginapi.script.expressionFunc.DateFunc
 import tororo1066.tororopluginapi.script.expressionFunc.IsOp
-import tororo1066.tororopluginapi.script.expressionFunc.SizeFunc
+import tororo1066.tororopluginapi.script.expressionFunc.list.FindFunc
+import tororo1066.tororopluginapi.script.expressionFunc.list.SizeFunc
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -100,6 +101,7 @@ class ScriptFile(val file: File) {
                     addFunction("now()", DateFunc())
                     addFunction("isOp()", IsOp())
                     addFunction("size()", SizeFunc())
+                    addFunction("find()", FindFunc())
                 }
 
             }

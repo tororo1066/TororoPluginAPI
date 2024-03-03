@@ -26,6 +26,7 @@ import java.util.UUID
  * ItemStackを継承したクラス。
  * @constructor Material
  */
+@Suppress("DEPRECATION")
 open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
 
     constructor(material: Material) : this(ItemStack(material))
