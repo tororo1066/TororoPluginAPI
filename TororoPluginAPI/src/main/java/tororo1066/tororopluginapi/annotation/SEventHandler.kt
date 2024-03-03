@@ -22,8 +22,9 @@ import tororo1066.tororopluginapi.frombukkit.SBukkit
  * }
  * ```
  *
- * @param property イベントの優先度 MONITOR->LOWEST->LOW->NORMAL->HIGH->HIGHESTの順に呼び出される
+ * @param priority イベントの優先度 LOWEST->LOW->NORMAL->HIGH->HIGHEST->MONITORの順に呼び出される
  * @param autoRegister 自動でイベントを登録するか(デフォルト:true) falseな場合、[SBukkit.registerSEvent][SBukkit.registerSEvent]で登録できる
  */
 @Target(AnnotationTarget.FUNCTION)
-annotation class SEventHandler(val property: EventPriority = EventPriority.NORMAL, val autoRegister: Boolean = true)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class SEventHandler(val priority: EventPriority = EventPriority.NORMAL, val autoRegister: Boolean = true)

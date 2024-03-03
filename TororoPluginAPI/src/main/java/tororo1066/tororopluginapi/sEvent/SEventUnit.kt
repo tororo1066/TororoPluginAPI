@@ -9,7 +9,7 @@ import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.function.Consumer
 
-class SEventUnit<T : Event>(private val eventClass: Class<T>, val plugin : JavaPlugin, private val handlers : List<(T)->Unit>, private val finishedFunction: (SEventUnit<in T>)->Unit) : Listener, EventExecutor {
+class SEventUnit<T : Event>(private val eventClass: Class<T>, val plugin : JavaPlugin, private val handlers : List<(T)->Unit>) : Listener, EventExecutor {
 
     var priority = EventPriority.NORMAL
 
@@ -17,7 +17,7 @@ class SEventUnit<T : Event>(private val eventClass: Class<T>, val plugin : JavaP
         register()
     }
 
-    constructor(eventClass: Class<T>, plugin: JavaPlugin, handlers : List<(T)->Unit>, finishedFunction: (SEventUnit<in T>)->Unit, priority : EventPriority) : this(eventClass,plugin,handlers,finishedFunction) {
+    constructor(eventClass: Class<T>, plugin: JavaPlugin, handlers : List<(T)->Unit>, priority : EventPriority) : this(eventClass,plugin,handlers) {
         this.priority = priority
     }
 
@@ -31,8 +31,6 @@ class SEventUnit<T : Event>(private val eventClass: Class<T>, val plugin : JavaP
         for (handler in handlers){
             handler.invoke(event)
         }
-
-        finishedFunction.invoke(this)
     }
 
     /**

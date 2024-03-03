@@ -42,7 +42,7 @@ class SBukkit {
                     }
 
                 }
-                Bukkit.getServer().pluginManager.registerEvent(method.parameters[0].type as Class<out Event>,listener,sEvent.property,listener,plugin)
+                Bukkit.getServer().pluginManager.registerEvent(method.parameters[0].type as Class<out Event>,listener,sEvent.priority,listener,plugin)
             }
             return true
         }

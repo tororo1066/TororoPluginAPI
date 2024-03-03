@@ -175,6 +175,10 @@ class SLang(private val plugin: JavaPlugin) {
                 files.filter { it?.extension == "json" }.forEach {
                     val lang = it.nameWithoutExtension
                     val json = Gson().fromJson(it.readText(),JsonObject::class.java)
+                    if (json == null) {
+                        it.delete()
+                        return@forEach
+                    }
                     mcLangFile[lang] = json
                 }
             }

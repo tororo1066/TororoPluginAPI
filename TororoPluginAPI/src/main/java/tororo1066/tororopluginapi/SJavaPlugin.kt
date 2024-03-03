@@ -159,7 +159,7 @@ abstract class SJavaPlugin() : JavaPlugin() {
                             method.invoke(instance,event.cast(e))
                         }
                     }
-                    server.pluginManager.registerEvent(method.parameters[0].type as Class<out Event>,listener,sEvent.property,listener,this)
+                    server.pluginManager.registerEvent(method.parameters[0].type as Class<out Event>,listener,sEvent.priority,listener,this)
                 }
             } catch (_: NoClassDefFoundError){
 

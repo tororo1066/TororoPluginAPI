@@ -2,6 +2,8 @@ package tororo1066.tororopluginapi.sItem
 
 import net.md_5.bungee.api.ChatMessageType
 import org.bukkit.Material
+import org.bukkit.event.Event
+import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
@@ -57,6 +59,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
 
     init {
         sEvent.register(PlayerInteractEvent::class.java) { e ->
+            if (e.useInteractedBlock() == Event.Result.DENY)return@register
             if (!e.hasItem())return@register
             if (e.player.inventory.itemInMainHand.isSimilar(e.item!!)){
                 if (e.hand != EquipmentSlot.HAND)return@register
@@ -67,7 +70,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
             item.amount = 1
             val interactItem = getItem(item)?:return@register
             if (interactItem.interactCoolDown != 0){
-                e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent())
+                SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").actionBar(e.player)
                 return@register
             }
             interactItem.interactEvents.forEach {
@@ -139,7 +142,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
                     interactItem?.let {
                         e.player.sendDebug("SInteractManager", "§7[PlayerItemHeldEvent] Cancel previousItem task...")
                         interactItem.task?.cancel()
-                        e.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,*SStr("").toBukkitComponent())
+                        SStr("").actionBar(e.player)
                     }
                 }
 
@@ -158,15 +161,9 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
                                     return
                                 }
                                 if (interactItem.interactCoolDown <= 0) {
-                                    e.player.spigot().sendMessage(
-                                        ChatMessageType.ACTION_BAR,
-                                        *SStr("&a&l使用可能！").toBukkitComponent()
-                                    )
+                                    SStr("&a&l使用可能！").actionBar(e.player)
                                 } else {
-                                    e.player.spigot().sendMessage(
-                                        ChatMessageType.ACTION_BAR,
-                                        *SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").toBukkitComponent()
-                                    )
+                                    SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").actionBar(e.player)
                                 }
 
                             }

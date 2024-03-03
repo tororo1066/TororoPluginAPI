@@ -20,44 +20,41 @@ class SEvent(val plugin : JavaPlugin) {
     /**
      * イベント登録
      */
-    fun <T : Event>register(clazz: Class<T> , function: (T)->Unit, finishedFunction: (SEventUnit<in T>)->Unit) : SEventUnit<T> {
-        return register(clazz, EventPriority.NORMAL, listOf(function), finishedFunction)
-    }
-
-    /**
-     * イベント登録
-     */
-    fun <T : Event>register(clazz: Class<T> , function: (T)->Unit) : SEventUnit<T> {
-        return register(clazz, EventPriority.NORMAL, listOf(function)) {}
+    fun <T : Event>register(clazz: Class<T>, function: (e: T) -> Unit) : SEventUnit<T> {
+        return register(clazz, EventPriority.NORMAL, listOf(function))
     }
 
     /**
      * イベント登録
      * プロパティも使えるよ
      */
-    fun <T : Event>register(clazz: Class<T> , priority : EventPriority , function: List<(T)->Unit>,finishedFunction: (SEventUnit<in T>)->Unit) : SEventUnit<T> {
-        val event = SEventUnit(clazz, plugin, function, finishedFunction, priority)
+    fun <T : Event>register(clazz: Class<T>, priority: EventPriority, function: List<(e: T) -> Unit>) : SEventUnit<T> {
+        val event = SEventUnit(clazz, plugin, function, priority)
         sEventUnits.add(event)
         return event
     }
 
+    inline fun <reified T : Event>register(noinline function: (e: T)->Unit) : SEventUnit<T> {
+        return register(T::class.java, EventPriority.NORMAL, listOf(function))
+    }
+
     /**
      * イベント登録
      * プロパティも使えるよ
      */
-    fun <T : Event>register(clazz: Class<T>, priority: EventPriority, function: (T)->Unit) : SEventUnit<T> {
-        return register(clazz, priority, listOf(function)) {}
+    fun <T : Event>register(clazz: Class<T>, priority: EventPriority, function: (e: T)->Unit) : SEventUnit<T> {
+        return register(clazz, priority, listOf(function))
     }
 
-    fun <T : Event>biRegister(clazz: Class<T>, function: (T, BiSEventUnit<in T>)->Unit) : BiSEventUnit<T> {
+    fun <T : Event>biRegister(clazz: Class<T>, function: (e: T, unit: BiSEventUnit<in T>)->Unit) : BiSEventUnit<T> {
         return biRegister(clazz, EventPriority.NORMAL, listOf(function))
     }
 
-    fun <T : Event>biRegister(clazz: Class<T>, priority: EventPriority, function: (T, BiSEventUnit<in T>)->Unit) : BiSEventUnit<T> {
+    fun <T : Event>biRegister(clazz: Class<T>, priority: EventPriority, function: (e: T, unit: BiSEventUnit<in T>)->Unit) : BiSEventUnit<T> {
         return biRegister(clazz, priority, listOf(function))
     }
 
-    fun <T : Event>biRegister(clazz: Class<T>, priority: EventPriority, function: List<(T, BiSEventUnit<in T>)->Unit>) : BiSEventUnit<T> {
+    fun <T : Event>biRegister(clazz: Class<T>, priority: EventPriority, function: List<(e: T, unit: BiSEventUnit<in T>)->Unit>) : BiSEventUnit<T> {
         val event = BiSEventUnit(clazz,plugin,function,priority)
         biSEventUnits.add(event)
         return event
