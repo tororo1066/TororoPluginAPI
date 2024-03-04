@@ -27,7 +27,6 @@ class FindFunc: AbstractFunction() {
                 break
             }
         }
-        expression.with("it", null)
         return EvaluationValue(result)
     }
 }
