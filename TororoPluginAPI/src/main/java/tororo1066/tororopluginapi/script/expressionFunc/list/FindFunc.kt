@@ -23,7 +23,7 @@ class FindFunc: AbstractFunction() {
             expression.with("it", item.value)
             val value = expression.evaluateSubtree(condition)
             if (value.booleanValue) {
-                result = item
+                result = item.value
                 break
             }
         }
