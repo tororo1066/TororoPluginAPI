@@ -1,25 +1,23 @@
 package tororo1066.tororopluginapi.script.action
 
 import com.ezylang.evalex.Expression
-import tororo1066.tororopluginapi.script.ActionData
 import tororo1066.tororopluginapi.script.ScriptFile
 import java.util.*
-import kotlin.collections.ArrayList
 
 class WhileAction: AbstractAction("while") {
 
-    override fun invoke(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
+    override fun invoke(scriptFile: ScriptFile, function: String, line: String, lineIndex: Int, separator: Int) {
         val loadLine = loadNextLines(scriptFile, lineIndex, separator)
 
         val split = line.split("@")
-        val condition = Expression(split[0], ScriptFile.configuration)
+        val condition = Expression(split[0], scriptFile.configuration)
         val label = split.getOrNull(1)
         val uuid = UUID.randomUUID()
         val format = if (label != null) "$uuid $label" else uuid.toString()
         scriptFile.breakFunction[format] = false
         while (condition.withValues(scriptFile.publicVariables).evaluate().booleanValue){
             for (action in loadLine) {
-                if (scriptFile.returnFlag){
+                if (scriptFile.returns.contains(function)){
                     return
                 }
                 if (scriptFile.breakFunction[format] == true){
@@ -28,7 +26,7 @@ class WhileAction: AbstractAction("while") {
                 if (action.separator != separator+1){
                     continue
                 }
-                action.invoke()
+                action.invoke(function)
             }
             if (scriptFile.breakFunction[format] == true){
                 break

@@ -1,6 +1,8 @@
 package tororo1066.tororopluginapi.script
 
+import com.ezylang.evalex.Expression
 import com.ezylang.evalex.config.ExpressionConfiguration
+import com.ezylang.evalex.functions.AbstractFunction
 import org.bukkit.Bukkit
 import tororo1066.tororopluginapi.script.action.*
 import tororo1066.tororopluginapi.script.action.entity.player.SendMessageAction
@@ -11,16 +13,22 @@ import tororo1066.tororopluginapi.script.expressionFunc.IsOp
 import tororo1066.tororopluginapi.script.expressionFunc.list.FindFunc
 import tororo1066.tororopluginapi.script.expressionFunc.list.SizeFunc
 import java.io.File
-import java.util.concurrent.Callable
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
-import java.util.concurrent.Future
 
 class ScriptFile(val file: File) {
     val lines = ArrayList<ActionData>()
-    val publicVariables = HashMap<String, Any>()
+    val publicVariables = HashMap<String, Any?>()
     val breakFunction = HashMap<String, Boolean>()
-    var returnFlag = false
-    var returnValue: Any? = null
+    val returns = HashMap<String, Any>()
+    val functionVariables = HashMap<String, HashMap<String, Any?>>()
+
+    val configuration = ExpressionConfiguration.defaultConfiguration()
+        .apply {
+            functionDictionary.apply {
+                functions.forEach { (key, value) -> addFunction(key, value.invoke(this@ScriptFile)) }
+            }
+        }
 
     var debug = false
 
@@ -43,21 +51,21 @@ class ScriptFile(val file: File) {
     }
 
     fun start(): Any {
-        returnFlag = false
+        returns.clear()
         lines.forEach {
             if (it.separator == 0){
-                it.invoke()
+                it.invoke("main")
             }
-            if (returnFlag){
-                return returnValue!!
+            if (returns.containsKey("main")){
+                return returns["main"]!!
             }
         }
 
         return Unit
     }
 
-    fun startAsync(): Future<Any> {
-        return Executors.newSingleThreadExecutor().submit(Callable { start() })
+    fun startAsync(): CompletableFuture<Any> {
+        return CompletableFuture.supplyAsync({ start() }, Executors.newSingleThreadExecutor())
     }
 
     fun readScriptLine(lineStr: String, line: Int): ActionData? {
@@ -94,17 +102,14 @@ class ScriptFile(val file: File) {
 
     companion object {
 
-        val configuration: ExpressionConfiguration =
-            ExpressionConfiguration.defaultConfiguration()
-            .apply {
-                functionDictionary.apply {
-                    addFunction("now()", DateFunc())
-                    addFunction("isOp()", IsOp())
-                    addFunction("size()", SizeFunc())
-                    addFunction("find()", FindFunc())
-                }
-
-            }
+        val functions = HashMap<String, (ScriptFile) -> AbstractFunction>(
+            mapOf(
+                "now()" to { DateFunc() },
+                "isOp()" to { IsOp(it) },
+                "size()" to { SizeFunc() },
+                "find()" to { FindFunc() }
+            )
+        )
 
         fun actionPair(vararg action: AbstractAction): Map<String,AbstractAction> {
             return action.associateBy { it.internalName }
@@ -118,8 +123,19 @@ class ScriptFile(val file: File) {
             BreakAction(),
             ReturnAction(),
             SleepAction(),
-            SendMessageAction()
+            SendMessageAction(),
+            FunctionAction(),
         ))
+
+        fun Expression.withVariables(function: String, scriptFile: ScriptFile): Expression {
+            return apply {
+                withValues(scriptFile.publicVariables)
+                if (scriptFile.functionVariables[function] != null){
+                    withValues(scriptFile.functionVariables[function]!!)
+                }
+            }
+
+        }
     }
 
 }

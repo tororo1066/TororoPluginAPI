@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.script.action.inline
 
 import com.ezylang.evalex.Expression
 import tororo1066.tororopluginapi.script.ScriptFile
+import tororo1066.tororopluginapi.script.ScriptFile.Companion.withVariables
 import tororo1066.tororopluginapi.script.action.AbstractAction
 import java.math.BigDecimal
 
@@ -9,7 +10,7 @@ class MathAction: AbstractAction("NONE") {
 
     val checkList = listOf('+', '-', '*', '/', '=')
 
-    override fun invoke(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
+    override fun invoke(scriptFile: ScriptFile, function: String, line: String, lineIndex: Int, separator: Int) {
         var variableName = ""
         val (sign, expr) = line.dropWhile {
             if (checkList.contains(it))return@dropWhile false
@@ -19,7 +20,7 @@ class MathAction: AbstractAction("NONE") {
             true
         }.split(" ")
         val value = Expression(expr)
-            .withValues(scriptFile.publicVariables)
+            .withVariables(function, scriptFile)
             .evaluate().value
         when(sign){
             "+=" -> {

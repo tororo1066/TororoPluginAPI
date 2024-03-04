@@ -5,14 +5,13 @@ import tororo1066.tororopluginapi.script.ScriptFile
 
 class ReturnAction: AbstractAction("return") {
 
-    override fun invoke(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
-        scriptFile.returnFlag = true
+    override fun invoke(scriptFile: ScriptFile, function: String, line: String, lineIndex: Int, separator: Int) {
         if (line.isBlank()){
-            scriptFile.returnValue = Unit
+            scriptFile.returns[function] = Unit
             return
         }
-        val expression = Expression(line, ScriptFile.configuration)
+        val expression = Expression(line, scriptFile.configuration)
             .withValues(scriptFile.publicVariables)
-        scriptFile.returnValue = expression.evaluate().value
+        scriptFile.returns[function] = expression.evaluate().value
     }
 }

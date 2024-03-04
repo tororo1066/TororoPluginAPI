@@ -1,28 +1,28 @@
 package tororo1066.tororopluginapi.script.action
 
 import com.ezylang.evalex.Expression
-import org.bukkit.Bukkit
 import tororo1066.tororopluginapi.script.ScriptFile
+import tororo1066.tororopluginapi.script.ScriptFile.Companion.withVariables
 import tororo1066.tororopluginapi.script.action.hidden.ElseAction
 
 class IfAction: AbstractAction("if") {
 
-    override fun invoke(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
-        val expression = Expression(line, ScriptFile.configuration)
-            .withValues(scriptFile.publicVariables)
+    override fun invoke(scriptFile: ScriptFile, function: String, line: String, lineIndex: Int, separator: Int) {
+        val expression = Expression(line, scriptFile.configuration)
+            .withVariables(function, scriptFile)
         if (expression.evaluate().booleanValue){
             val lines = scriptFile.lines.subList(lineIndex+1, scriptFile.lines.size).takeWhile {
                 it.separator > separator
             }
 
             lines.forEach {
-                if (scriptFile.returnFlag){
+                if (scriptFile.returns.containsKey(function)){
                     return
                 }
                 if (it.separator != separator+1){
                     return@forEach
                 }
-                it.invoke()
+                it.invoke(function)
             }
         } else {
             val elseFind = scriptFile.lines.subList(lineIndex+1, scriptFile.lines.size).filter {
@@ -36,13 +36,13 @@ class IfAction: AbstractAction("if") {
             }
 
             lines.forEach {
-                if (scriptFile.returnFlag){
+                if (scriptFile.returns.containsKey(function)){
                     return
                 }
                 if (it.separator != separator+1){
                     return@forEach
                 }
-                it.invoke()
+                it.invoke(function)
             }
         }
     }

@@ -5,7 +5,7 @@ import tororo1066.tororopluginapi.script.action.AbstractAction
 
 class ElseAction: AbstractAction("else") {
 
-    override fun invoke(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
+    override fun invoke(scriptFile: ScriptFile, function: String, line: String, lineIndex: Int, separator: Int) {
 
     }
 }

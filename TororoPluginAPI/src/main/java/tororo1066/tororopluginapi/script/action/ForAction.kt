@@ -2,13 +2,14 @@ package tororo1066.tororopluginapi.script.action
 
 import com.ezylang.evalex.Expression
 import tororo1066.tororopluginapi.script.ScriptFile
+import tororo1066.tororopluginapi.script.ScriptFile.Companion.withVariables
 import tororo1066.tororopluginapi.utils.toIntProgression
 import tororo1066.tororopluginapi.utils.toIntProgressionOrNull
 import java.util.UUID
 
 class ForAction: AbstractAction("for") {
 
-    override fun invoke(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
+    override fun invoke(scriptFile: ScriptFile, function: String, line: String, lineIndex: Int, separator: Int) {
         val loadLine = loadNextLines(scriptFile, lineIndex, separator)
 
         val split = line.split(" in ")
@@ -19,24 +20,25 @@ class ForAction: AbstractAction("for") {
         val uuid = UUID.randomUUID()
         val format = if (label != null) "$uuid $label" else uuid.toString()
         scriptFile.breakFunction[format] = false
-        val expr = Expression(ruleStr, ScriptFile.configuration)
-            .withValues(scriptFile.publicVariables).evaluate()
+        val expr = Expression(ruleStr, scriptFile.configuration)
+            .withVariables(function, scriptFile)
+            .evaluate()
         fun loop(variables: Iterable<Any>){
             for (i in variables) {
                 scriptFile.publicVariables[variable] = i
                 for (action in loadLine) {
-                    if (scriptFile.returnFlag){
+                    if (scriptFile.returns.containsKey(function)) {
                         return
                     }
-                    if (scriptFile.breakFunction[format] == true){
+                    if (scriptFile.breakFunction[format] == true) {
                         break
                     }
-                    if (action.separator != separator+1){
+                    if (action.separator != separator+1) {
                         continue
                     }
-                    action.invoke()
+                    action.invoke(function)
                 }
-                if (scriptFile.breakFunction[format] == true){
+                if (scriptFile.breakFunction[format] == true) {
                     break
                 }
             }
