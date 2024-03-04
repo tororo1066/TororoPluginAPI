@@ -14,6 +14,9 @@ class FunctionAction: AbstractAction("def") {
         val argsString = line.split("(")[1].split(")")[0].split(",")
         val args = ArrayList<String>()
         for (arg in argsString) {
+            if (arg.isBlank()) {
+                continue
+            }
             val argName = if (arg.contains(":")) {
                 arg.split(":")[0].trim()
             } else {
