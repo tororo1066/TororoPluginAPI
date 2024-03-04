@@ -104,10 +104,10 @@ class ScriptFile(val file: File) {
 
         val functions = HashMap<String, (ScriptFile) -> AbstractFunction>(
             mapOf(
-                "now()" to { DateFunc() },
-                "isOp()" to { IsOp(it) },
-                "size()" to { SizeFunc() },
-                "find()" to { FindFunc() }
+                "now" to { DateFunc() },
+                "isOp" to { IsOp(it) },
+                "size" to { SizeFunc() },
+                "find" to { FindFunc() }
             )
         )
 

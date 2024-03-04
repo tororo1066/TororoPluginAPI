@@ -2,7 +2,6 @@ package tororo1066.tororopluginapi.script.action
 
 import com.ezylang.evalex.Expression
 import com.ezylang.evalex.data.EvaluationValue
-import com.ezylang.evalex.data.EvaluationValue.DataType
 import com.ezylang.evalex.functions.AbstractFunction
 import com.ezylang.evalex.functions.FunctionParameterDefinition
 import com.ezylang.evalex.parser.Token
