@@ -20,8 +20,7 @@ class FindFunc: AbstractFunction() {
         val condition = parameterValues[1].expressionNode
         var result: Any? = null
         for (item in list) {
-            Bukkit.broadcastMessage(item.javaClass.name)
-            expression.with("it", item)
+            expression.with("it", item.value)
             val value = expression.evaluateSubtree(condition)
             if (value.booleanValue) {
                 result = item
