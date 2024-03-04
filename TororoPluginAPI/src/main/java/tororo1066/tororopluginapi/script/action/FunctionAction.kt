@@ -13,11 +13,14 @@ class FunctionAction: AbstractAction("def") {
     override fun init(scriptFile: ScriptFile, line: String, lineIndex: Int, separator: Int) {
         val functionName = line.split("(")[0]
         val argsString = line.split("(")[1].split(")")[0].split(",")
-        val args = HashMap<String, DataType>()
+        val args = ArrayList<String>()
         for (arg in argsString) {
-            val argName = arg.split(":")[0]
-            val argType = arg.split(":")[1]
-            args[argName] = DataType.valueOf(argType.uppercase())
+            val argName = if (arg.contains(":")) {
+                arg.split(":")[0].trim()
+            } else {
+                arg.trim()
+            }
+            args.add(argName)
         }
         val lines = loadNextLines(scriptFile, lineIndex, separator)
         val function = object : AbstractFunction() {
@@ -25,7 +28,7 @@ class FunctionAction: AbstractAction("def") {
             override fun getFunctionParameterDefinitions(): MutableList<FunctionParameterDefinition> {
                 val list = mutableListOf<FunctionParameterDefinition>()
                 for (arg in args) {
-                    list.add(FunctionParameterDefinition.builder().name(arg.key).isLazy(true).build())
+                    list.add(FunctionParameterDefinition.builder().name(arg).isLazy(true).build())
                 }
                 return list
             }
@@ -35,8 +38,8 @@ class FunctionAction: AbstractAction("def") {
                 vararg parameterValues: EvaluationValue
             ): EvaluationValue {
                 scriptFile.functionVariables[functionName] = hashMapOf()
-                for (i in args.keys.indices) {
-                    scriptFile.functionVariables[functionName]!![args.keys.elementAt(i)] = parameterValues[i].value
+                for (i in args.indices) {
+                    scriptFile.functionVariables[functionName]!![args.elementAt(i)] = parameterValues[i].value
                 }
 
                 lines.forEach {
