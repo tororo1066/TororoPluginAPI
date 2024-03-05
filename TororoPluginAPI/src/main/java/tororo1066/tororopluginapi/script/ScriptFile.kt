@@ -32,7 +32,7 @@ class ScriptFile(val file: File) {
             }
         }
 
-    var debug = true
+    var debug = false
 
     constructor(file: File, debug: Boolean): this(file){
         this.debug = debug
