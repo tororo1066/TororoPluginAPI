@@ -5,6 +5,7 @@ import com.ezylang.evalex.data.EvaluationValue
 import com.ezylang.evalex.functions.AbstractFunction
 import com.ezylang.evalex.functions.FunctionParameterDefinition
 import com.ezylang.evalex.parser.Token
+import org.bukkit.Bukkit
 import tororo1066.tororopluginapi.script.ScriptFile
 
 class FunctionAction: AbstractAction("def") {
@@ -13,6 +14,7 @@ class FunctionAction: AbstractAction("def") {
         val functionName = line.split("(")[0]
         val argsString = line.split("(")[1].split(")")[0].split(",")
         val args = ArrayList<String>()
+        Bukkit.broadcastMessage(lineIndex.toString())
         for (arg in argsString) {
             if (arg.isBlank()) {
                 continue
@@ -24,6 +26,7 @@ class FunctionAction: AbstractAction("def") {
             }
             args.add(argName)
         }
+        Bukkit.broadcastMessage("args: ${args.size}")
         val lines = loadNextLines(scriptFile, lineIndex, separator)
         val function = object : AbstractFunction() {
 
@@ -40,10 +43,9 @@ class FunctionAction: AbstractAction("def") {
                 vararg parameterValues: EvaluationValue
             ): EvaluationValue {
                 scriptFile.functionVariables[functionName] = hashMapOf()
-                for (i in args.indices) {
-                    scriptFile.functionVariables[functionName]!![args.elementAt(i)] = parameterValues[i].value
+                for ((index, arg) in args.withIndex()) {
+                    scriptFile.functionVariables[functionName]!![arg] = parameterValues[index]
                 }
-
                 lines.forEach {
                     if (scriptFile.returns.containsKey(functionName)) {
                         return EvaluationValue(scriptFile.returns[functionName]!!)
@@ -52,6 +54,10 @@ class FunctionAction: AbstractAction("def") {
                         return@forEach
                     }
                     it.invoke(functionName)
+                }
+
+                if (scriptFile.returns.containsKey(functionName)) {
+                    return EvaluationValue(scriptFile.returns[functionName]!!)
                 }
 
                 return EvaluationValue(null)

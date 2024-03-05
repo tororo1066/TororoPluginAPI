@@ -23,6 +23,7 @@ abstract class AbstractAction(val internalName: String) {
                     return@run
                 }
                 loadLine.add(it)
+                scriptFile.debug("Load line: ${it.action.internalName}")
             }
         }
 

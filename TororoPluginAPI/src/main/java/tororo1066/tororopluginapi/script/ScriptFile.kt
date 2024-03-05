@@ -7,6 +7,7 @@ import org.bukkit.Bukkit
 import tororo1066.tororopluginapi.script.action.*
 import tororo1066.tororopluginapi.script.action.entity.player.SendMessageAction
 import tororo1066.tororopluginapi.script.action.hidden.ElseAction
+import tororo1066.tororopluginapi.script.action.inline.EmptyAction
 import tororo1066.tororopluginapi.script.action.inline.MathAction
 import tororo1066.tororopluginapi.script.expressionFunc.DateFunc
 import tororo1066.tororopluginapi.script.expressionFunc.IsOp
@@ -21,7 +22,7 @@ class ScriptFile(val file: File) {
     val lines = ArrayList<ActionData>()
     val publicVariables = HashMap<String, Any?>()
     val breakFunction = HashMap<String, Boolean>()
-    val returns = HashMap<String, Any>()
+    val returns = HashMap<String, Any?>()
     val functionVariables = HashMap<String, HashMap<String, Any?>>()
 
     val configuration = ExpressionConfiguration.defaultConfiguration()
@@ -31,7 +32,7 @@ class ScriptFile(val file: File) {
             }
         }
 
-    var debug = false
+    var debug = true
 
     constructor(file: File, debug: Boolean): this(file){
         this.debug = debug
@@ -41,24 +42,24 @@ class ScriptFile(val file: File) {
         var index = 0
         file.readLines().forEach {
             val script = readScriptLine(it, index)
-            if (script == null){
-                index--
-                return@forEach
-            }
 
             lines.add(script)
             index++
         }
+
+        lines.forEach {
+            it.init()
+        }
     }
 
-    fun start(): Any {
+    fun start(): Any? {
         returns.clear()
         lines.forEach {
             if (it.separator == 0){
                 it.invoke("main")
             }
             if (returns.containsKey("main")){
-                return returns["main"]!!
+                return returns["main"]
             }
         }
 
@@ -69,9 +70,9 @@ class ScriptFile(val file: File) {
         return CompletableFuture.supplyAsync({ start() }, Executors.newSingleThreadExecutor())
     }
 
-    fun readScriptLine(lineStr: String, line: Int): ActionData? {
+    fun readScriptLine(lineStr: String, line: Int): ActionData {
         var lineString = lineStr
-        if (lineString.isBlank() || lineString.startsWith("#"))return null
+        if (lineString.isBlank() || lineString.startsWith("#"))return ActionData(EmptyAction(), this, lineString, line, 0)
         var space = 0
         lineString = lineString.dropWhile {
             if (it == ' '){

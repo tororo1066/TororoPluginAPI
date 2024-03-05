@@ -1,6 +1,7 @@
 package tororo1066.tororoplugin.command
 
 import com.google.gson.JsonObject
+import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
@@ -23,7 +24,9 @@ import tororo1066.tororopluginapi.annotation.SCommandV2Body
 import tororo1066.tororopluginapi.lang.SLang
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2
 import tororo1066.tororopluginapi.sItem.SItem
+import tororo1066.tororopluginapi.script.ScriptFile
 import tororo1066.tororopluginapi.utils.sendMessage
+import java.io.File
 import java.util.*
 
 class TororoCommandV2: SCommandV2("tororo") {
@@ -348,6 +351,18 @@ class TororoCommandV2: SCommandV2("tororo") {
     val tororo = command {
         literal("rename") {
             arg(test)
+        }
+    }
+
+    @SCommandV2Body
+    val test_ = command {
+        literal("test") {
+            setPermission("tororo.test")
+            setPlayerFunctionExecutor { sender, _, _ ->
+                val script = ScriptFile(File(TororoPlugin.plugin.dataFolder, "test.tororo"), true)
+                script.publicVariables["list"] = listOf("a", "b", "c")
+                Bukkit.broadcastMessage(script.start().toString())
+            }
         }
     }
 }
