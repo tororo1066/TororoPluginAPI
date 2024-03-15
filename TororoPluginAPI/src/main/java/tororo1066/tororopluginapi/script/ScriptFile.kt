@@ -7,6 +7,7 @@ import org.bukkit.Bukkit
 import tororo1066.tororopluginapi.script.action.*
 import tororo1066.tororopluginapi.script.action.entity.player.SendMessageAction
 import tororo1066.tororopluginapi.script.action.hidden.ElseAction
+import tororo1066.tororopluginapi.script.action.hidden.OrChoiceAction
 import tororo1066.tororopluginapi.script.action.inline.EmptyAction
 import tororo1066.tororopluginapi.script.action.inline.MathAction
 import tororo1066.tororopluginapi.script.expressionFunc.DateFunc
@@ -128,6 +129,8 @@ class ScriptFile(val file: File) {
             SleepAction(),
             SendMessageAction(),
             FunctionAction(),
+            RandomChoiceAction(),
+            OrChoiceAction(),
         ))
 
         fun Expression.withVariables(function: String, scriptFile: ScriptFile): Expression {

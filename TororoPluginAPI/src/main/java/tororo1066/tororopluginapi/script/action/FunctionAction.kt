@@ -14,7 +14,6 @@ class FunctionAction: AbstractAction("def") {
         val functionName = line.split("(")[0]
         val argsString = line.split("(")[1].split(")")[0].split(",")
         val args = ArrayList<String>()
-        Bukkit.broadcastMessage(lineIndex.toString())
         for (arg in argsString) {
             if (arg.isBlank()) {
                 continue
@@ -26,7 +25,6 @@ class FunctionAction: AbstractAction("def") {
             }
             args.add(argName)
         }
-        Bukkit.broadcastMessage("args: ${args.size}")
         val lines = loadNextLines(scriptFile, lineIndex, separator)
         val function = object : AbstractFunction() {
 
