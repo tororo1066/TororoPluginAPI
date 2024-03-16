@@ -64,6 +64,10 @@ class ScriptFile(val file: File) {
             }
         }
 
+        if (returns.containsKey("main")){
+            return returns["main"]
+        }
+
         return Unit
     }
 
