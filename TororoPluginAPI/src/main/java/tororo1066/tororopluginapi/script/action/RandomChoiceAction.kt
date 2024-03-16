@@ -20,7 +20,7 @@ class RandomChoiceAction: AbstractAction("randomChoice") {
             if (scriptFile.returns.containsKey(function)) {
                 return
             }
-            if (action.separator != separator+1) {
+            if (action.separator != random.separator+1) {
                 continue
             }
             action.invoke(function)
