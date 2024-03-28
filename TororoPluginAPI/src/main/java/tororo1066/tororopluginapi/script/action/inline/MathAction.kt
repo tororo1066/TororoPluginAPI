@@ -12,13 +12,15 @@ class MathAction: AbstractAction("NONE") {
 
     override fun invoke(scriptFile: ScriptFile, function: String, line: String, lineIndex: Int, separator: Int) {
         var variableName = ""
-        val (sign, expr) = line.dropWhile {
+        val split = line.dropWhile {
             if (checkList.contains(it))return@dropWhile false
             if (it != ' '){
                 variableName += it
             }
             true
         }.split(" ")
+        val sign = split[0]
+        val expr = split.drop(1).joinToString(" ")
         val value = Expression(expr)
             .withVariables(function, scriptFile)
             .evaluate().value
