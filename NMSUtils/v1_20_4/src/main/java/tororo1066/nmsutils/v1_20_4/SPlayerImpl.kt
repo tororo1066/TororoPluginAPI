@@ -1,24 +1,23 @@
 package tororo1066.nmsutils.v1_20_4
 
 import com.mojang.datafixers.util.Pair
+import net.minecraft.ChatFormatting
 import net.minecraft.core.Rotations
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.*
+import net.minecraft.network.syncher.EntityDataAccessor
+import net.minecraft.network.syncher.EntityDataSerializers
+import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.server.ServerScoreboard
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.MoverType
 import net.minecraft.world.entity.RelativeMovement
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.phys.Vec3
-import net.minecraft.world.scores.DisplaySlot
-import net.minecraft.world.scores.Objective
+import net.minecraft.world.scores.*
 import net.minecraft.world.scores.criteria.ObjectiveCriteria
-import org.bukkit.Bukkit
-import org.bukkit.Keyed
-import org.bukkit.Location
-import org.bukkit.Material
+import org.bukkit.*
 import org.bukkit.craftbukkit.v1_20_R3.CraftEquipmentSlot
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld
@@ -206,6 +205,35 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
                 null
             )
             handle.connection.send(packet)
+        }
+    }
+
+    override fun sendTeam(teamColor: ChatColor, receivers: Collection<Player>) {
+        val packet = ClientboundSetPlayerTeamPacket.createPlayerPacket(
+            Scoreboard().let {
+                it.addPlayerTeam("color").apply {
+                    nameTagVisibility = Team.Visibility.NEVER
+                    color = ChatFormatting.valueOf(teamColor.name)
+                }
+            },
+            name,
+            ClientboundSetPlayerTeamPacket.Action.ADD
+        )
+
+        receivers.forEach {
+            (it as CraftPlayer).handle.connection.send(packet)
+        }
+    }
+
+    override fun sendGlow(glow: Boolean, receivers: Collection<Player>) {
+        val packet = ClientboundSetEntityDataPacket(entityId, listOf(
+            SynchedEntityData.DataValue.create(
+                EntityDataAccessor(entityId, EntityDataSerializers.BYTE),
+                0x40
+            )
+        ))
+        receivers.forEach {
+            (it as CraftPlayer).handle.connection.send(packet)
         }
     }
 

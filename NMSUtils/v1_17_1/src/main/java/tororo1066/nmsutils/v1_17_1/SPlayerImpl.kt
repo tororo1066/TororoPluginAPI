@@ -1,9 +1,13 @@
 package tororo1066.nmsutils.v1_17_1
 
 import com.mojang.datafixers.util.Pair
+import net.minecraft.ChatFormatting
 import net.minecraft.core.Rotations
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.*
+import net.minecraft.network.syncher.EntityDataAccessor
+import net.minecraft.network.syncher.EntityDataSerializers
+import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.ServerScoreboard
 import net.minecraft.server.level.ServerPlayer
@@ -12,11 +16,10 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.scores.Objective
+import net.minecraft.world.scores.Scoreboard
+import net.minecraft.world.scores.Team
 import net.minecraft.world.scores.criteria.ObjectiveCriteria
-import org.bukkit.Bukkit
-import org.bukkit.Keyed
-import org.bukkit.Location
-import org.bukkit.Material
+import org.bukkit.*
 import org.bukkit.craftbukkit.v1_17_R1.CraftEquipmentSlot
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld
@@ -32,6 +35,8 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import tororo1066.nmsutils.SPlayer
 import tororo1066.nmsutils.SPlayer.Companion.hiddenEntities
+import kotlin.experimental.and
+import kotlin.experimental.or
 
 class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.level.craftServer, p.handle){
 
@@ -203,6 +208,39 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
                 score
             )
             handle.connection.send(packet)
+        }
+    }
+
+    override fun sendTeam(teamColor: ChatColor, receivers: Collection<Player>) {
+        val packet = ClientboundSetPlayerTeamPacket.createPlayerPacket(
+            Scoreboard().let {
+                it.addPlayerTeam("color").apply {
+                    nameTagVisibility = Team.Visibility.NEVER
+                    color = ChatFormatting.valueOf(teamColor.name)
+                }
+            },
+            name,
+            ClientboundSetPlayerTeamPacket.Action.ADD
+        )
+
+        receivers.forEach {
+            (it as CraftPlayer).handle.connection.send(packet)
+        }
+    }
+
+    override fun sendGlow(glow: Boolean, receivers: Collection<Player>) {
+        val initialBitMask = handle.entityData.all?.get(0)?.value as? Byte?:0
+        val packet = ClientboundSetEntityDataPacket(entityId, SynchedEntityData(handle).apply {
+            if (glow) {
+                set(EntityDataAccessor(0, EntityDataSerializers.BYTE), (initialBitMask or ((1 shl 0x40).toByte())))
+            } else {
+                set(EntityDataAccessor(0, EntityDataSerializers.BYTE),
+                    (initialBitMask and ((1 shl 0x40).inv()).toByte())
+                )
+            }
+        }, true)
+        receivers.forEach {
+            (it as CraftPlayer).handle.connection.send(packet)
         }
     }
 }

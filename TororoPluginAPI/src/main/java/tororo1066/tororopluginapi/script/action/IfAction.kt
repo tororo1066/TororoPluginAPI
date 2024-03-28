@@ -11,9 +11,7 @@ class IfAction: AbstractAction("if") {
         val expression = Expression(line, scriptFile.configuration)
             .withVariables(function, scriptFile)
         if (expression.evaluate().booleanValue){
-            val lines = scriptFile.lines.subList(lineIndex+1, scriptFile.lines.size).takeWhile {
-                it.separator > separator
-            }
+            val lines = loadNextLines(scriptFile, lineIndex, separator)
 
             lines.forEach {
                 if (scriptFile.returns.containsKey(function)){
@@ -31,9 +29,7 @@ class IfAction: AbstractAction("if") {
 
             if ((elseFind.firstOrNull()?:return).action is IfAction)return
 
-            val lines = scriptFile.lines.subList(elseFind.first().lineIndex+1, scriptFile.lines.size).takeWhile {
-                it.separator > separator
-            }
+            val lines = loadNextLines(scriptFile, elseFind.first().lineIndex, separator)
 
             lines.forEach {
                 if (scriptFile.returns.containsKey(function)){

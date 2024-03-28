@@ -8,7 +8,7 @@ import java.math.BigDecimal
 
 class MathAction: AbstractAction("NONE") {
 
-    val checkList = listOf('+', '-', '*', '/', '=')
+    val checkList = listOf('+', '-', '*', '/', '=', '%')
 
     override fun invoke(scriptFile: ScriptFile, function: String, line: String, lineIndex: Int, separator: Int) {
         var variableName = ""
@@ -67,6 +67,18 @@ class MathAction: AbstractAction("NONE") {
                 when(value){
                     is BigDecimal -> {
                         scriptFile.publicVariables[variableName] = (beforeValue as BigDecimal) * value
+                    }
+                    else -> {
+                        throw UnsupportedOperationException("$sign is not supported value type ${value.javaClass.simpleName}")
+                    }
+                }
+            }
+
+            "%=" -> {
+                val beforeValue = scriptFile.publicVariables[variableName]!!
+                when(value){
+                    is BigDecimal -> {
+                        scriptFile.publicVariables[variableName] = (beforeValue as BigDecimal) % value
                     }
                     else -> {
                         throw UnsupportedOperationException("$sign is not supported value type ${value.javaClass.simpleName}")

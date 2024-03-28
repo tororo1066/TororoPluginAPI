@@ -12,6 +12,7 @@ import tororo1066.tororopluginapi.script.action.inline.EmptyAction
 import tororo1066.tororopluginapi.script.action.inline.MathAction
 import tororo1066.tororopluginapi.script.expressionFunc.DateFunc
 import tororo1066.tororopluginapi.script.expressionFunc.IsOp
+import tororo1066.tororopluginapi.script.expressionFunc.SplitFunc
 import tororo1066.tororopluginapi.script.expressionFunc.list.ContainsFunc
 import tororo1066.tororopluginapi.script.expressionFunc.list.FindFunc
 import tororo1066.tororopluginapi.script.expressionFunc.list.SizeFunc
@@ -115,7 +116,8 @@ class ScriptFile(val file: File) {
                 "isOp" to { IsOp(it) },
                 "size" to { SizeFunc() },
                 "find" to { FindFunc() },
-                "contains" to { ContainsFunc() }
+                "contains" to { ContainsFunc() },
+                "split" to { SplitFunc() },
             )
         )
 

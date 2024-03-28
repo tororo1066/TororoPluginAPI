@@ -5,6 +5,7 @@ import org.bukkit.entity.Player
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.script.ActionData
 import tororo1066.tororopluginapi.script.ScriptFile
+import tororo1066.tororopluginapi.script.action.inline.EmptyAction
 import tororo1066.tororopluginapi.utils.toPlayer
 import java.util.UUID
 
@@ -19,7 +20,7 @@ abstract class AbstractAction(val internalName: String) {
         val loadLine = ArrayList<ActionData>()
         run {
             lines.forEach {
-                if (it.separator < separator+1){
+                if (it.separator < separator+1 && it.action !is EmptyAction){
                     return@run
                 }
                 loadLine.add(it)

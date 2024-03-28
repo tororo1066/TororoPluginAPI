@@ -1,6 +1,7 @@
 package tororo1066.nmsutils
 
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Keyed
 import org.bukkit.Location
 import org.bukkit.entity.Entity
@@ -43,6 +44,10 @@ interface SPlayer {
     fun sendObjective(scoreboard: Scoreboard, objectiveName: String, displayName: String)
 
     fun sendScore(objectiveName: String, vararg scores: Pair<Int,String>)
+
+    fun sendTeam(teamColor: ChatColor, receivers: Collection<Player>)
+
+    fun sendGlow(glow: Boolean, receivers: Collection<Player>)
 
     companion object{
         fun getSPlayer(p: Player): SPlayer {

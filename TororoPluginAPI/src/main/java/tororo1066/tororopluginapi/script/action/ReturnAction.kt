@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.script.action
 
 import com.ezylang.evalex.Expression
 import tororo1066.tororopluginapi.script.ScriptFile
+import tororo1066.tororopluginapi.script.ScriptFile.Companion.withVariables
 
 class ReturnAction: AbstractAction("return") {
 
@@ -11,7 +12,7 @@ class ReturnAction: AbstractAction("return") {
             return
         }
         val expression = Expression(line, scriptFile.configuration)
-            .withValues(scriptFile.publicVariables)
+            .withVariables(function, scriptFile)
         scriptFile.returns[function] = expression.evaluate().value
     }
 }
