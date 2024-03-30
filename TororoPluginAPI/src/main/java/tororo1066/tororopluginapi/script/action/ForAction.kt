@@ -1,6 +1,7 @@
 package tororo1066.tororopluginapi.script.action
 
 import com.ezylang.evalex.Expression
+import com.ezylang.evalex.data.EvaluationValue
 import tororo1066.tororopluginapi.script.ScriptFile
 import tororo1066.tororopluginapi.script.ScriptFile.Companion.withVariables
 import tororo1066.tororopluginapi.utils.toIntProgression
@@ -25,7 +26,7 @@ class ForAction: AbstractAction("for") {
             .evaluate()
         fun loop(variables: Iterable<Any>){
             for (i in variables) {
-                scriptFile.publicVariables[variable] = i
+                scriptFile.publicVariables[variable] = (i as? EvaluationValue)?.value ?: i
                 for (action in loadLine) {
                     if (scriptFile.returns.containsKey(function)) {
                         return
