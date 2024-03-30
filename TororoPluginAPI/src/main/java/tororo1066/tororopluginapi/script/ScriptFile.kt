@@ -78,7 +78,6 @@ class ScriptFile(val file: File) {
 
     fun readScriptLine(lineStr: String, line: Int): ActionData {
         var lineString = lineStr
-        if (lineString.isBlank() || lineString.startsWith("#"))return ActionData(EmptyAction(), this, lineString, line, 0)
         var space = 0
         lineString = lineString.dropWhile {
             if (it == ' '){
@@ -87,6 +86,7 @@ class ScriptFile(val file: File) {
             }
             false
         }
+        if (lineString.isBlank() || lineString.startsWith("#"))return ActionData(EmptyAction(), this, lineString, line, 0)
         val actionString = lineString.split(" ")[0]
         val action = actions[actionString]
         if (action == null){

@@ -20,7 +20,7 @@ class FindFunc: AbstractFunction() {
         val condition = parameterValues[1].expressionNode
         var result: Any? = null
         for (item in list) {
-            expression.with("it", item.value)
+            expression.with("it", (item.value as? EvaluationValue)?.value ?: item.value)
             val value = expression.evaluateSubtree(condition)
             if (value.booleanValue) {
                 result = item.value
