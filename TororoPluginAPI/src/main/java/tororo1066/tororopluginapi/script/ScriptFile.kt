@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.script
 
 import com.ezylang.evalex.Expression
 import com.ezylang.evalex.config.ExpressionConfiguration
+import com.ezylang.evalex.data.EvaluationValue
 import com.ezylang.evalex.functions.AbstractFunction
 import org.bukkit.Bukkit
 import tororo1066.tororopluginapi.script.action.*
@@ -10,7 +11,6 @@ import tororo1066.tororopluginapi.script.action.hidden.ElseAction
 import tororo1066.tororopluginapi.script.action.hidden.OrChoiceAction
 import tororo1066.tororopluginapi.script.action.inline.EmptyAction
 import tororo1066.tororopluginapi.script.action.inline.MathAction
-import tororo1066.tororopluginapi.script.expressionFunc.DateFunc
 import tororo1066.tororopluginapi.script.expressionFunc.IsOp
 import tororo1066.tororopluginapi.script.expressionFunc.SplitFunc
 import tororo1066.tororopluginapi.script.expressionFunc.list.ContainsFunc
@@ -112,12 +112,11 @@ class ScriptFile(val file: File) {
 
         val functions = HashMap<String, (ScriptFile) -> AbstractFunction>(
             mapOf(
-                "now" to { DateFunc() },
                 "isOp" to { IsOp(it) },
-                "size" to { SizeFunc() },
-                "find" to { FindFunc() },
-                "contains" to { ContainsFunc() },
-                "split" to { SplitFunc() },
+                "size" to { SizeFunc(it) },
+                "find" to { FindFunc(it) },
+                "contains" to { ContainsFunc(it) },
+                "split" to { SplitFunc(it) },
             )
         )
 
@@ -146,7 +145,15 @@ class ScriptFile(val file: File) {
                     withValues(scriptFile.functionVariables[function]!!)
                 }
             }
+        }
 
+        fun miningData(value: Any): Any {
+            return when(value) {
+                is EvaluationValue -> value.value
+                is List<*> -> value.map { miningData(it!!) }
+                is Map<*,*> -> value.map { miningData(it.key!!) to miningData(it.value!!) }.toMap()
+                else -> value
+            }
         }
     }
 

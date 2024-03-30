@@ -360,7 +360,16 @@ class TororoCommandV2: SCommandV2("tororo") {
             setPermission("tororo.test")
             setPlayerFunctionExecutor { sender, _, _ ->
                 val script = ScriptFile(File(TororoPlugin.plugin.dataFolder, "test.tororo"), true)
-                script.publicVariables["list"] = listOf("a", "b", "c")
+                script.publicVariables["list"] = listOf(mapOf(
+                    "name" to "test1",
+                    "age" to 10
+                ), mapOf(
+                    "name" to "test2",
+                    "age" to 20
+                ), mapOf(
+                    "name" to "test3",
+                    "age" to 30
+                ))
                 Bukkit.broadcastMessage(script.start().toString())
             }
         }

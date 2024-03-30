@@ -46,7 +46,7 @@ class FunctionAction: AbstractAction("def") {
                 }
                 lines.forEach {
                     if (scriptFile.returns.containsKey(functionName)) {
-                        return EvaluationValue(scriptFile.returns[functionName]!!)
+                        return EvaluationValue(scriptFile.returns[functionName]!!, scriptFile.configuration)
                     }
                     if (it.separator != separator + 1) {
                         return@forEach
@@ -55,10 +55,10 @@ class FunctionAction: AbstractAction("def") {
                 }
 
                 if (scriptFile.returns.containsKey(functionName)) {
-                    return EvaluationValue(scriptFile.returns[functionName]!!)
+                    return EvaluationValue(scriptFile.returns[functionName]!!, scriptFile.configuration)
                 }
 
-                return EvaluationValue(null)
+                return EvaluationValue(null, scriptFile.configuration)
             }
         }
         scriptFile.configuration.functionDictionary.addFunction(functionName, function)
