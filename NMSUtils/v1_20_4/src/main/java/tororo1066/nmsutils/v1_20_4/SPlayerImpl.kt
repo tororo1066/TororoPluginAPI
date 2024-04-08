@@ -33,6 +33,8 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import tororo1066.nmsutils.SPlayer
 import tororo1066.nmsutils.SPlayer.Companion.hiddenEntities
+import kotlin.experimental.and
+import kotlin.experimental.or
 
 class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.level().craftServer, p.handle) {
 
@@ -208,16 +210,17 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun sendTeam(teamColor: ChatColor, receivers: Collection<Player>) {
-        val packet = ClientboundSetPlayerTeamPacket.createPlayerPacket(
+        val packet = ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(
             Scoreboard().let {
                 it.addPlayerTeam("color").apply {
                     nameTagVisibility = Team.Visibility.NEVER
                     color = ChatFormatting.valueOf(teamColor.name)
+                    this.players.add(name)
                 }
             },
-            name,
-            ClientboundSetPlayerTeamPacket.Action.ADD
+            true
         )
 
         receivers.forEach {
@@ -226,10 +229,15 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
     }
 
     override fun sendGlow(glow: Boolean, receivers: Collection<Player>) {
+        val initialBitMask = handle.entityData.nonDefaultValues?.get(0)?.value as? Byte?:0
         val packet = ClientboundSetEntityDataPacket(entityId, listOf(
             SynchedEntityData.DataValue.create(
                 EntityDataAccessor(entityId, EntityDataSerializers.BYTE),
-                0x40
+                if (glow) {
+                    initialBitMask or ((1 shl 0x40).toByte())
+                } else {
+                    initialBitMask and ((1 shl 0x40).inv()).toByte()
+                }
             )
         ))
         receivers.forEach {
