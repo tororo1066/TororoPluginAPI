@@ -26,13 +26,14 @@ open class IfAction(name: String): AbstractAction(name) {
             }
         } else {
             val elseFind = scriptFile.lines.subList(lineIndex+1, scriptFile.lines.size).filter {
-                it.separator == separator && (it.action is IfAction || it.action is ElseAction)
+                it.separator == separator && (it.action is ElifAction || it.action is IfAction || it.action is ElseAction)
             }
 
             val first = elseFind.firstOrNull()?:return
 
             if (first.action is ElifAction) {
                 first.invoke(function)
+                return
             }
 
             if (first.action is IfAction)return

@@ -1,4 +1,4 @@
-package tororo1066.nmsutils.v1_20_1.command
+package tororo1066.nmsutils.v1_20_4.command
 
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.commands.CommandSourceStack

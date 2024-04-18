@@ -24,7 +24,7 @@ import tororo1066.commandapi.SCommandV2Literal
 import tororo1066.commandapi.argumentType.bukkit.EnchantArgument
 import tororo1066.commandapi.argumentType.bukkit.EntityArgument
 import tororo1066.nmsutils.SNms
-import tororo1066.nmsutils.v1_20_1.command.CommandArgumentsImpl
+import tororo1066.nmsutils.v1_20_4.command.CommandArgumentsImpl
 
 class SNmsImpl: SNms {
 
