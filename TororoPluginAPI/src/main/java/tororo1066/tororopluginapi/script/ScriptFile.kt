@@ -136,6 +136,7 @@ class ScriptFile(val file: File) {
             FunctionAction(),
             RandomChoiceAction(),
             OrChoiceAction(),
+            ElifAction()
         ))
 
         fun Expression.withVariables(function: String, scriptFile: ScriptFile): Expression {
