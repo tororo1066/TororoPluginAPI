@@ -1,8 +1,10 @@
 package tororo1066.nmsutils.v1_20_1
 
 import com.mojang.datafixers.util.Pair
+import io.netty.buffer.Unpooled
 import net.minecraft.ChatFormatting
 import net.minecraft.core.Rotations
+import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.*
 import net.minecraft.network.syncher.EntityDataAccessor
@@ -36,6 +38,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import tororo1066.nmsutils.SPlayer
 import tororo1066.nmsutils.SPlayer.Companion.hiddenEntities
+import tororo1066.nmsutils.items.GlowColor
 import kotlin.experimental.and
 import kotlin.experimental.or
 
@@ -212,37 +215,20 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
         }
     }
 
-    override fun sendTeam(teamColor: ChatColor, receivers: Collection<Player>) {
-        val packet = ClientboundSetPlayerTeamPacket.createPlayerPacket(
-            Scoreboard().let {
-                it.addPlayerTeam("color").apply {
-                    nameTagVisibility = Team.Visibility.NEVER
-                    color = ChatFormatting.valueOf(teamColor.name)
-                }
-            },
-            name,
-            ClientboundSetPlayerTeamPacket.Action.ADD
-        )
-
-        receivers.forEach {
-            (it as CraftPlayer).handle.connection.send(packet)
-        }
-    }
-
-    override fun sendGlow(glow: Boolean, receivers: Collection<Player>) {
-        val initialBitMask = handle.entityData.nonDefaultValues?.get(0)?.value as? Byte?:0
-        val packet = ClientboundSetEntityDataPacket(entityId, listOf(
-            SynchedEntityData.DataValue.create(
-                EntityDataAccessor(entityId, EntityDataSerializers.BYTE),
-                if (glow) {
-                    initialBitMask or ((1 shl 0x40).toByte())
-                } else {
-                    initialBitMask and ((1 shl 0x40).inv()).toByte()
-                }
-            )
-        ))
-        receivers.forEach {
-            (it as CraftPlayer).handle.connection.send(packet)
+    override fun initGlowTeam(nameTagVisibility: String) {
+        for (color in GlowColor.values()){
+            val buf = FriendlyByteBuf(Unpooled.buffer())
+            buf.writeUtf(color.getTeamName())
+            buf.writeByte(0)
+            buf.writeComponent(Component.literal(color.getTeamName()))
+            buf.writeByte(3)
+            buf.writeUtf(nameTagVisibility)
+            buf.writeUtf("always")
+            buf.writeEnum(color)
+            buf.writeComponent(Component.empty())
+            buf.writeComponent(Component.empty())
+            val packet = ClientboundSetPlayerTeamPacket(buf)
+            handle.connection.send(packet)
         }
     }
 

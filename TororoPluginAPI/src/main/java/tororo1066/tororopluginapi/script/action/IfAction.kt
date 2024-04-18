@@ -5,7 +5,9 @@ import tororo1066.tororopluginapi.script.ScriptFile
 import tororo1066.tororopluginapi.script.ScriptFile.Companion.withVariables
 import tororo1066.tororopluginapi.script.action.hidden.ElseAction
 
-class IfAction: AbstractAction("if") {
+open class IfAction(name: String): AbstractAction(name) {
+
+    constructor(): this("if")
 
     override fun invoke(scriptFile: ScriptFile, function: String, line: String, lineIndex: Int, separator: Int) {
         val expression = Expression(line, scriptFile.configuration)
@@ -27,9 +29,15 @@ class IfAction: AbstractAction("if") {
                 it.separator == separator && (it.action is IfAction || it.action is ElseAction)
             }
 
-            if ((elseFind.firstOrNull()?:return).action is IfAction)return
+            val first = elseFind.firstOrNull()?:return
 
-            val lines = loadNextLines(scriptFile, elseFind.first().lineIndex, separator)
+            if (first.action is ElifAction) {
+                first.invoke(function)
+            }
+
+            if (first.action is IfAction)return
+
+            val lines = loadNextLines(scriptFile, first.lineIndex, separator)
 
             lines.forEach {
                 if (scriptFile.returns.containsKey(function)){

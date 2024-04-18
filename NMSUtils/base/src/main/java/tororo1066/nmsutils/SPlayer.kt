@@ -45,9 +45,7 @@ interface SPlayer {
 
     fun sendScore(objectiveName: String, vararg scores: Pair<Int,String>)
 
-    fun sendTeam(teamColor: ChatColor, receivers: Collection<Player>)
-
-    fun sendGlow(glow: Boolean, receivers: Collection<Player>)
+    fun initGlowTeam(nameTagVisibility: String)
 
     companion object{
         fun getSPlayer(p: Player): SPlayer {
