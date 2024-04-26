@@ -34,6 +34,9 @@ class MathAction: AbstractAction("NONE") {
                     is String -> {
                         scriptFile.publicVariables[variableName] = (beforeValue as String) + value
                     }
+                    is List<*> -> {
+                        scriptFile.publicVariables[variableName] = (beforeValue as List<Any?>) + value
+                    }
                     else -> {
                         throw UnsupportedOperationException("$sign is not supported value type ${value.javaClass.simpleName}")
                     }
