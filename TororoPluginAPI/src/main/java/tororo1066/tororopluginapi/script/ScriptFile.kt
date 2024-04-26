@@ -15,6 +15,7 @@ import tororo1066.tororopluginapi.script.expressionFunc.IsOp
 import tororo1066.tororopluginapi.script.expressionFunc.SplitFunc
 import tororo1066.tororopluginapi.script.expressionFunc.list.ContainsFunc
 import tororo1066.tororopluginapi.script.expressionFunc.list.FindFunc
+import tororo1066.tororopluginapi.script.expressionFunc.list.RandomElementFunc
 import tororo1066.tororopluginapi.script.expressionFunc.list.SizeFunc
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -117,6 +118,7 @@ class ScriptFile(val file: File) {
                 "find" to { FindFunc(it) },
                 "contains" to { ContainsFunc(it) },
                 "split" to { SplitFunc(it) },
+                "randomElement" to { RandomElementFunc(it) }
             )
         )
 
