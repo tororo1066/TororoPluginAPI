@@ -17,7 +17,7 @@ class WhileAction: AbstractAction("while") {
         scriptFile.breakFunction[format] = false
         while (condition.withValues(scriptFile.publicVariables).evaluate().booleanValue){
             for (action in loadLine) {
-                if (scriptFile.returns.contains(function)){
+                if (scriptFile.returns.containsKey(function)){
                     return
                 }
                 if (scriptFile.breakFunction[format] == true){

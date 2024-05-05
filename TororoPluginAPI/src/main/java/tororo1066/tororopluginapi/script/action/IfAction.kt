@@ -14,15 +14,15 @@ open class IfAction(name: String): AbstractAction(name) {
             .withVariables(function, scriptFile)
         if (expression.evaluate().booleanValue){
             val lines = loadNextLines(scriptFile, lineIndex, separator)
-
+            //TODO: 成功したときにIf外のActionが実行されないから修正する
             lines.forEach {
-                if (scriptFile.returns.containsKey(function)){
-                    return
-                }
                 if (it.separator != separator+1){
                     return@forEach
                 }
                 it.invoke(function)
+                if (scriptFile.returns.containsKey(function)){
+                    return
+                }
             }
         } else {
             val elseFind = scriptFile.lines.subList(lineIndex+1, scriptFile.lines.size).filter {
@@ -41,13 +41,13 @@ open class IfAction(name: String): AbstractAction(name) {
             val lines = loadNextLines(scriptFile, first.lineIndex, separator)
 
             lines.forEach {
-                if (scriptFile.returns.containsKey(function)){
-                    return
-                }
                 if (it.separator != separator+1){
                     return@forEach
                 }
                 it.invoke(function)
+                if (scriptFile.returns.containsKey(function)){
+                    return
+                }
             }
         }
     }

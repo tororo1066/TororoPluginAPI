@@ -17,13 +17,13 @@ class RandomChoiceAction: AbstractAction("randomChoice") {
         val nextLines = loadNextLines(scriptFile, random.lineIndex, random.separator)
 
         for (action in nextLines) {
-            if (scriptFile.returns.containsKey(function)) {
-                return
-            }
             if (action.separator != random.separator+1) {
                 continue
             }
             action.invoke(function)
+            if (scriptFile.returns.containsKey(function)) {
+                return
+            }
         }
     }
 }

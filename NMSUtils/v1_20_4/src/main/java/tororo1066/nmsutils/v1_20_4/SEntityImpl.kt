@@ -18,6 +18,9 @@ import kotlin.experimental.or
 
 class SEntityImpl(entity: Entity): SEntity, CraftEntity((entity as CraftEntity).handle.level().craftServer, entity.handle) {
 
+    override val bukkitEntity: Entity
+        get() = this
+
     companion object {
         private val SHARED_FLAGS = EntityDataAccessor(0, EntityDataSerializers.BYTE)
     }
@@ -25,12 +28,12 @@ class SEntityImpl(entity: Entity): SEntity, CraftEntity((entity as CraftEntity).
     override fun sendGlow(glow: Boolean, receivers: Collection<Player>, glowColor: GlowColor) {
         val previous: Byte = if (handle.entityData.isEmpty) 0 else handle.entityData.get(SHARED_FLAGS)
         val byte = if (glow) previous or 0x40 else previous
-        val glowPacket = ClientboundSetEntityDataPacket(entityId, listOf(SynchedEntityData.DataValue.create(SHARED_FLAGS, byte)))
+        val glowPacket = ClientboundSetEntityDataPacket(-entityId, listOf(SynchedEntityData.DataValue.create(SHARED_FLAGS, byte)))
 
         val teamBuf = FriendlyByteBuf(Unpooled.buffer())
         teamBuf.writeUtf(glowColor.getTeamName())
         teamBuf.writeByte(if (glow) 3 else 4)
-        teamBuf.writeCollection(listOf(name), FriendlyByteBuf::writeUtf)
+        teamBuf.writeCollection(listOf(if (bukkitEntity is Player) bukkitEntity.name else uniqueId.toString()), FriendlyByteBuf::writeUtf)
         val teamPacket = ClientboundSetPlayerTeamPacket(teamBuf)
         val bundlePacket = ClientboundBundlePacket(listOf(glowPacket,teamPacket))
         receivers.forEach {

@@ -215,6 +215,9 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
 
     override fun initGlowTeam(nameTagVisibility: String) {
         for (color in GlowColor.values()){
+            val removeTeamBuf = FriendlyByteBuf(Unpooled.buffer())
+            removeTeamBuf.writeUtf(color.getTeamName())
+            removeTeamBuf.writeByte(1)
             val buf = FriendlyByteBuf(Unpooled.buffer())
             buf.writeUtf(color.getTeamName())
             buf.writeByte(0)
@@ -222,10 +225,11 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
             buf.writeByte(3)
             buf.writeUtf(nameTagVisibility)
             buf.writeUtf("always")
-            buf.writeEnum(color)
+            buf.writeEnum(color as Enum<*>)
             buf.writeComponent(Component.empty())
             buf.writeComponent(Component.empty())
-            val packet = ClientboundSetPlayerTeamPacket(buf)
+            buf.writeCollection(emptyList(), FriendlyByteBuf::writeUtf)
+            val packet = ClientboundBundlePacket(listOf(ClientboundSetPlayerTeamPacket(removeTeamBuf), ClientboundSetPlayerTeamPacket(buf)))
             handle.connection.send(packet)
         }
     }

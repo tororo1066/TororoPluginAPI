@@ -16,6 +16,7 @@ import tororo1066.commandapi.CommandArguments
 import tororo1066.commandapi.SCommandV2Arg
 import tororo1066.commandapi.ToolTip
 import tororo1066.commandapi.argumentType.DoubleArg
+import tororo1066.commandapi.argumentType.EntityArg
 import tororo1066.commandapi.argumentType.IntArg
 import tororo1066.commandapi.argumentType.StringArg
 import tororo1066.tororoplugin.TororoPlugin
@@ -37,7 +38,7 @@ class TororoCommandV2: SCommandV2("tororo") {
     var japanese: JsonObject? = null
 
     init {
-        root.setPermission("tororo")
+        root.setPermission("tororo.op")
         root.setFunctionExecutor { sender, _, _ ->
             sender.sendMessage("TororoPlugin v${TororoPlugin.plugin.description.version}")
         }
@@ -347,31 +348,29 @@ class TororoCommandV2: SCommandV2("tororo") {
         }
     }
 
+    @SCommandV2Body
+    val sudo = command {
+        literal("sudo") {
+            setPermission("tororo.op")
+            argument("player", EntityArg(singleTarget = false, playersOnly = true)) {
+                argument("command", StringArg.greedyPhrase()) {
+                    setFunctionExecutor { sender, _, args ->
+                        val players = args.getEntities("player").map { it as Player }
+                        val command = args.getArgument("command", String::class.java)
+                        players.forEach {
+                            Bukkit.dispatchCommand(it, command)
+                        }
+                        sender.sendPrefixMsg(SStr("&aコマンドを実行しました"))
+                    }
+                }
+            }
+        }
+    }
+
     @SCommandV2Body(asRoot = true)
     val tororo = command {
         literal("rename") {
             arg(test)
-        }
-    }
-
-    @SCommandV2Body
-    val test_ = command {
-        literal("test") {
-            setPermission("tororo.test")
-            setPlayerFunctionExecutor { sender, _, _ ->
-                val script = ScriptFile(File(TororoPlugin.plugin.dataFolder, "test.tororo"), true)
-                script.publicVariables["list"] = listOf(mapOf(
-                    "name" to "test1",
-                    "age" to 10
-                ), mapOf(
-                    "name" to "test2",
-                    "age" to 20
-                ), mapOf(
-                    "name" to "test3",
-                    "age" to 30
-                ))
-                Bukkit.broadcastMessage(script.start().toString())
-            }
         }
     }
 }

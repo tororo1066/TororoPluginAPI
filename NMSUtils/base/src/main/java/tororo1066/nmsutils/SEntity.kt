@@ -8,13 +8,15 @@ import java.util.UUID
 
 interface SEntity {
 
+    val bukkitEntity: Entity
+
     fun sendGlow(glow: Boolean, receivers: Collection<Player>, glowColor: GlowColor = GlowColor.WHITE)
 
 
     companion object {
 
-        fun getSEntity(entity: Entity): SEntity? {
-            return fromEntity(entity)
+        fun getSEntity(entity: Entity): SEntity {
+            return fromEntity(entity) ?: throw UnsupportedOperationException("SEntity not supported mc_version ${Bukkit.getServer().minecraftVersion}.")
         }
 
         private fun fromEntity(entity: Entity?): SEntity? {

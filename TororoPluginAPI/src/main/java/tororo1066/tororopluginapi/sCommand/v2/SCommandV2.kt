@@ -6,14 +6,12 @@ import tororo1066.commandapi.SCommandV2Literal
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.annotation.SCommandV2Body
 
-abstract class SCommandV2(val plugin: JavaPlugin, val command: String, val permission: String? = null) {
+abstract class SCommandV2(val plugin: JavaPlugin, val command: String) {
 
     val commands = ArrayList<SCommandV2Object>()
     protected val root = SCommandV2Literal(command)
 
     constructor(command: String): this(SJavaPlugin.plugin, command)
-
-    constructor(command: String, permission: String): this(SJavaPlugin.plugin, command, permission)
 
     init {
         Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, Runnable {
