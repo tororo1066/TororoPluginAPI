@@ -1,12 +1,16 @@
 package tororo1066.tororopluginapi.sCommand.v2
 
 import org.bukkit.Bukkit
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerCommandSendEvent
+import org.bukkit.event.server.ServerLoadEvent
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.commandapi.SCommandV2Literal
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.annotation.SCommandV2Body
 
-abstract class SCommandV2(val plugin: JavaPlugin, val command: String) {
+abstract class SCommandV2(val plugin: JavaPlugin, val command: String): Listener {
 
     val commands = ArrayList<SCommandV2Object>()
     protected val root = SCommandV2Literal(command)
@@ -16,6 +20,7 @@ abstract class SCommandV2(val plugin: JavaPlugin, val command: String) {
     init {
         Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, Runnable {
             loadAllCommands()
+            Bukkit.getPluginManager().registerEvents(this, plugin)
         }, 100)
     }
 
@@ -25,7 +30,7 @@ abstract class SCommandV2(val plugin: JavaPlugin, val command: String) {
 
     protected fun command(init: SCommandV2Object.() -> Unit) = SCommandV2Object(init)
 
-    fun loadAllCommands() {
+    fun loadAllCommands(update: Boolean = true) {
         commands.clear()
         javaClass.declaredFields.forEach {
             if (it.isAnnotationPresent(SCommandV2Body::class.java) && it.type == SCommandV2Object::class.java){
@@ -41,8 +46,15 @@ abstract class SCommandV2(val plugin: JavaPlugin, val command: String) {
             }
         }
 
-        Bukkit.getOnlinePlayers().forEach {
-            it.updateCommands()
+        if (update) {
+            Bukkit.getOnlinePlayers().forEach {
+                it.updateCommands()
+            }
         }
+    }
+
+    @EventHandler
+    fun onServerLoad(e: ServerLoadEvent) {
+        loadAllCommands()
     }
 }
