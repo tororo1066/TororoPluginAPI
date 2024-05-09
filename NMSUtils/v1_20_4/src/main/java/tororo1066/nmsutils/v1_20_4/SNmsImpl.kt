@@ -17,6 +17,7 @@ import org.bukkit.Color
 import org.bukkit.block.Block
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer
 import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock
+import org.bukkit.craftbukkit.v1_20_R3.command.VanillaCommandWrapper
 import tororo1066.commandapi.SCommandV2Arg
 import tororo1066.commandapi.SCommandV2Argument
 import tororo1066.commandapi.SCommandV2Data
@@ -34,10 +35,12 @@ class SNmsImpl: SNms {
     }
 
     override fun registerCommand(command: SCommandV2Literal) {
-        val server = (Bukkit.getServer() as CraftServer).server
+        val craftServer = Bukkit.getServer() as CraftServer
+        val server = craftServer.server
         val converted = convertToBrigadier(command)
         server.vanillaCommandDispatcher.dispatcher.root.addChild(converted.build())
         server.resources.managers.commands.dispatcher.register(converted)
+        craftServer.commandMap.knownCommands[command.literal] = VanillaCommandWrapper(server.vanillaCommandDispatcher, converted.build())
     }
 
     private fun convert(command: SCommandV2Arg): ArgumentBuilder<CommandSourceStack, *> {

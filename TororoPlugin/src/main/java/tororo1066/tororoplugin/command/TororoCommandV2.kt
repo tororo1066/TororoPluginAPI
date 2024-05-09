@@ -81,8 +81,6 @@ class TororoCommandV2: SCommandV2("tororo") {
     }
 
 
-
-
     lateinit var test: SCommandV2Arg
 
     @SCommandV2Body

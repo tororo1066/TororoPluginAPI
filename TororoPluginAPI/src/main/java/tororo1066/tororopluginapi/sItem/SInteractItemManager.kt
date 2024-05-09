@@ -59,7 +59,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
 
     init {
         sEvent.register(PlayerInteractEvent::class.java) { e ->
-            if (e.useInteractedBlock() == Event.Result.DEFAULT)return@register
+            if (e.useInteractedBlock() == Event.Result.ALLOW)return@register
             if (!e.hasItem())return@register
             if (e.player.inventory.itemInMainHand.isSimilar(e.item!!)){
                 if (e.hand != EquipmentSlot.HAND)return@register
