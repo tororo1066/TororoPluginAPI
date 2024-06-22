@@ -15,6 +15,8 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import tororo1066.nmsutils.SEntity
 import tororo1066.nmsutils.items.GlowColor
+import java.util.HashMap
+import java.util.UUID
 import kotlin.experimental.or
 
 class SEntityImpl(entity: Entity): SEntity, CraftEntity((entity as CraftEntity).handle.level().craftServer, entity.handle) {
@@ -23,7 +25,8 @@ class SEntityImpl(entity: Entity): SEntity, CraftEntity((entity as CraftEntity).
         get() = this
 
     companion object {
-        private val SHARED_FLAGS = EntityDataAccessor(0, EntityDataSerializers.BYTE)
+        val SHARED_FLAGS = EntityDataAccessor(0, EntityDataSerializers.BYTE)
+        val glowData = HashMap<Int, ArrayList<Int>>() //key: receiver entityId, value: List of entityIds
     }
 
     override fun sendGlow(glow: Boolean, receivers: Collection<Player>, glowColor: GlowColor) {
@@ -40,6 +43,11 @@ class SEntityImpl(entity: Entity): SEntity, CraftEntity((entity as CraftEntity).
             (it as CraftPlayer).handle.connection.run {
                 send(teamPacket)
                 send(glowPacket)
+                if (glow) {
+                    glowData.computeIfAbsent(it.entityId) { ArrayList() }.add(entityId)
+                } else {
+                    glowData[it.entityId]?.remove(entityId)
+                }
             }
         }
     }

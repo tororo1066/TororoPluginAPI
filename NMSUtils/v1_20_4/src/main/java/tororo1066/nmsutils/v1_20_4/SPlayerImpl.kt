@@ -2,6 +2,9 @@ package tororo1066.nmsutils.v1_20_4
 
 import com.mojang.datafixers.util.Pair
 import io.netty.buffer.Unpooled
+import io.netty.channel.ChannelDuplexHandler
+import io.netty.channel.ChannelHandlerContext
+import io.netty.channel.ChannelPromise
 import net.minecraft.ChatFormatting
 import net.minecraft.core.Rotations
 import net.minecraft.network.FriendlyByteBuf
