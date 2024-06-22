@@ -8,6 +8,7 @@ import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
+import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer
 import org.bukkit.entity.Entity
@@ -28,16 +29,30 @@ class SEntityImpl(entity: Entity): SEntity, CraftEntity((entity as CraftEntity).
     override fun sendGlow(glow: Boolean, receivers: Collection<Player>, glowColor: GlowColor) {
         val previous: Byte = if (handle.entityData.isEmpty) 0 else handle.entityData.get(SHARED_FLAGS)
         val byte = if (glow) previous or 0x40 else previous
-        val glowPacket = ClientboundSetEntityDataPacket(-entityId, listOf(SynchedEntityData.DataValue.create(SHARED_FLAGS, byte)))
-
+        val glowPacket = ClientboundSetEntityDataPacket(entityId, listOf(SynchedEntityData.DataValue.create(SHARED_FLAGS, byte)))
         val teamBuf = FriendlyByteBuf(Unpooled.buffer())
         teamBuf.writeUtf(glowColor.getTeamName())
         teamBuf.writeByte(if (glow) 3 else 4)
-        teamBuf.writeCollection(listOf(if (bukkitEntity is Player) bukkitEntity.name else uniqueId.toString()), FriendlyByteBuf::writeUtf)
+        teamBuf.writeCollection(listOf(if (this.entity is net.minecraft.world.entity.player.Player) bukkitEntity.name else uniqueId.toString()), FriendlyByteBuf::writeUtf)
         val teamPacket = ClientboundSetPlayerTeamPacket(teamBuf)
-        val bundlePacket = ClientboundBundlePacket(listOf(glowPacket,teamPacket))
+
         receivers.forEach {
-            (it as CraftPlayer).handle.connection.send(bundlePacket)
+            (it as CraftPlayer).handle.connection.run {
+                send(teamPacket)
+                send(glowPacket)
+            }
+        }
+    }
+
+    override fun setTeam(teamName: String, receivers: Collection<Player>, remove: Boolean) {
+        val teamBuf = FriendlyByteBuf(Unpooled.buffer())
+        teamBuf.writeUtf(teamName)
+        teamBuf.writeByte(if (remove) 4 else 3)
+        teamBuf.writeCollection(listOf(if (this.entity is net.minecraft.world.entity.player.Player) bukkitEntity.name else uniqueId.toString()), FriendlyByteBuf::writeUtf)
+        val teamPacket = ClientboundSetPlayerTeamPacket(teamBuf)
+
+        receivers.forEach {
+            (it as CraftPlayer).handle.connection.send(teamPacket)
         }
     }
 }

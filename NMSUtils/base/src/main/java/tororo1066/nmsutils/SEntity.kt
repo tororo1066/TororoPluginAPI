@@ -12,6 +12,8 @@ interface SEntity {
 
     fun sendGlow(glow: Boolean, receivers: Collection<Player>, glowColor: GlowColor = GlowColor.WHITE)
 
+    fun setTeam(teamName: String, receivers: Collection<Player>, remove: Boolean = false)
+
 
     companion object {
 

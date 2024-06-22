@@ -2,14 +2,10 @@ package tororo1066.nmsutils.v1_20_1
 
 import com.mojang.datafixers.util.Pair
 import io.netty.buffer.Unpooled
-import net.minecraft.ChatFormatting
 import net.minecraft.core.Rotations
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.*
-import net.minecraft.network.syncher.EntityDataAccessor
-import net.minecraft.network.syncher.EntityDataSerializers
-import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.ServerScoreboard
 import net.minecraft.server.level.ServerPlayer
@@ -19,8 +15,6 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.scores.Objective
-import net.minecraft.world.scores.Scoreboard
-import net.minecraft.world.scores.Team
 import net.minecraft.world.scores.criteria.ObjectiveCriteria
 import org.bukkit.*
 import org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot
@@ -39,8 +33,6 @@ import org.bukkit.inventory.ItemStack
 import tororo1066.nmsutils.SPlayer
 import tororo1066.nmsutils.SPlayer.Companion.hiddenEntities
 import tororo1066.nmsutils.items.GlowColor
-import kotlin.experimental.and
-import kotlin.experimental.or
 
 class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.level().craftServer, p.handle) {
 
