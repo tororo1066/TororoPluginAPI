@@ -27,7 +27,9 @@ class SInput(private val plugin: JavaPlugin) {
         p: Player,
         type: Class<*>,
         message: String = "§a/<入れるデータ(${type.simpleName})>\n§a/cancelでキャンセル",
-        action: Consumer<String>) {
+        action: Consumer<String>,
+        onCancel: ()->Unit = {}
+    ) {
         p.sendMessage(message)
         SEvent(plugin).biRegister(PlayerCommandPreprocessEvent::class.java) { cEvent, unit ->
             if (cEvent.player != p) return@biRegister
@@ -35,6 +37,7 @@ class SInput(private val plugin: JavaPlugin) {
 
             if (cEvent.message == "/cancel"){
                 p.sendMessage("§aCancelled Input")
+                onCancel.invoke()
                 unit.unregister()
                 return@biRegister
             }
@@ -50,7 +53,8 @@ class SInput(private val plugin: JavaPlugin) {
         type: Class<T>,
         message: String = "§a/<入れるデータ(${type.simpleName})>\n§a/cancelでキャンセル",
         errorMsg: (String) -> String = { "§d${it}§4は§d${type.simpleName}§4ではありません" },
-        action: Consumer<T?>
+        action: Consumer<T?>,
+        onCancel: () -> Unit = {}
     ) {
         sendInputCUI0(p, type, message, Consumer {
             val (blank, value) = modifyClassValue(type, it, allowEmpty = true)
@@ -59,7 +63,7 @@ class SInput(private val plugin: JavaPlugin) {
                 return@Consumer
             }
             action.accept(value)
-        })
+        }, onCancel)
     }
 
     fun <T>sendInputCUI(
@@ -67,7 +71,8 @@ class SInput(private val plugin: JavaPlugin) {
         type: Class<T>,
         message: String = "§a/<入れるデータ(${type.simpleName})>\n§a/cancelでキャンセル",
         errorMsg: (String) -> String = { "§d${it}§4は§d${type.simpleName}§4ではありません" },
-        action: Consumer<T>
+        action: Consumer<T>,
+        onCancel: () -> Unit = {}
     ) {
         sendInputCUI0(p, type, message, Consumer {
             val (_, value) = modifyClassValue(type, it)
@@ -76,7 +81,7 @@ class SInput(private val plugin: JavaPlugin) {
                 return@Consumer
             }
             action.accept(value)
-        })
+        }, onCancel)
     }
 
     fun clickAccept(p: Player, message: String, action: ()->Unit, fail: ()->Unit, timeSecond: Int){
