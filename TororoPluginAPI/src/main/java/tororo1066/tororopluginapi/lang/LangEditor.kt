@@ -36,11 +36,11 @@ class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
                             }
                         }
                         items.add(this.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aNew Insert"),String::class.java,"Please enter path.", invOpenCancel = true){ include, _ ->
-                            SInput(plugin).sendInputCUI(p,String::class.java,"Please enter translated message.") { message ->
+                            SInput(plugin).sendInputCUI(p,String::class.java,"Please enter translated message.", action = { message ->
                                 yaml.set(include,message)
                                 yaml.save(File(plugin.dataFolder.path + "/LangFolder/${str}.yml"))
                                 this.open(p)
-                            }
+                            })
                         })
                         setResourceItems(items)
                         return true
@@ -79,12 +79,12 @@ class LangEditor(plugin: JavaPlugin): LargeSInventory(plugin,"LangEditor") {
                     }
 
                     items.add(this.createInputItem(SItem(Material.EMERALD_BLOCK).setDisplayName("§aNew Insert"),String::class.java,"Please enter path.", invOpenCancel = true){ str, _ ->
-                        SInput(plugin).sendInputCUI(p,String::class.java,"Please enter translated message.") {
+                        SInput(plugin).sendInputCUI(p,String::class.java,"Please enter translated message.", action = {
                             section.set("$path.$str",it)
                             yaml.save(File(plugin.dataFolder.path + "/LangFolder/${fileName}.yml"))
                             SLang.langFile[fileName] = yaml
                             this.open(p)
-                        }
+                        })
                     })
 
                     setResourceItems(items)
