@@ -32,4 +32,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: NMSUtils-1.0-SNAPSHOT.jar
-        path: build/libs/NMSUtils-1.0-SNAPSHOT.jar
+        path: NMSUtils/build/libs/NMSUtils-1.0-SNAPSHOT.jar
