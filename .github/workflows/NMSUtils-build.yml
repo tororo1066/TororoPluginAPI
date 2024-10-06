@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+    - v*
+env:
+  GITHUB_USERNAME: ${{secrets.USERNAME}}
+  GITHUB_TOKEN: ${{secrets.TOKEN}}
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v1
+      with:
+        java-version: 17
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew NMSUtils:shadowJar
+   
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: NMSUtils-1.0-SNAPSHOT.jar
+        path: NMSUtils/build/libs/NMSUtils-1.0-SNAPSHOT.jar
