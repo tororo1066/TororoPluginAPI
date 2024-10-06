@@ -39,9 +39,13 @@ class EmptyWorldGenerator(val plugin: JavaPlugin) {
 
     companion object {
         private fun copyFolder(plugin: JavaPlugin, dirName: String, outputFolder: File) {
-            val method = JavaPlugin::class.java.getDeclaredMethod("getFile")
-            method.isAccessible = true
-            val pluginFile = method.invoke(plugin) as File
+            val pluginFile = if (plugin is SJavaPlugin) {
+                plugin.file
+            } else {
+                val method = JavaPlugin::class.java.getDeclaredMethod("getFile")
+                method.isAccessible = true
+                method.invoke(plugin) as File
+            }
             val jar = JarFile(pluginFile)
 
             jar.use {

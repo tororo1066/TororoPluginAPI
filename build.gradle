@@ -18,7 +18,7 @@ allprojects {
     }
 
     dependencies {
-        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+        compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     }
 
     compileKotlin {

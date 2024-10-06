@@ -19,15 +19,20 @@ import tororo1066.commandapi.argumentType.DoubleArg
 import tororo1066.commandapi.argumentType.EntityArg
 import tororo1066.commandapi.argumentType.IntArg
 import tororo1066.commandapi.argumentType.StringArg
+import tororo1066.nmsutils.PacketListener
+import tororo1066.nmsutils.SEntity
+import tororo1066.nmsutils.SPlayer
+import tororo1066.nmsutils.items.GlowColor
 import tororo1066.tororoplugin.TororoPlugin
+import tororo1066.tororopluginapi.Proxy
+import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandV2Body
 import tororo1066.tororopluginapi.lang.SLang
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2
 import tororo1066.tororopluginapi.sItem.SItem
-import tororo1066.tororopluginapi.script.ScriptFile
 import tororo1066.tororopluginapi.utils.sendMessage
-import java.io.File
+import tororo1066.tororopluginapi.world.EmptyWorldGenerator
 import java.util.*
 
 class TororoCommandV2: SCommandV2("tororo") {
@@ -369,6 +374,68 @@ class TororoCommandV2: SCommandV2("tororo") {
     val tororo = command {
         literal("rename") {
             arg(test)
+        }
+    }
+
+    @SCommandV2Body
+    val test_ = command {
+        literal("test") {
+            setPermission("tororo.test")
+            setPlayerFunctionExecutor { sender, _, _ ->
+                sender.sendMessage(sender.getTargetEntity(4)?.type?.name?:"null")
+            }
+        }
+    }
+
+    @SCommandV2Body
+    val test_2 = command {
+        literal("test2") {
+            setPermission("tororo.test")
+            setPlayerFunctionExecutor { sender, _, _ ->
+                val worldGenerator = EmptyWorldGenerator()
+                worldGenerator.createEmptyWorld("test")
+            }
+        }
+    }
+
+    @SCommandV2Body
+    val test_3 = command {
+        literal("test3") {
+            setPermission("tororo.test")
+            argument("world", StringArg.word()) {
+                setPlayerFunctionExecutor { sender, _, args ->
+                    val world = args.getArgument("world", String::class.java)
+                    EmptyWorldGenerator.deleteWorld(Bukkit.getWorld(world)?:return@setPlayerFunctionExecutor)
+                }
+            }
+        }
+    }
+
+    @SCommandV2Body
+    val test_glow = command {
+        literal("glow") {
+            setPermission("tororo.test")
+            argument("target", EntityArg(singleTarget = true, playersOnly = false)) {
+                argument("color", StringArg.word()) {
+
+                    suggest(*GlowColor.values().map { it.name toolTip null }.toTypedArray())
+
+                    setPlayerFunctionExecutor { sender, _, args ->
+                        try {
+                            val target = args.getEntities("target").first()
+                            val color = args.getArgument("color", String::class.java)
+                            SPlayer.getSPlayer(sender).initGlowTeam("never")
+                            SEntity.getSEntity(target).sendGlow(true, listOf(sender), GlowColor.valueOf(color.uppercase()))
+
+                            Bukkit.getScheduler().runTaskLater(TororoPlugin.plugin, Runnable {
+                                SEntity.getSEntity(target).sendGlow(false, listOf(sender))
+                            }, 100L)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            }
         }
     }
 }

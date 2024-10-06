@@ -87,6 +87,10 @@ abstract class SJavaPlugin() : JavaPlugin() {
         this.folder = pluginFolder
     }
 
+    public override fun getFile(): File {
+        return super.getFile()
+    }
+
     /**
      * プラグイン起動時に行う処理
      *

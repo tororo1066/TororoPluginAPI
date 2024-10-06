@@ -35,6 +35,7 @@ class PacketListenerImpl: PacketListener {
                                 data.write(buf)
                             }
                         }
+                        buf.writeByte(255)
                         super.write(ctx, ClientboundSetEntityDataPacket(buf), promise)
                         return
                     }
@@ -44,13 +45,12 @@ class PacketListenerImpl: PacketListener {
         }
 
         val pipeline = (player as CraftPlayer).handle.connection.connection.channel.pipeline()
-        pipeline.addBefore(channelName, "${channelName}_${player.name}", channelDuplexHandler)
+        pipeline.remove(channelName)
+        pipeline.addBefore("packet_handler", channelName, channelDuplexHandler)
     }
 
     override fun removePlayer(channelName: String, player: Player) {
         val channel = (player as CraftPlayer).handle.connection.connection.channel
-        channel.eventLoop().execute {
-            channel.pipeline().remove("${channelName}_${player.name}")
-        }
+        channel.pipeline().remove(channelName)
     }
 }

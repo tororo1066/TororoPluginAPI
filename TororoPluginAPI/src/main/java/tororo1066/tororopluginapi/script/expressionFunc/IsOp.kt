@@ -16,6 +16,9 @@ class IsOp(val scriptFile: ScriptFile): AbstractFunction() {
         functionToken: Token,
         vararg parameterValues: EvaluationValue
     ): EvaluationValue {
-        return EvaluationValue(AbstractAction.getPlayer(parameterValues[0].stringValue, scriptFile)?.isOp?:false)
+        return EvaluationValue(
+            AbstractAction.getPlayer(parameterValues[0].stringValue, scriptFile)?.isOp?:false,
+            expression.configuration
+        )
     }
 }
