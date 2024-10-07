@@ -9,6 +9,12 @@ class DependencyResolver(val plugin: JavaPlugin) {
     val libFolder = plugin.dataFolder.parentFile.parentFile.resolve("tororo-lib")
     val ADD_URL_METHOD = URLClassLoader::class.java.getDeclaredMethod("addURL", URL::class.java).apply { isAccessible = true }
 
+    init {
+        if (!libFolder.exists()) {
+            libFolder.mkdirs()
+        }
+    }
+
     fun resolve(group: String, artifact: String, version: String, repository: String? = null) {
         val file = libFolder.resolve("$artifact-$version.jar")
         if (file.exists()) {
@@ -22,6 +28,8 @@ class DependencyResolver(val plugin: JavaPlugin) {
                 input.copyTo(output)
             }
         }
+
+        addURL(file.toURI().toURL())
     }
 
     fun addURL(url: URL) {
