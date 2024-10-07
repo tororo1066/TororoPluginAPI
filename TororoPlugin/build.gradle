@@ -63,5 +63,8 @@ tasks.withType(JavaCompile) {
 shadowJar {
     relocate("tororo1066.nmsutils", "tororo1066.tororopluginapi.nmsutils")
     relocate("tororo1066.commandapi", "tororo1066.tororopluginapi.commandapi")
+    relocate('kotlin', 'tororo1066.libs.kotlin')
+    relocate('org.jetbrains.kotlin', 'tororo1066.libs.kotlin.org.jetbrains.kotlin')
+    relocate('org.jetbrains.annotations', 'tororo1066.libs.kotlin.org.jetbrains.annotations')
     archiveFileName = "${project.name}-${project.version}.jar"
 }

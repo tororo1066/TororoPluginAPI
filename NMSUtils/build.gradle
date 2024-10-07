@@ -16,6 +16,7 @@ java {
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     implementation files('v1_17_1/build/libs/v1_17_1-1.0-SNAPSHOT.jar')
     implementation files('v1_19_2/build/libs/v1_19_2-1.0-SNAPSHOT.jar')
@@ -34,5 +35,8 @@ subprojects {
 }
 
 shadowJar {
+    relocate('kotlin', 'tororo1066.libs.kotlin')
+    relocate('org.jetbrains.kotlin', 'tororo1066.libs.kotlin.org.jetbrains.kotlin')
+    relocate('org.jetbrains.annotations', 'tororo1066.libs.kotlin.org.jetbrains.annotations')
     archiveFileName.set("${project.name}-${project.version}.jar")
 }
