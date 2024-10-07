@@ -35,6 +35,11 @@ class EmptyWorldGenerator(val plugin: JavaPlugin) {
         return Bukkit.createWorld(WorldCreator(worldName).generator(EmptyChunkGenerator))!!
     }
 
+    fun clearWorlds(name: String) {
+        val prefix = "${plugin.name.lowercase()}_${name}_"
+        Bukkit.getWorlds().filter { it.name.startsWith(prefix) }.forEach { deleteWorld(it) }
+    }
+
     private object EmptyChunkGenerator: ChunkGenerator()
 
     companion object {

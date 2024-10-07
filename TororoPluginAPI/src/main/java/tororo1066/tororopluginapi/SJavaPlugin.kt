@@ -5,6 +5,7 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.nmsutils.SNms
+import tororo1066.tororopluginapi.annotation.Dependency
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
 import tororo1066.tororopluginapi.config.SConfig
@@ -47,6 +48,7 @@ abstract class SJavaPlugin() : JavaPlugin() {
         lateinit var plugin: SJavaPlugin
 
         private lateinit var proxy: Proxy
+        private lateinit var dependencyResolver: DependencyResolver
 
         fun getSNms(): SNms {
             return proxy.getProxy(SNms::class.java)
@@ -98,9 +100,17 @@ abstract class SJavaPlugin() : JavaPlugin() {
      */
     abstract fun onStart()
 
+    override fun onLoad() {
+        plugin = this
+        dependencyResolver = DependencyResolver(this)
+        val dependencies = this::class.java.annotations.filterIsInstance<Dependency>()
+        dependencies.forEach {
+            dependencyResolver.resolve(it.group,it.artifact,it.version,it.repository)
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun onEnable() {
-        plugin = this
         proxy = Proxy(this,"tororo1066.nmsutils")
         if (useOptions.contains(UseOption.SConfig)){
             saveDefaultConfig()
