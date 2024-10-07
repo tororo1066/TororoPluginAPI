@@ -1,4 +1,4 @@
-name: CI
+name: NMSUtils
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
       run: ./gradlew NMSUtils:shadowJar
    
     - name: Upload Build Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: NMSUtils-1.0-SNAPSHOT.jar
         path: NMSUtils/build/libs/NMSUtils-1.0-SNAPSHOT.jar
