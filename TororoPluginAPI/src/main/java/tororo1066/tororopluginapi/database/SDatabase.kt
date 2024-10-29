@@ -13,27 +13,36 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.function.Supplier
 
-abstract class SDatabase(val plugin: JavaPlugin) {
+abstract class SDatabase {
 
-    private var configFile: String? = null
-    private var configPath: String? = null
-    protected val host: String?
+    protected var host: String?
     protected var port: Int? = null
-    protected val pass: String?
-    protected val db: String?
-    protected val user: String?
-    protected val url: String?
+    protected var pass: String?
+    protected var db: String?
+    protected var user: String?
+    protected var url: String?
+
+    protected var plugin: JavaPlugin
 
     private val thread: ExecutorService = Executors.newCachedThreadPool()
 
     abstract val isMongo: Boolean
 
-    constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): this(plugin){
-        this.configFile = configFile
-        this.configPath = configPath
+    constructor(plugin: JavaPlugin){
+        this.plugin = plugin
+        val yml = plugin.config
+        host = yml.getString("database.host")
+        if (yml.isSet("database.port")){
+            port = yml.getInt("database.port")
+        }
+        pass = yml.getString("database.pass")
+        user = yml.getString("database.user")
+        db = yml.getString("database.db")
+        url = yml.getString("database.url")
     }
 
-    init {
+    constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): this(plugin){
+        this.plugin = plugin
         var yml = plugin.config
         if (configFile != null){
             yml = YamlConfiguration.loadConfiguration(File(plugin.dataFolder.path + File.separator + configFile))
@@ -57,7 +66,6 @@ abstract class SDatabase(val plugin: JavaPlugin) {
             db = yml.getString("database.db")
             url = yml.getString("database.url")
         }
-
     }
 
 
@@ -74,6 +82,8 @@ abstract class SDatabase(val plugin: JavaPlugin) {
     abstract fun delete(table: String, condition: SDBCondition = SDBCondition.empty()): Boolean
 
     abstract fun query(query: String): List<SDBResultSet>
+
+    abstract fun execute(query: String): Boolean
 
     fun asyncCreateTable(table: String, map: Map<String, SDBVariable<*>>): CompletableFuture<Boolean> {
         return CompletableFuture.supplyAsync({ createTable(table, map) }, thread)
@@ -97,6 +107,10 @@ abstract class SDatabase(val plugin: JavaPlugin) {
 
     fun asyncQuery(query: String): CompletableFuture<List<SDBResultSet>> {
         return CompletableFuture.supplyAsync({ query(query) }, thread)
+    }
+
+    fun asyncExecute(query: String): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({ execute(query) }, thread)
     }
 
     fun backGroundCreateTable(table: String, map: Map<String, SDBVariable<*>>, callback: (Boolean) -> Unit = {}){
@@ -132,6 +146,12 @@ abstract class SDatabase(val plugin: JavaPlugin) {
     fun backGroundQuery(query: String, callback: (List<SDBResultSet>) -> Unit = {}){
         thread.execute {
             callback(query(query))
+        }
+    }
+
+    fun backGroundExecute(query: String, callback: (Boolean) -> Unit = {}){
+        thread.execute {
+            callback(execute(query))
         }
     }
 

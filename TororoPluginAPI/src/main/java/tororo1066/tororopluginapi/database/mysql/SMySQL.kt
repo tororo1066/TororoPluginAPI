@@ -173,4 +173,20 @@ class SMySQL: SDatabase {
             conn.close()
         }
     }
+
+    override fun execute(query: String): Boolean {
+        val conn = open()
+        val stmt = conn.createStatement()
+
+        return try {
+            stmt.setEscapeProcessing(true)
+            stmt.execute(query)
+        } catch (e: Exception){
+            e.printStackTrace()
+            false
+        } finally {
+            stmt.close()
+            conn.close()
+        }
+    }
 }

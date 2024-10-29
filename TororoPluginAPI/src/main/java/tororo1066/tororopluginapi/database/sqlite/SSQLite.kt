@@ -1,6 +1,5 @@
 package tororo1066.tororopluginapi.database.sqlite
 
-import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.database.SDBResultSet
@@ -166,6 +165,21 @@ class SSQLite: SDatabase {
             return arrayListOf()
         } finally {
             rs.close()
+            stmt.close()
+            conn.close()
+        }
+    }
+
+    override fun execute(query: String): Boolean {
+        val conn = open()
+        val stmt = conn.createStatement()
+
+        return try {
+            stmt.execute(query)
+        } catch (e: Exception){
+            e.printStackTrace()
+            false
+        } finally {
             stmt.close()
             conn.close()
         }

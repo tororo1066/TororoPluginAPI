@@ -153,4 +153,20 @@ class SMongo: SDatabase {
             client?.close()
         }
     }
+
+    override fun execute(query: String): Boolean {
+        var client: MongoClient? = null
+        return try {
+            val open = open()
+            client = open.first
+            val db = open.second
+            db.runCommand(Document.parse(query))
+            true
+        } catch (e: Exception){
+            e.printStackTrace()
+            false
+        } finally {
+            client?.close()
+        }
+    }
 }
