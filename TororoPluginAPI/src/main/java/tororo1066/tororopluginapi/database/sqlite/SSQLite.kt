@@ -16,6 +16,8 @@ class SSQLite: SDatabase {
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): super(plugin, configFile, configPath)
 
     override fun open(): Connection {
+        logger.info("Opening SQLite connection")
+        logger.config("Database: $db")
         val conn: Connection
         try {
             if (db == null){
@@ -24,6 +26,7 @@ class SSQLite: SDatabase {
             Class.forName("org.sqlite.JDBC")
             conn = DriverManager.getConnection("jdbc:sqlite:${plugin.dataFolder.absolutePath.replace("\\","/")}/${db}.db")
         }catch (e : SQLException){
+            logger.severe("Failed to open SQLite connection.")
             throw e
         }
 
@@ -31,6 +34,7 @@ class SSQLite: SDatabase {
     }
 
     override fun createTable(table: String, map: Map<String, SDBVariable<*>>): Boolean {
+        logger.info("Creating table $table")
         val conn = open()
         val queryBuilder = StringBuilder()
         queryBuilder.append("create table if not exists $table (")
@@ -44,17 +48,31 @@ class SSQLite: SDatabase {
             queryBuilder.append(map.filter { it.value.index == SDBVariable.Index.UNIQUE }.keys.joinToString(",") { "unique($it)" })
         }
         queryBuilder.append(")")
+        logger.config(queryBuilder.toString())
 
         val stmt = conn.createStatement()
 
         val createIndexQuery = map.filter { it.value.index == SDBVariable.Index.KEY }.map { "create index if not exists ${table}_${it.key}_index on $table(${it.key})" }
+        logger.config(createIndexQuery.toString())
+
+        fun failure() {
+            logger.severe("Failed to create table $table")
+        }
+
         return try {
-            if (!stmt.execute(queryBuilder.toString()))return false
+            if (!stmt.execute(queryBuilder.toString())) {
+                failure()
+                return false
+            }
             createIndexQuery.forEach {
-                if (!stmt.execute(it))return false
+                if (!stmt.execute(it)) {
+                    failure()
+                    return false
+                }
             }
             true
         } catch (e: Exception){
+            logger.severe("Failed to create table $table")
             e.printStackTrace()
             false
         } finally {
@@ -64,6 +82,7 @@ class SSQLite: SDatabase {
     }
 
     override fun insert(table: String, map: Map<String, Any>): Boolean {
+        logger.info("Inserting data to $table")
         val conn = open()
         val builder = StringBuilder("?")
         for (i in 1 until map.size){
@@ -75,9 +94,18 @@ class SSQLite: SDatabase {
             stmt.setObject(index+1, any)
         }
 
+        logger.config("Query: $stmt")
+
         return try {
-            stmt.execute()
+            val result = stmt.execute()
+            if (result){
+                logger.info("Data inserted to $table")
+            } else {
+                logger.severe("Failed to insert data to $table")
+            }
+            result
         } catch (e: Exception){
+            logger.severe("Failed to insert data to $table")
             e.printStackTrace()
             false
         } finally {
@@ -92,6 +120,7 @@ class SSQLite: SDatabase {
 
     @Suppress("UNCHECKED_CAST")
     override fun update(table: String, update: Any, condition: SDBCondition): Boolean {
+        logger.info("Updating data in $table")
         val conn = open()
         val map = update as Map<String, Any>
         val query = "update $table set ${
@@ -102,9 +131,18 @@ class SSQLite: SDatabase {
             stmt.setObject(index+1, any)
         }
 
+        logger.config("Query: $stmt")
+
         return try {
-            stmt.execute()
+            val result = stmt.execute()
+            if (result){
+                logger.info("Data updated in $table")
+            } else {
+                logger.severe("Failed to update data in $table")
+            }
+            result
         } catch (e: Exception){
+            logger.severe("Failed to update data in $table")
             e.printStackTrace()
             false
         } finally {
@@ -115,13 +153,24 @@ class SSQLite: SDatabase {
     }
 
     override fun delete(table: String, condition: SDBCondition): Boolean {
+        logger.info("Deleting data from $table")
         val conn = open()
-        val query = "delete from $table ${condition.build()}"
-        val stmt = conn.createStatement()
+        val query = "delete from $table ?"
+        val stmt = conn.prepareStatement(query)
+        stmt.setObject(1, condition.build())
+
+        logger.config("Query: $stmt")
 
         return try {
-            stmt.execute(query)
+            val result = stmt.execute()
+            if (result){
+                logger.info("Data deleted from $table")
+            } else {
+                logger.severe("Failed to delete data from $table")
+            }
+            result
         } catch (e: Exception){
+            logger.severe("Failed to delete data from $table")
             e.printStackTrace()
             false
         } finally {
@@ -131,6 +180,7 @@ class SSQLite: SDatabase {
     }
 
     override fun query(query: String): List<SDBResultSet> {
+        logger.info("Executing query: $query")
         val conn = open()
         val stmt: Statement
         val rs: ResultSet
@@ -139,6 +189,7 @@ class SSQLite: SDatabase {
             stmt = conn.createStatement()
             rs = stmt.executeQuery(query)
         } catch (e : SQLException) {
+            logger.severe("Failed to execute query: $query")
             e.printStackTrace()
             return arrayListOf()
         }
@@ -159,8 +210,10 @@ class SSQLite: SDatabase {
                 }
                 result.add(SDBResultSet(data))
             }
+            logger.info("Query executed successfully.")
             return result
         } catch (e : Exception){
+            logger.severe("Failed to execute query: $query")
             e.printStackTrace()
             return arrayListOf()
         } finally {
@@ -171,12 +224,20 @@ class SSQLite: SDatabase {
     }
 
     override fun execute(query: String): Boolean {
+        logger.info("Executing execute: $query")
         val conn = open()
         val stmt = conn.createStatement()
 
         return try {
-            stmt.execute(query)
+            val result = stmt.execute(query)
+            if (result){
+                logger.info("Command executed successfully.")
+            } else {
+                logger.severe("Failed to execute command: $query")
+            }
+            result
         } catch (e: Exception){
+            logger.severe("Failed to execute command: $query")
             e.printStackTrace()
             false
         } finally {

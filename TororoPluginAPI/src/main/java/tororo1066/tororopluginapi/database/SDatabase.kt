@@ -6,12 +6,11 @@ import tororo1066.tororopluginapi.database.mongo.SMongo
 import tororo1066.tororopluginapi.database.mysql.SMySQL
 import tororo1066.tororopluginapi.database.sqlite.SSQLite
 import java.io.File
-import java.util.concurrent.Callable
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.Future
-import java.util.function.Supplier
+import java.util.logging.FileHandler
+import java.util.logging.Logger
 
 abstract class SDatabase {
 
@@ -28,6 +27,17 @@ abstract class SDatabase {
 
     abstract val isMongo: Boolean
 
+    protected var logger: Logger
+
+    private fun createLogger(): Logger {
+        val logger = Logger.getLogger(this.javaClass.simpleName)
+        logger.useParentHandlers = false
+        val handler = FileHandler(plugin.dataFolder.path + File.separator + "database.log", true)
+        handler.formatter = SDatabaseLoggerFormatter()
+        logger.addHandler(handler)
+        return logger
+    }
+
     constructor(plugin: JavaPlugin){
         this.plugin = plugin
         val yml = plugin.config
@@ -39,6 +49,7 @@ abstract class SDatabase {
         user = yml.getString("database.user")
         db = yml.getString("database.db")
         url = yml.getString("database.url")
+        logger = createLogger()
     }
 
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): this(plugin){
@@ -66,6 +77,7 @@ abstract class SDatabase {
             db = yml.getString("database.db")
             url = yml.getString("database.url")
         }
+        logger = createLogger()
     }
 
 
