@@ -42,6 +42,21 @@ abstract class SDatabase {
         return logger
     }
 
+    fun close() {
+        try {
+            if (!thread.awaitTermination(60, java.util.concurrent.TimeUnit.SECONDS)) {
+                thread.shutdownNow()
+                if (!thread.awaitTermination(60, java.util.concurrent.TimeUnit.SECONDS)) {
+                    logger.severe("Thread pool did not terminate.")
+                }
+            }
+        } catch (e: InterruptedException) {
+            thread.shutdownNow()
+        }
+        logger.info("Closing database connection")
+        logger.handlers.filterIsInstance<FileHandler>().forEach { it.close() }
+    }
+
     constructor(plugin: JavaPlugin){
         this.plugin = plugin
         val yml = plugin.config
