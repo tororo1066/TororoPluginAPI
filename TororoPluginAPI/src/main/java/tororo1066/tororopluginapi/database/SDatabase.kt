@@ -34,7 +34,7 @@ abstract class SDatabase {
         logger.useParentHandlers = false
         val file = File(plugin.dataFolder.path + File.separator + "logs")
         if (!file.exists()){
-            file.mkdir()
+            file.mkdirs()
         }
         val handler = FileHandler(plugin.dataFolder.path + File.separator + "logs" + File.separator + "database.log", true)
         handler.formatter = SDatabaseLoggerFormatter()
