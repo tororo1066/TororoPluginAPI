@@ -9,7 +9,7 @@ class SDatabaseLoggerFormatter: Formatter() {
         // 2021-08-07 12:00:00 [INFO] [Database] Message
         return MessageFormat.format("{0,date,yyyy-MM-dd HH:mm:ss} [{1}] [{2}] {3}\n",
             record.millis,
-            record.level.localizedName,
+            record.level.name,
             record.loggerName,
             record.message
         )
