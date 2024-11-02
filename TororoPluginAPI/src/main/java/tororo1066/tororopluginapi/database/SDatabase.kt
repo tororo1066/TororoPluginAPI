@@ -32,6 +32,10 @@ abstract class SDatabase {
     private fun createLogger(): Logger {
         val logger = Logger.getLogger(this.javaClass.simpleName)
         logger.useParentHandlers = false
+        val file = File(plugin.dataFolder.path + File.separator + "logs")
+        if (!file.exists()){
+            file.mkdir()
+        }
         val handler = FileHandler(plugin.dataFolder.path + File.separator + "logs" + File.separator + "database.log", true)
         handler.formatter = SDatabaseLoggerFormatter()
         logger.addHandler(handler)
