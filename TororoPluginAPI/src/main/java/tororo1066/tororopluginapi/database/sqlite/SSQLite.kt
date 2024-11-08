@@ -81,7 +81,7 @@ class SSQLite: SDatabase {
         }
     }
 
-    override fun insert(table: String, map: Map<String, Any>): Boolean {
+    override fun insert(table: String, map: Map<String, Any?>): Boolean {
         logger.info("Inserting data to $table")
         val conn = open()
         val builder = StringBuilder("?")

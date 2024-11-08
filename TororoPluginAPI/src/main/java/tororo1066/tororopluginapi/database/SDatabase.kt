@@ -5,11 +5,13 @@ import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.mongo.SMongo
 import tororo1066.tororopluginapi.database.mysql.SMySQL
 import tororo1066.tororopluginapi.database.sqlite.SSQLite
+import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.logging.FileHandler
+import java.util.logging.Level
 import java.util.logging.Logger
 
 abstract class SDatabase {
@@ -20,6 +22,7 @@ abstract class SDatabase {
     protected var db: String?
     protected var user: String?
     protected var url: String?
+    protected var loggerLevel: String = "INFO"
 
     protected var plugin: JavaPlugin
 
@@ -32,6 +35,7 @@ abstract class SDatabase {
     private fun createLogger(): Logger {
         val logger = Logger.getLogger(this.javaClass.simpleName)
         logger.useParentHandlers = false
+        logger.level = UsefulUtility.sTry({ Level.parse(loggerLevel) }, { Level.INFO })
         val file = File(plugin.dataFolder.path + File.separator + "logs")
         if (!file.exists()){
             file.mkdirs()
@@ -68,6 +72,7 @@ abstract class SDatabase {
         user = yml.getString("database.user")
         db = yml.getString("database.db")
         url = yml.getString("database.url")
+        loggerLevel = yml.getString("database.loggerLevel")?:"INFO"
         logger = createLogger()
     }
 
@@ -86,6 +91,7 @@ abstract class SDatabase {
             user = yml.getString("$configPath.user")
             db = yml.getString("$configPath.db")
             url = yml.getString("$configPath.url")
+            loggerLevel = yml.getString("$configPath.loggerLevel")?:"INFO"
         } else {
             host = yml.getString("database.host")
             if (yml.isSet("database.port")){
@@ -95,6 +101,7 @@ abstract class SDatabase {
             user = yml.getString("database.user")
             db = yml.getString("database.db")
             url = yml.getString("database.url")
+            loggerLevel = yml.getString("database.loggerLevel")?:"INFO"
         }
         logger = createLogger()
     }
@@ -104,7 +111,7 @@ abstract class SDatabase {
 
     abstract fun createTable(table: String, map: Map<String, SDBVariable<*>>): Boolean
 
-    abstract fun insert(table: String, map: Map<String, Any>): Boolean
+    abstract fun insert(table: String, map: Map<String, Any?>): Boolean
 
     abstract fun select(table: String, condition: SDBCondition = SDBCondition.empty()): List<SDBResultSet>
 
@@ -120,7 +127,7 @@ abstract class SDatabase {
         return CompletableFuture.supplyAsync({ createTable(table, map) }, thread)
     }
 
-    fun asyncInsert(table: String, map: Map<String, Any>): CompletableFuture<Boolean> {
+    fun asyncInsert(table: String, map: Map<String, Any?>): CompletableFuture<Boolean> {
         return CompletableFuture.supplyAsync({ insert(table, map) }, thread)
     }
 
@@ -150,7 +157,7 @@ abstract class SDatabase {
         }
     }
 
-    fun backGroundInsert(table: String, map: Map<String, Any>, callback: (Boolean) -> Unit = {}){
+    fun backGroundInsert(table: String, map: Map<String, Any?>, callback: (Boolean) -> Unit = {}){
         thread.execute {
             callback(insert(table, map))
         }
