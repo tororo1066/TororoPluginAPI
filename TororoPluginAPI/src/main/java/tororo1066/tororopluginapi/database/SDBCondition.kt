@@ -53,6 +53,12 @@ class SDBCondition {
         return this
     }
 
+    fun between(variable: String, value1: Any, value2: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
+        filter = Filters.and(Filters.gte(variable, value1), Filters.lte(variable, value2))
+        builder.append("$variable between ${modifySQLString(type?: SDBVariable.Text,value1)} and ${modifySQLString(type?: SDBVariable.Text,value2)}")
+        return this
+    }
+
     fun and(condition: SDBCondition): SDBCondition {
         this.filter = Filters.and(this.filter, condition.filter)
         builder.append(" and (${replaceWhere(condition)})")
