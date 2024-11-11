@@ -72,7 +72,7 @@ fun Player.getAllItem(): Array<ItemStack> {
         }
     }
     this.inventory.armorContents.forEach {
-        if (it.type != Material.AIR){
+        if (it != null && it.type != Material.AIR){
             list.add(it)
         }
     }
