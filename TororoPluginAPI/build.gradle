@@ -4,8 +4,9 @@ apply plugin: 'maven-publish'
 group = 'tororo1066'
 version = '1.0-SNAPSHOT'
 
-sourceCompatibility = '16'
-targetCompatibility = '16'
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
 
 repositories {
     mavenCentral()
@@ -28,7 +29,7 @@ repositories {
 
 dependencies {
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
-    compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT'
     compileOnly 'net.kyori:adventure-text-serializer-bungeecord:4.0.1'
     compileOnly 'com.ezylang:EvalEx:3.1.2'
     compileOnly 'org.mongodb:mongodb-driver-sync:4.11.1'
