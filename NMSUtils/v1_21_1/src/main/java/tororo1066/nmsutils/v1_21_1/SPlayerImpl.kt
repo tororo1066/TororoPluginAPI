@@ -1,18 +1,12 @@
-package tororo1066.nmsutils.v1_20_4
+package tororo1066.nmsutils.v1_21_1
 
 import com.mojang.datafixers.util.Pair
 import io.netty.buffer.Unpooled
-import io.netty.channel.ChannelDuplexHandler
-import io.netty.channel.ChannelHandlerContext
-import io.netty.channel.ChannelPromise
 import net.minecraft.ChatFormatting
 import net.minecraft.core.Rotations
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.*
-import net.minecraft.network.syncher.EntityDataAccessor
-import net.minecraft.network.syncher.EntityDataSerializers
-import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.MoverType
@@ -23,13 +17,13 @@ import net.minecraft.world.phys.Vec3
 import net.minecraft.world.scores.*
 import net.minecraft.world.scores.criteria.ObjectiveCriteria
 import org.bukkit.*
-import org.bukkit.craftbukkit.v1_20_R3.CraftEquipmentSlot
-import org.bukkit.craftbukkit.v1_20_R3.CraftServer
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack
-import org.bukkit.craftbukkit.v1_20_R3.scoreboard.CraftScoreboard
+import org.bukkit.craftbukkit.CraftEquipmentSlot
+import org.bukkit.craftbukkit.CraftServer
+import org.bukkit.craftbukkit.CraftWorld
+import org.bukkit.craftbukkit.entity.CraftEntity
+import org.bukkit.craftbukkit.entity.CraftPlayer
+import org.bukkit.craftbukkit.inventory.CraftItemStack
+import org.bukkit.craftbukkit.scoreboard.CraftScoreboard
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
@@ -39,13 +33,16 @@ import org.bukkit.inventory.ItemStack
 import tororo1066.nmsutils.SPlayer
 import tororo1066.nmsutils.SPlayer.Companion.hiddenEntities
 import tororo1066.nmsutils.items.GlowColor
-import kotlin.experimental.and
-import kotlin.experimental.or
+import java.util.Optional
 
 class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.level().craftServer, p.handle) {
 
     override val bukkitPlayer: Player
         get() = this
+
+    private fun createAddEntityPacket(entity: net.minecraft.world.entity.Entity): ClientboundAddEntityPacket {
+        return ClientboundAddEntityPacket(entity, 0, entity.blockPosition())
+    }
 
     override fun updateInventoryTitle(inv: Inventory, title: String) {
         val con = when(inv.size){
@@ -84,7 +81,7 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
 
     override fun placeRecipe(recipe: Keyed, isShift: Boolean) {
         val packet = ServerboundPlaceRecipePacket(handle.containerMenu.containerId,(Bukkit.getServer() as CraftServer).server.recipeManager.byKey(
-            ResourceLocation(recipe.key.namespace,recipe.key.key)
+            ResourceLocation.fromNamespaceAndPath(recipe.key.namespace,recipe.key.key)
         ).get(),isShift)
 
         handle.connection.send(packet)
@@ -139,7 +136,7 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
                 ))
         }
 
-        handle.connection.send(ClientboundAddEntityPacket(other))
+        handle.connection.send(createAddEntityPacket(other))
     }
 
     override fun spawnFakeInvisibleArmorStand(location: Location, slot: EquipmentSlot, item: ItemStack): Int {
@@ -149,7 +146,7 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
         armorStand.isInvisible = true
         armorStand.setLeftArmPose(Rotations(0f,0f,0f))
         armorStand.setRightArmPose(Rotations(0f,0f,0f))
-        val spawnPacket = ClientboundAddEntityPacket(armorStand)
+        val spawnPacket = createAddEntityPacket(armorStand)
         handle.connection.send(spawnPacket)
         handle.connection.send(ClientboundSetEntityDataPacket(armorStand.id, armorStand.entityData.packDirty()?: listOf()))
         handle.connection.send(ClientboundSetEquipmentPacket(armorStand.id, mutableListOf(Pair(CraftEquipmentSlot.getNMS(slot), CraftItemStack.asNMSCopy(item)))))
@@ -209,8 +206,8 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
                 name,
                 objectiveName,
                 score,
-                null,
-                null
+                Optional.empty(),
+                Optional.empty()
             )
             handle.connection.send(packet)
         }
@@ -218,22 +215,15 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
 
     override fun initGlowTeam(nameTagVisibility: String) {
         for (color in GlowColor.values()){
-            val removeTeamBuf = FriendlyByteBuf(Unpooled.buffer())
-            removeTeamBuf.writeUtf(color.getTeamName())
-            removeTeamBuf.writeByte(1)
-            val buf = FriendlyByteBuf(Unpooled.buffer())
-            buf.writeUtf(color.getTeamName())
-            buf.writeByte(0)
-            buf.writeComponent(Component.literal(color.getTeamName()))
-            buf.writeByte(3)
-            buf.writeUtf(nameTagVisibility)
-            buf.writeUtf("always")
-            buf.writeEnum(color as Enum<*>)
-            buf.writeComponent(Component.empty())
-            buf.writeComponent(Component.empty())
-            buf.writeCollection(emptyList(), FriendlyByteBuf::writeUtf)
-            val packet = ClientboundBundlePacket(listOf(ClientboundSetPlayerTeamPacket(removeTeamBuf), ClientboundSetPlayerTeamPacket(buf)))
-            handle.connection.send(packet)
+            val team = PlayerTeam(Scoreboard(), color.getTeamName())
+                .apply {
+                    this.nameTagVisibility = Team.Visibility.byName(nameTagVisibility) ?: Team.Visibility.ALWAYS
+                    this.color = ChatFormatting.getByName(color.colorName.uppercase()) ?: ChatFormatting.WHITE
+                }
+            val removeTeamPacket = ClientboundSetPlayerTeamPacket.createRemovePacket(team)
+            val addTeamPacket = ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(team, false)
+
+            handle.connection.send(ClientboundBundlePacket(listOf(removeTeamPacket, addTeamPacket)))
         }
     }
 

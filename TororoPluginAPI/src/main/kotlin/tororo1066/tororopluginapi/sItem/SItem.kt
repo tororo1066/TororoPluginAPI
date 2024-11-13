@@ -332,7 +332,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     }
 
     override fun clone(): SItem {
-        return super.clone() as SItem
+        return SItem(super.clone())
     }
 
     /**

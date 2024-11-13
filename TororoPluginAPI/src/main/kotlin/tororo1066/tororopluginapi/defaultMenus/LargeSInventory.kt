@@ -1,7 +1,6 @@
 package tororo1066.tororopluginapi.defaultMenus
 
 import org.bukkit.Material
-import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.sInventory.SInventory

@@ -183,7 +183,7 @@ class SStr: Cloneable {
                 Title.title(
                     toPaperComponent(),
                     subtitle?.toPaperComponent()?:Component.empty(),
-                    Title.Times.of(Duration.ofMillis(fadeIn * 50L), Duration.ofMillis(stay * 50L), Duration.ofMillis(fadeOut * 50L))
+                    Title.Times.times(Duration.ofMillis(fadeIn * 50L), Duration.ofMillis(stay * 50L), Duration.ofMillis(fadeOut * 50L))
                 )
             )
         } else {

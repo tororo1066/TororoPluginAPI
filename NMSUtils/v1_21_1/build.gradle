@@ -1,0 +1,15 @@
+plugins {
+    id "io.papermc.paperweight.userdev" version "1.7.4"
+}
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT'
+    compileOnly project(":NMSUtils:base")
+    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.21.1-R0.1-SNAPSHOT")
+}
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+tasks.assemble {
+    dependsOn(tasks.reobfJar)
+}

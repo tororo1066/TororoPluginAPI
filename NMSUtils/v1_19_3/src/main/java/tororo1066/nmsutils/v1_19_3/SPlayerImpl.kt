@@ -85,7 +85,7 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
 
     override fun placeRecipe(recipe: Keyed, isShift: Boolean) {
         val packet = ServerboundPlaceRecipePacket(handle.containerMenu.containerId,(Bukkit.getServer() as CraftServer).server.recipeManager.byKey(
-            ResourceLocation(recipe.key.key,recipe.key.namespace)
+            ResourceLocation(recipe.key.namespace,recipe.key.key)
         ).get(),isShift)
 
         handle.connection.send(packet)
