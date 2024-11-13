@@ -13,6 +13,7 @@ public class DefaultKotlinResolver extends AbstractKotlinResolver {
 
     @Override
     public void classloader(@NotNull PluginClasspathBuilder builder) {
+        System.out.println("DefaultKotlinResolver.classloader");
         super.classloader(builder);
 
         MavenLibraryResolver resolver = new MavenLibraryResolver();
