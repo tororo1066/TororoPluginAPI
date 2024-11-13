@@ -1,14 +1,19 @@
 # TororoPluginAPI
 依存関係追加方法
-[![Release](https://jitpack.io/v/tororo1066/TororoPluginAPI.svg)]
 
 ```gradle
 repositories {
-    maven { url 'https://jitpack.io' }
+   maven {
+        url = uri('https://maven.pkg.github.com/tororo1066/TororoPluginAPI')
+        credentials {
+            username = <GITHUB_USERNAME>
+            password = <GITHUB_TOKEN>
+        }
+    }
 }
 ```
 ```gradle
 dependencies {
-    implementation 'com.github.tororo1066.TororoPluginAPI:TororoPluginAPI:<Version>'
+    implementation 'tororo1066:tororopluginapi::<Version>'
 }
 ```
