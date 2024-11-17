@@ -25,7 +25,7 @@ abstract class AbstractKotlinResolver implements PluginLoader {
         try {
             clazz.getClassLoader().loadClass("kotlin.jvm.internal.Intrinsics");
         } catch (ClassNotFoundException e) {
-            resolver.addDependency(new Dependency(new DefaultArtifact("org.jetbrains.kotlin:kotlin-stdlib:" + version), null));
+            resolver.addDependency(new Dependency(new DefaultArtifact("org.jetbrains.kotlin:kotlin-stdlib:" + version), "compile"));
         }
         builder.addLibrary(resolver);
     }

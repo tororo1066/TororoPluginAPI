@@ -20,12 +20,12 @@ public class DefaultKotlinResolver extends AbstractKotlinResolver {
         try {
             clazz.getClassLoader().loadClass("org.mongodb.client.MongoClient");
         } catch (ClassNotFoundException e) {
-            resolver.addDependency(new Dependency(new DefaultArtifact("org.mongodb:mongodb-driver-sync:4.11.1"), null));
+            resolver.addDependency(new Dependency(new DefaultArtifact("org.mongodb:mongodb-driver-sync:4.11.1"), "compile"));
         }
         try {
             clazz.getClassLoader().loadClass("com.ezylang.evalex.Expression");
         } catch (ClassNotFoundException e) {
-            resolver.addDependency(new Dependency(new DefaultArtifact("com.ezylang:EvalEx:3.1.2"), null));
+            resolver.addDependency(new Dependency(new DefaultArtifact("com.ezylang:EvalEx:3.1.2"), "compile"));
         }
 //        resolver.addDependency(new Dependency(new DefaultArtifact("org.mongodb:mongodb-driver-sync:4.11.1"), null));
 //        resolver.addDependency(new Dependency(new DefaultArtifact("com.ezylang:EvalEx:3.1.2"), null));
