@@ -31,11 +31,18 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
 
     constructor(command: String, prefix: String, perm: String) : this(command){
         this.prefix = prefix
-        this.perm = perm
+        setPermission(perm)
     }
 
-    fun setPermission(perm : String){
-        this.perm = perm
+//    @JvmName("setPermission1")
+//    fun setPermission(perm : String){
+//        this.perm = perm
+//        super.setPermission(perm)
+//    }
+
+    final override fun setPermission(permission: String?) {
+        this.perm = permission
+        super.setPermission(permission)
     }
 
     private fun register(): PluginCommand? {
@@ -81,6 +88,7 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
 
     init {
         if (SStr.isPaper()) {
+            super.setPermission(perm)
             this.register(Bukkit.getCommandMap())
         } else {
             val register = register() ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")
