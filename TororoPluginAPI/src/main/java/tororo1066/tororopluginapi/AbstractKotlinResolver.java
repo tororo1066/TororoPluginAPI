@@ -6,6 +6,7 @@ import io.papermc.paper.plugin.loader.library.impl.MavenLibraryResolver;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.jetbrains.annotations.NotNull;
 
 abstract class AbstractKotlinResolver implements PluginLoader {
@@ -21,7 +22,7 @@ abstract class AbstractKotlinResolver implements PluginLoader {
     @Override
     public void classloader(@NotNull PluginClasspathBuilder builder) {
         MavenLibraryResolver resolver = new MavenLibraryResolver();
-//        resolver.addDependency(new Dependency(new DefaultArtifact("org.jetbrains.kotlin:kotlin-stdlib:" + version), null));
+        resolver.addRepository(new RemoteRepository.Builder("mavenCentral", "default", "https://repo.maven.apache.org/maven2/").build());
         try {
             clazz.getClassLoader().loadClass("kotlin.jvm.internal.Intrinsics");
         } catch (ClassNotFoundException e) {

@@ -5,6 +5,7 @@ import io.papermc.paper.plugin.loader.library.impl.MavenLibraryResolver;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.jetbrains.annotations.NotNull;
 
 public class DefaultKotlinResolver extends AbstractKotlinResolver {
@@ -17,6 +18,7 @@ public class DefaultKotlinResolver extends AbstractKotlinResolver {
         super.classloader(builder);
 
         MavenLibraryResolver resolver = new MavenLibraryResolver();
+        resolver.addRepository(new RemoteRepository.Builder("mavenCentral", "default", "https://repo.maven.apache.org/maven2/").build());
         try {
             clazz.getClassLoader().loadClass("org.mongodb.client.MongoClient");
         } catch (ClassNotFoundException e) {
