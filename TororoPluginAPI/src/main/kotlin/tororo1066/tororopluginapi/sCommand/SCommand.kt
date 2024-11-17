@@ -1,18 +1,20 @@
 package tororo1066.tororopluginapi.sCommand
 
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.command.*
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SDebug
 import tororo1066.tororopluginapi.SJavaPlugin
+import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.lang.LangEditor
 import tororo1066.tororopluginapi.lang.SLang
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import java.util.function.Consumer
 
-abstract class SCommand(private val command: String) : CommandExecutor, TabCompleter {
+abstract class SCommand(private val command: String) : CommandExecutor, TabCompleter, Command(command) {
 
 
     private var perm : String? = null
@@ -78,19 +80,23 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
     }
 
     init {
-        val register = register() ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")
-        register.setExecutor(this)
-        register.tabCompleter = this
+        if (SStr.isPaper()) {
+            this.register(Bukkit.getCommandMap())
+        } else {
+            val register = register() ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")
+            register.setExecutor(this)
+            register.tabCompleter = this
 
-        UsefulUtility.sTry({
-            if (!SJavaPlugin.plugin.deprecatedMode){
-                Bukkit.getScheduler().runTaskLater(SJavaPlugin.plugin, Runnable {
-                    Bukkit.getScheduler().runTask(SJavaPlugin.plugin, Runnable {
-                        loadAllCommands()
-                    })
-                }, 1)
-            }
-        },{})
+            UsefulUtility.sTry({
+                if (!SJavaPlugin.plugin.deprecatedMode){
+                    Bukkit.getScheduler().runTaskLater(SJavaPlugin.plugin, Runnable {
+                        Bukkit.getScheduler().runTask(SJavaPlugin.plugin, Runnable {
+                            loadAllCommands()
+                        })
+                    }, 1)
+                }
+            },{})
+        }
     }
 
 
@@ -116,6 +122,10 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
         }
         if (this.commandNoFoundEvent != null) this.commandNoFoundEvent!!.accept(commandData)
         return true
+    }
+
+    override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
+        return onCommand(sender, this, label, args)
     }
 
     override fun onTabComplete(
@@ -177,6 +187,10 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
             }
         }
         return result
+    }
+
+    override fun tabComplete(sender: CommandSender, alias: String, args: Array<out String>): MutableList<String> {
+        return onTabComplete(sender, this, alias, args) ?: ArrayList()
     }
 
 
