@@ -97,17 +97,17 @@ abstract class SCommand(
             val register = register() ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")
             register.setExecutor(this)
             register.tabCompleter = this
-
-            UsefulUtility.sTry({
-                if (!SJavaPlugin.plugin.deprecatedMode){
-                    Bukkit.getScheduler().runTaskLater(SJavaPlugin.plugin, Runnable {
-                        Bukkit.getScheduler().runTask(SJavaPlugin.plugin, Runnable {
-                            loadAllCommands()
-                        })
-                    }, 1)
-                }
-            },{})
         }
+
+        UsefulUtility.sTry({
+            if (!SJavaPlugin.plugin.deprecatedMode){
+                Bukkit.getScheduler().runTaskLater(SJavaPlugin.plugin, Runnable {
+                    Bukkit.getScheduler().runTask(SJavaPlugin.plugin, Runnable {
+                        loadAllCommands()
+                    })
+                }, 1)
+            }
+        },{})
     }
 
 
