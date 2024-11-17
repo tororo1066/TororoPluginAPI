@@ -27,6 +27,8 @@ public class DefaultKotlinResolver extends AbstractKotlinResolver {
         } catch (ClassNotFoundException e) {
             resolver.addDependency(new Dependency(new DefaultArtifact("com.ezylang:EvalEx:3.1.2"), "compile"));
         }
+
+        builder.addLibrary(resolver);
 //        resolver.addDependency(new Dependency(new DefaultArtifact("org.mongodb:mongodb-driver-sync:4.11.1"), null));
 //        resolver.addDependency(new Dependency(new DefaultArtifact("com.ezylang:EvalEx:3.1.2"), null));
     }
