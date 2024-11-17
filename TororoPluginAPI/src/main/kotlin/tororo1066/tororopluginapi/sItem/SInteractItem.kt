@@ -22,7 +22,7 @@ class SInteractItem(private val manager: SInteractItemManager, private val itemS
 
     constructor(manager: SInteractItemManager,material: Material): this(manager, ItemStack(material))
 
-    constructor(manager: SInteractItemManager,sItem: SItem): this(manager, ItemStack(sItem))
+    constructor(manager: SInteractItemManager,sItem: SItem): this(manager, sItem.build())
 
     init {
         manager.items[itemStack.apply { amount = 1 }] = this

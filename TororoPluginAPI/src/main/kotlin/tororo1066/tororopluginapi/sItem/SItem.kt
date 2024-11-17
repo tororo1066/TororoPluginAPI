@@ -27,7 +27,7 @@ import java.util.UUID
  * @constructor Material
  */
 @Suppress("DEPRECATION")
-open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
+open class SItem(protected val itemStack: ItemStack): Cloneable {
 
     constructor(material: Material) : this(ItemStack(material))
 
@@ -142,12 +142,12 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     }
 
     private fun getMeta(): ItemMeta {
-        return if (hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
+        return if (itemStack.hasItemMeta()) itemStack.itemMeta else Bukkit.getItemFactory().getItemMeta(itemStack.type)
     }
 
 
     open fun setItemAmount(amount: Int): SItem {
-        this.amount = amount
+        itemStack.amount = amount
         return this
     }
 
@@ -158,7 +158,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     open fun setDisplayName(name : String): SItem {
         val meta = getMeta()
         meta.setDisplayName(name)
-        itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -169,7 +169,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
         } else {
             meta.setDisplayNameComponent(sStr.toBukkitComponent())
         }
-        itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -188,7 +188,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     open fun setLore(lore : List<String>): SItem {
         val meta = getMeta()
         meta.lore = lore
-        itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -203,7 +203,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
         } else {
             meta.loreComponents = sStr.map { it.toBukkitComponent() }
         }
-        itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -252,7 +252,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     open fun setCustomModelData(cmd : Int): SItem {
         val meta = getMeta()
         meta.setCustomModelData(cmd)
-        itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -275,7 +275,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     open fun <T : Any, Z: Any> setCustomData(plugin: JavaPlugin, key: String, type : PersistentDataType<T,Z>, value: Z): SItem {
         val meta = this.getMeta()
         meta.persistentDataContainer[NamespacedKey(plugin,key),type] = value
-        this.itemMeta = meta
+        this.itemStack.itemMeta = meta
         return this
     }
 
@@ -296,7 +296,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
      * @return 変更したアイテム
      */
     open fun setEnchantment(enchantment: Enchantment, level: Int): SItem {
-        this.addUnsafeEnchantment(enchantment,level)
+        itemStack.addUnsafeEnchantment(enchantment,level)
         return this
     }
 
@@ -309,14 +309,14 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
     open fun setSkullOwner(uuid: UUID): SItem {
         val meta = (getMeta()) as SkullMeta
         meta.owningPlayer = Bukkit.getOfflinePlayer(uuid)
-        itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
     open fun addPattern(pattern: Pattern): SItem {
         val meta = (getMeta()) as BannerMeta
         meta.addPattern(pattern)
-        itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -327,12 +327,12 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
         return SInventoryItem(this)
     }
 
-    open fun asItemStack(): ItemStack {
-        return ItemStack(this)
+    open fun build(): ItemStack {
+        return itemStack
     }
 
     override fun clone(): SItem {
-        return SItem(super.clone())
+        return SItem(itemStack.clone())
     }
 
     /**
@@ -343,7 +343,7 @@ open class SItem(itemStack: ItemStack) :  ItemStack(itemStack) {
             val outputStream = ByteArrayOutputStream()
             val dataOutput = BukkitObjectOutputStream(outputStream)
             dataOutput.writeInt(1)
-            dataOutput.writeObject(ItemStack(this))
+            dataOutput.writeObject(build())
             dataOutput.close()
             Base64Coder.encodeLines(outputStream.toByteArray())
 

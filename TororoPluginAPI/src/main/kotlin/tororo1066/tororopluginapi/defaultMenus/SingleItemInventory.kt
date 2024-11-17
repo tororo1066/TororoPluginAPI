@@ -12,10 +12,10 @@ open class SingleItemInventory(plugin: JavaPlugin, name: String): StrSInventory(
     "s s s c . c s s s",
     "s s s s c s s s s",
     "s s s s e s s s s"), hashMapOf()) {
-    open var sideBackground: ItemStack = SItem(Material.LIGHT_BLUE_STAINED_GLASS_PANE).setDisplayName(" ")
-    open var centerBackground : ItemStack = SItem(Material.LIME_STAINED_GLASS_PANE).setDisplayName(" ")
-    open var selectItem: ItemStack = SItem(Material.RED_STAINED_GLASS_PANE).setDisplayName("§c選択")
-    open var nowItem: ItemStack = SItem(Material.AIR)
+    open var sideBackground: ItemStack = SItem(Material.LIGHT_BLUE_STAINED_GLASS_PANE).setDisplayName(" ").build()
+    open var centerBackground : ItemStack = SItem(Material.LIME_STAINED_GLASS_PANE).setDisplayName(" ").build()
+    open var selectItem: ItemStack = SItem(Material.RED_STAINED_GLASS_PANE).setDisplayName("§c選択").build()
+    open var nowItem: ItemStack = SItem(Material.AIR).build()
     var onConfirm: Consumer<ItemStack>? = null
 
     override fun afterRenderMenu() {

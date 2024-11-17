@@ -1,0 +1,10 @@
+name: TororoPluginAPI
+version: "1.0"
+main: tororo1066.tororoplugin.TororoPlugin
+api-version: "1.19"
+loader: tororo1066.tororopluginapi.DefaultKotlinResolver
+
+dependencies:
+  server:
+    NMSUtils:
+      load: BEFORE

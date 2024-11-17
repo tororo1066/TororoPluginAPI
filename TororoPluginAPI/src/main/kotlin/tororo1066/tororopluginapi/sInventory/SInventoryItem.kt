@@ -31,7 +31,7 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
 
     constructor(material: Material) : this(ItemStack(material))
 
-    constructor(sItem: SItem) : this(sItem as ItemStack)
+    constructor(sItem: SItem) : this(sItem.build())
 
     init {
         setClickEvent { if (!canClick) it.isCancelled = true }

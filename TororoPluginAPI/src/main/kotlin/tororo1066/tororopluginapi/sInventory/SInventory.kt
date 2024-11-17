@@ -123,7 +123,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
      */
     fun setItem(slot : Int, item : SInventoryItem){
         items[slot] = item
-        inv.setItem(slot,item)
+        inv.setItem(slot, item.build())
     }
 
     /**

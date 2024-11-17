@@ -28,6 +28,7 @@ import tororo1066.tororopluginapi.Proxy
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.annotation.SCommandV2Body
+import tororo1066.tororopluginapi.defaultMenus.LargeSInventory
 import tororo1066.tororopluginapi.lang.SLang
 import tororo1066.tororopluginapi.sCommand.v2.SCommandV2
 import tororo1066.tororopluginapi.sItem.SItem
@@ -139,7 +140,7 @@ class TororoCommandV2: SCommandV2("tororo") {
                             sender.sendPrefixMsg(SStr("&c不正なBase64です"))
                             return@setPlayerFunctionExecutor
                         }
-                        sender.inventory.addItem(item)
+                        sender.inventory.addItem(item.build())
                         sender.sendPrefixMsg(SStr("&aアイテムを付与しました"))
                     }
                 }
@@ -407,6 +408,21 @@ class TororoCommandV2: SCommandV2("tororo") {
                     val world = args.getArgument("world", String::class.java)
                     EmptyWorldGenerator.deleteWorld(Bukkit.getWorld(world)?:return@setPlayerFunctionExecutor)
                 }
+            }
+        }
+    }
+
+    @SCommandV2Body
+    val test_4 = command {
+        literal("test4") {
+            setPermission("tororo.test")
+            setPlayerFunctionExecutor { sender, _, _ ->
+                val inv = object : LargeSInventory("test") {
+                    override fun renderMenu(): Boolean {
+                        return true
+                    }
+                }
+                inv.open(sender)
             }
         }
     }

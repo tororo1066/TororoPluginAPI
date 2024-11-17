@@ -1,7 +1,7 @@
 name: TororoPluginAPI
 version: 1.0
 main: tororo1066.tororoplugin.TororoPlugin
-api-version: 1.17
+api-version: 1.19
 softdepend:
   - Essentials
   - NMSUtils

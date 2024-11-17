@@ -16,7 +16,7 @@ class ItemStackPersistent: PersistentDataType<String, ItemStack> {
     }
 
     override fun fromPrimitive(primitive: String, context: PersistentDataAdapterContext): ItemStack {
-        return ItemStack(SItem.fromBase64(primitive)?:return ItemStack(Material.AIR))
+        return ItemStack(SItem.fromBase64(primitive)?.build()?:return ItemStack(Material.AIR))
     }
 
     override fun toPrimitive(complex: ItemStack, context: PersistentDataAdapterContext): String {
