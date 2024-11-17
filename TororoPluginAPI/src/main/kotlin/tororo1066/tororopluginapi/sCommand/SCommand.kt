@@ -204,6 +204,15 @@ abstract class SCommand(
         return onTabComplete(sender, this, alias, args) ?: ArrayList()
     }
 
+    override fun tabComplete(
+        sender: CommandSender,
+        alias: String,
+        args: Array<out String>,
+        location: Location?
+    ): MutableList<String> {
+        return onTabComplete(sender, this, alias, args) ?: ArrayList()
+    }
+
 
     private fun sendPrefixMessage(p : CommandSender, message : String){
         p.sendMessage(this.prefix + message)
