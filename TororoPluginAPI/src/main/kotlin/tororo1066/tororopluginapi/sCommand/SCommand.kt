@@ -14,25 +14,27 @@ import tororo1066.tororopluginapi.lang.SLang
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import java.util.function.Consumer
 
-abstract class SCommand(private val command: String) : CommandExecutor, TabCompleter, Command(command) {
-
-
-    private var perm : String? = null
-    private var prefix = ""
+abstract class SCommand(
+    private val command: String,
+    plugin: JavaPlugin = SJavaPlugin.plugin,
+    private var prefix: String = "",
+    private var perm: String? = null,
+    alias: List<String> = emptyList()
+) : CommandExecutor, TabCompleter, Command(command) {
 
     private val commands = ArrayList<SCommandObject>()
 
     private var commandNoFoundEvent : Consumer<SCommandData>? = null
 
-    constructor(command: String, prefix: String) : this(command){
-        this.prefix = prefix
-    }
-
-
-    constructor(command: String, prefix: String, perm: String) : this(command){
-        this.prefix = prefix
-        setPermission(perm)
-    }
+//    constructor(
+//        command: String,
+//        prefix: String = "",
+//        perm: String = "",
+//        plugin: JavaPlugin = SJavaPlugin.plugin
+//    ) : this(plugin, command) {
+//        this.prefix = prefix
+//        setPermission(perm)
+//    }
 
 //    @JvmName("setPermission1")
 //    fun setPermission(perm : String){
@@ -87,9 +89,10 @@ abstract class SCommand(private val command: String) : CommandExecutor, TabCompl
     }
 
     init {
+        super.setPermission(perm)
         if (SStr.isPaper()) {
-            super.setPermission(perm)
-            this.register(Bukkit.getCommandMap())
+            super.setAliases(alias)
+            Bukkit.getCommandMap().register(plugin.name, this)
         } else {
             val register = register() ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")
             register.setExecutor(this)
