@@ -346,7 +346,7 @@ open class SItem(protected val itemStack: ItemStack): Cloneable {
         return itemStack
     }
 
-    override fun clone(): SItem {
+    public override fun clone(): SItem {
         return SItem(itemStack.clone())
     }
 
