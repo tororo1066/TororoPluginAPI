@@ -6,6 +6,7 @@ import org.bukkit.block.banner.Pattern
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
@@ -166,6 +167,14 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
 
     override fun addPattern(pattern: Pattern): SInventoryItem {
         return super.addPattern(pattern) as SInventoryItem
+    }
+
+    override fun addItemFlags(vararg flags: ItemFlag): SInventoryItem {
+        return super.addItemFlags(*flags) as SInventoryItem
+    }
+
+    override fun removeItemFlags(vararg flags: ItemFlag): SInventoryItem {
+        return super.removeItemFlags(*flags) as SInventoryItem
     }
 
     override fun clone(): SInventoryItem {

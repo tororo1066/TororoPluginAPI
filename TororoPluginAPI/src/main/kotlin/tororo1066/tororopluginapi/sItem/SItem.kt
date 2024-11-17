@@ -5,6 +5,7 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.block.banner.Pattern
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BannerMeta
 import org.bukkit.inventory.meta.ItemMeta
@@ -316,6 +317,20 @@ open class SItem(protected val itemStack: ItemStack): Cloneable {
     open fun addPattern(pattern: Pattern): SItem {
         val meta = (getMeta()) as BannerMeta
         meta.addPattern(pattern)
+        itemStack.itemMeta = meta
+        return this
+    }
+
+    open fun addItemFlags(vararg flags: ItemFlag): SItem {
+        val meta = getMeta()
+        meta.addItemFlags(*flags)
+        itemStack.itemMeta = meta
+        return this
+    }
+
+    open fun removeItemFlags(vararg flags: ItemFlag): SItem {
+        val meta = getMeta()
+        meta.removeItemFlags(*flags)
         itemStack.itemMeta = meta
         return this
     }
