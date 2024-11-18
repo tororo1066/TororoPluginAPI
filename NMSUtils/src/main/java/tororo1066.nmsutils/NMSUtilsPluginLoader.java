@@ -5,6 +5,7 @@ import io.papermc.paper.plugin.loader.PluginLoader;
 import io.papermc.paper.plugin.loader.library.impl.MavenLibraryResolver;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.jetbrains.annotations.NotNull;
 
 public class NMSUtilsPluginLoader implements PluginLoader {
@@ -13,6 +14,8 @@ public class NMSUtilsPluginLoader implements PluginLoader {
     public void classloader(@NotNull PluginClasspathBuilder builder) {
         MavenLibraryResolver resolver = new MavenLibraryResolver();
 
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.jetbrains.kotlin:kotlin-stdlib:1.7.20"), null));
+        resolver.addRepository(new RemoteRepository.Builder("mavenCentral", "default", "https://repo.maven.apache.org/maven2/").build());
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.jetbrains.kotlin:kotlin-stdlib:1.7.20"), "compile"));
+        builder.addLibrary(resolver);
     }
 }

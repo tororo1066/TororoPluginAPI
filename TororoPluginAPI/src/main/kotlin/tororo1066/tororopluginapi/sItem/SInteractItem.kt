@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
 
-class SInteractItem(private val manager: SInteractItemManager, private val itemStack: ItemStack) {
+class SInteractItem(private val manager: SInteractItemManager, val itemStack: ItemStack) {
 
     val interactEvents = ArrayList<(PlayerInteractEvent, SInteractItem)->Boolean>()
     val dropEvents = ArrayList<(PlayerDropItemEvent, SInteractItem)->Unit>()
