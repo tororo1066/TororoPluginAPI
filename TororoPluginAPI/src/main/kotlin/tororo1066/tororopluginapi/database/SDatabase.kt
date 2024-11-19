@@ -48,6 +48,7 @@ abstract class SDatabase {
 
     fun close() {
         try {
+            thread.shutdown()
             if (!thread.awaitTermination(60, java.util.concurrent.TimeUnit.SECONDS)) {
                 thread.shutdownNow()
                 if (!thread.awaitTermination(60, java.util.concurrent.TimeUnit.SECONDS)) {
