@@ -48,15 +48,10 @@ abstract class SDatabase {
 
     fun close() {
         try {
-            thread.shutdown()
-            if (!thread.awaitTermination(60, java.util.concurrent.TimeUnit.SECONDS)) {
-                thread.shutdownNow()
-                if (!thread.awaitTermination(60, java.util.concurrent.TimeUnit.SECONDS)) {
-                    logger.severe("Thread pool did not terminate.")
-                }
-            }
-        } catch (e: InterruptedException) {
             thread.shutdownNow()
+        } catch (e: Exception) {
+            logger.warning("Failed to shutdown thread pool")
+            e.printStackTrace()
         }
         logger.info("Closing database connection")
         logger.handlers.filterIsInstance<FileHandler>().forEach { it.close() }
