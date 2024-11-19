@@ -10,6 +10,7 @@ import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -46,7 +47,17 @@ abstract class SDatabase {
         return logger
     }
 
-    fun closeLogger() {
+    fun close() {
+        try {
+            thread.shutdown()
+            if (!thread.awaitTermination(10, TimeUnit.SECONDS)) {
+                thread.shutdownNow()
+            }
+        } catch (e: Exception) {
+            logger.warning("Failed to shutdown thread pool")
+            e.printStackTrace()
+        }
+        logger.info("Closing database connection")
         logger.handlers.filterIsInstance<FileHandler>().forEach { it.close() }
     }
 
