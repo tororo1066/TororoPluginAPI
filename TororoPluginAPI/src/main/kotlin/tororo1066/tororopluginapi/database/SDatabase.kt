@@ -46,14 +46,7 @@ abstract class SDatabase {
         return logger
     }
 
-    fun close() {
-        try {
-            thread.shutdownNow()
-        } catch (e: Exception) {
-            logger.warning("Failed to shutdown thread pool")
-            e.printStackTrace()
-        }
-        logger.info("Closing database connection")
+    fun closeLogger() {
         logger.handlers.filterIsInstance<FileHandler>().forEach { it.close() }
     }
 
