@@ -59,9 +59,9 @@ class SConfig(val plugin: JavaPlugin) {
         val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
         if (!file.exists()){
             file.parentFile.mkdirs()
-            val resource = plugin.getResource("${alwaysPath}/${path}.yml")
+            val resource = plugin.getResource("${if (alwaysPath.isNotEmpty()) "$alwaysPath/" else ""}$path.yml")
             if (resource != null){
-                plugin.saveResource("${alwaysPath}/${path}.yml",false)
+                plugin.saveResource("${if (alwaysPath.isNotEmpty()) "$alwaysPath/" else ""}$path.yml",false)
             } else {
                 file.createNewFile()
             }
