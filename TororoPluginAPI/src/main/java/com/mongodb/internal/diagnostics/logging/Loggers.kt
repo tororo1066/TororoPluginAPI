@@ -1,8 +1,17 @@
-package com.mongodb.internal.diagnostics.logging;
+//mongodbのLoggersを無効化する(クラスの上書き)
+package com.mongodb.internal.diagnostics.logging
 
-@SuppressWarnings("unused")
-public class Loggers {
-    public static Logger getLogger(String suffix) {
-        return new NoOpLogger(suffix);
+
+@Suppress("unused")
+class Loggers {
+
+
+    companion object {
+
+        @JvmStatic
+        fun getLogger(suffix: String): Logger {
+            return NoOpLogger(suffix)
+        }
     }
+
 }

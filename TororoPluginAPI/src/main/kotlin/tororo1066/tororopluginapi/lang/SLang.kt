@@ -104,7 +104,7 @@ class SLang(private val plugin: JavaPlugin) {
          * @param value {<数字>}の文字を置き換える
          */
         @Suppress("DEPRECATION")
-        fun CommandSender.sendTranslateMsg(msg: String, vararg value: String){
+        fun CommandSender.sendTranslateMsg(msg: String, vararg value: Any){
             if (this !is Player){
                 val defaultLang = langFile[defaultLanguage]
                 if (defaultLang == null){

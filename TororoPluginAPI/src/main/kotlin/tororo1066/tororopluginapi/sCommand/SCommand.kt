@@ -26,22 +26,6 @@ abstract class SCommand(
 
     private var commandNoFoundEvent : Consumer<SCommandData>? = null
 
-//    constructor(
-//        command: String,
-//        prefix: String = "",
-//        perm: String = "",
-//        plugin: JavaPlugin = SJavaPlugin.plugin
-//    ) : this(plugin, command) {
-//        this.prefix = prefix
-//        setPermission(perm)
-//    }
-
-//    @JvmName("setPermission1")
-//    fun setPermission(perm : String){
-//        this.perm = perm
-//        super.setPermission(perm)
-//    }
-
     final override fun setPermission(permission: String?) {
         this.perm = permission
         super.setPermission(permission)
