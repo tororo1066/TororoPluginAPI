@@ -59,7 +59,12 @@ class SConfig(val plugin: JavaPlugin) {
         val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
         if (!file.exists()){
             file.parentFile.mkdirs()
-            file.createNewFile()
+            val resource = plugin.getResource("${alwaysPath}/${path}.yml")
+            if (resource != null){
+                plugin.saveResource("${alwaysPath}/${path}.yml",false)
+            } else {
+                file.createNewFile()
+            }
         }
         return YamlConfiguration.loadConfiguration(file)
     }
