@@ -49,6 +49,27 @@ class SConfig(val plugin: JavaPlugin) {
         return YamlConfiguration.loadConfiguration(file)
     }
 
+    fun asyncGetConfig(path: String): CompletableFuture<YamlConfiguration?> {
+        return CompletableFuture.supplyAsync {
+            getConfig(path)
+        }
+    }
+
+    fun getOrCreateConfig(path: String): YamlConfiguration {
+        val file = File(plugin.dataFolder.path + "/${alwaysPath}/${path}.yml")
+        if (!file.exists()){
+            file.parentFile.mkdirs()
+            file.createNewFile()
+        }
+        return YamlConfiguration.loadConfiguration(file)
+    }
+
+    fun asyncGetOrCreateConfig(path: String): CompletableFuture<YamlConfiguration> {
+        return CompletableFuture.supplyAsync {
+            getOrCreateConfig(path)
+        }
+    }
+
     /**
      * configファイルのリストを取得する
      * ```java
