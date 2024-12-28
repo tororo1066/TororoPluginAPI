@@ -52,7 +52,7 @@ class SLang(private val plugin: JavaPlugin) {
         if (!file.exists()) file.mkdirs()
         val langList = plugin.getResource("LangFolder/lang.txt")
         langList?.bufferedReader()?.readLines()?.forEach {
-            if (File(file.path + "$it.yml").exists() && !overwrite)return@forEach
+            if (overwrite && File(plugin.dataFolder.path + "/LangFolder/${it}.yml").exists())return@forEach
             plugin.saveResource("LangFolder/${it}.yml",true)
         }
 
