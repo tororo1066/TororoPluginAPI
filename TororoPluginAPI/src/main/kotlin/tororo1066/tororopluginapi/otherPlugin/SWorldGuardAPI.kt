@@ -42,6 +42,10 @@ class SWorldGuardAPI {
         return ArrayList(regions)
     }
 
+    fun getRegion(world: World, id: String): ProtectedRegion? {
+        return container.get(BukkitAdapter.adapt(world))?.getRegion(id)
+    }
+
     /**
      * プレイヤーが特定のregionにいるか確認する
      * @param player プレイヤー
