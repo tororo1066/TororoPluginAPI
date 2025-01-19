@@ -28,7 +28,7 @@ import java.util.UUID
  * @constructor Material
  */
 @Suppress("DEPRECATION")
-open class SItem(protected val itemStack: ItemStack): Cloneable {
+open class SItem(protected var itemStack: ItemStack): Cloneable {
 
     constructor(material: Material) : this(ItemStack(material))
 
@@ -38,6 +38,10 @@ open class SItem(protected val itemStack: ItemStack): Cloneable {
 
     constructor(material: Material, amount: Int): this(ItemStack(material)){
         this.setItemAmount(amount)
+    }
+
+    init {
+        itemStack = itemStack.clone()
     }
 
     companion object{
