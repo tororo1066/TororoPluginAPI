@@ -31,36 +31,6 @@ abstract class SDatabase {
 
     abstract val isMongo: Boolean
 
-    protected var logger: Logger
-
-    private fun createLogger(): Logger {
-        val logger = Logger.getLogger(this.javaClass.simpleName)
-        logger.useParentHandlers = false
-        logger.level = UsefulUtility.sTry({ Level.parse(loggerLevel) }, { Level.INFO })
-        val file = File(plugin.dataFolder.path + File.separator + "logs")
-        if (!file.exists()){
-            file.mkdirs()
-        }
-        val handler = FileHandler(plugin.dataFolder.path + File.separator + "logs" + File.separator + "database.log", true)
-        handler.formatter = SDatabaseLoggerFormatter()
-        logger.addHandler(handler)
-        return logger
-    }
-
-    fun close() {
-        try {
-            thread.shutdown()
-            if (!thread.awaitTermination(10, TimeUnit.SECONDS)) {
-                thread.shutdownNow()
-            }
-        } catch (e: Exception) {
-            logger.warning("Failed to shutdown thread pool")
-            e.printStackTrace()
-        }
-        logger.info("Closing database connection")
-        logger.handlers.filterIsInstance<FileHandler>().forEach { it.close() }
-    }
-
     constructor(plugin: JavaPlugin){
         this.plugin = plugin
         val yml = plugin.config
@@ -73,7 +43,6 @@ abstract class SDatabase {
         db = yml.getString("database.db")
         url = yml.getString("database.url")
         loggerLevel = yml.getString("database.loggerLevel")?:"INFO"
-        logger = createLogger()
     }
 
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): this(plugin){
@@ -103,7 +72,6 @@ abstract class SDatabase {
             url = yml.getString("database.url")
             loggerLevel = yml.getString("database.loggerLevel")?:"INFO"
         }
-        logger = createLogger()
     }
 
 

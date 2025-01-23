@@ -16,8 +16,6 @@ class SMySQL: SDatabase {
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): super(plugin, configFile, configPath)
 
     override fun open(): Connection {
-        logger.info("Opening MySQL connection")
-        logger.config("Host: $host, Port: $port, User: $user, Database: $db")
         val conn: Connection
         try {
             if (host == null){
@@ -37,9 +35,7 @@ class SMySQL: SDatabase {
             }
             Class.forName("com.mysql.cj.jdbc.Driver")
             conn = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.db + "?useSSL=false", this.user, this.pass)
-            logger.info("MySQL connection opened.")
         } catch (e : SQLException){
-            logger.severe("Failed to open MySQL connection.")
             throw e
         }
 
@@ -47,7 +43,6 @@ class SMySQL: SDatabase {
     }
 
     override fun createTable(table: String, map: Map<String, SDBVariable<*>>): Boolean {
-        logger.info("Creating table $table")
         val conn = open()
         val queryBuilder = StringBuilder()
         queryBuilder.append("create table if not exists $table (")
@@ -59,20 +54,12 @@ class SMySQL: SDatabase {
         { (if (it.value.index == SDBVariable.Index.PRIMARY) "${it.value.index!!.tableString} (${it.key})" else "${it.value.index!!.tableString} ${it.key} (${it.key})") + if (it.value.index!!.usingBTREE) " using btree" else "" } else "")
         queryBuilder.append(")")
 
-        logger.config("Query: $queryBuilder")
-
         return try {
             val stmt = conn.createStatement()
             val result = stmt.execute(queryBuilder.toString())
             stmt.close()
-            if (result){
-                logger.info("Table $table created.")
-            } else {
-                logger.severe("Failed to create table $table.")
-            }
             result
         } catch (e: Exception){
-            logger.severe("Failed to create table $table.")
             e.printStackTrace()
             false
         } finally {
@@ -81,7 +68,6 @@ class SMySQL: SDatabase {
     }
 
     override fun insert(table: String, map: Map<String, Any?>): Boolean {
-        logger.info("Inserting data to $table")
         val conn = open()
         val builder = StringBuilder("?")
         for (i in 1 until map.size){
@@ -93,18 +79,9 @@ class SMySQL: SDatabase {
             stmt.setObject(index+1, any)
         }
 
-        logger.config("Query: $stmt")
-
         return try {
-            val result = stmt.execute()
-            if (result){
-                logger.info("Data inserted to $table.")
-            } else {
-                logger.severe("Failed to insert data to $table.")
-            }
-            result
+            stmt.execute()
         } catch (e: Exception){
-            logger.severe("Failed to insert data to $table.")
             e.printStackTrace()
             false
         } finally {
@@ -119,7 +96,6 @@ class SMySQL: SDatabase {
 
     @Suppress("UNCHECKED_CAST")
     override fun update(table: String, update: Any, condition: SDBCondition): Boolean {
-        logger.info("Updating data in $table")
         val conn = open()
         val map = update as Map<String, Any>
         val query = "update $table set ${
@@ -130,18 +106,9 @@ class SMySQL: SDatabase {
             stmt.setObject(index+1, any)
         }
 
-        logger.config("Query: $stmt")
-
         return try {
-            val result = stmt.execute()
-            if (result){
-                logger.info("Data updated in $table.")
-            } else {
-                logger.severe("Failed to update data in $table.")
-            }
-            result
+            stmt.execute()
         } catch (e: Exception){
-            logger.severe("Failed to update data in $table.")
             e.printStackTrace()
             false
         } finally {
@@ -152,20 +119,14 @@ class SMySQL: SDatabase {
     }
 
     override fun delete(table: String, condition: SDBCondition): Boolean {
-        logger.info("Deleting data from $table")
         val conn = open()
         val query = "delete from $table ?"
         val stmt = conn.prepareStatement(query)
         stmt.setString(1, condition.build())
 
-        logger.config("Query: $stmt")
-
         return try {
-            val result = stmt.execute()
-            logger.info("Data deleted from $table.")
-            result
+            stmt.execute()
         } catch (e: Exception){
-            logger.severe("Failed to delete data from $table.")
             e.printStackTrace()
             false
         } finally {
@@ -175,7 +136,6 @@ class SMySQL: SDatabase {
     }
 
     override fun query(query: String): List<SDBResultSet> {
-        logger.info("Executing query: $query")
         val conn = open()
         val stmt: Statement
         val rs: ResultSet
@@ -185,7 +145,6 @@ class SMySQL: SDatabase {
             stmt.setEscapeProcessing(true)
             rs = stmt.executeQuery(query)
         } catch (e : SQLException) {
-            logger.severe("Failed to execute query: $query")
             e.printStackTrace()
             return arrayListOf()
         }
@@ -206,10 +165,8 @@ class SMySQL: SDatabase {
                 }
                 result.add(SDBResultSet(data))
             }
-            logger.info("Query executed successfully.")
             return result
         } catch (e : Exception){
-            logger.severe("Failed to get result from query: $query")
             e.printStackTrace()
             return arrayListOf()
         } finally {
@@ -220,21 +177,13 @@ class SMySQL: SDatabase {
     }
 
     override fun execute(query: String): Boolean {
-        logger.info("Executing execute: $query")
         val conn = open()
         val stmt = conn.createStatement()
 
         return try {
             stmt.setEscapeProcessing(true)
-            val result = stmt.execute(query)
-            if (result){
-                logger.info("Query executed successfully.")
-            } else {
-                logger.severe("Failed to execute execute: $query")
-            }
-            result
+            stmt.execute(query)
         } catch (e: Exception){
-            logger.severe("Failed to execute execute: $query")
             e.printStackTrace()
             false
         } finally {
