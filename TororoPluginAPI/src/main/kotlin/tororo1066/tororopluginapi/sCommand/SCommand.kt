@@ -13,6 +13,7 @@ import tororo1066.tororopluginapi.lang.LangEditor
 import tororo1066.tororopluginapi.lang.SLang
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import java.util.function.Consumer
+import java.util.function.Function
 
 abstract class SCommand(
     private val command: String,
@@ -166,18 +167,17 @@ abstract class SCommand(
                 if (it.startsWith(argString) || argString.isBlank()) result.add(it)
             }
 
-            arg.changeableAllowString.forEach {
-                it.getAllowString(data).forEach { s ->
-                    if (s.startsWith(argString) || argString.isBlank()){
-                        result.add(s)
-                    }
+            arg.allowStringFunctions.forEach { func ->
+                val list = func.apply(data)
+                list.forEach {
+                    if (it.startsWith(argString) || argString.isBlank()) result.add(it)
                 }
             }
-            arg.changeableAlias.forEach {
-                it.getAlias(data).forEach { s ->
-                    if (s.startsWith(argString) || argString.isBlank()){
-                        result.add(s)
-                    }
+
+            arg.aliasFunctions.forEach { func ->
+                val list = func.apply(data)
+                list.forEach {
+                    if (it.startsWith(argString) || argString.isBlank()) result.add(it)
                 }
             }
         }
@@ -214,10 +214,8 @@ abstract class SCommand(
             })
 
         addCommand(SCommandObject().addArg(SCommandArg().addAllowString("debug"))
-            .addArg(SCommandArg().addChangeableAllowString(object : ChangeableAllowString() {
-                override fun getAllowString(data: SCommandData): ArrayList<String> {
-                    return SDebug.debugType
-                }
+            .addArg(SCommandArg().addAllowStringFunction(Function { _ ->
+                SDebug.debugType
             }))
             .setNormalExecutor {
                 if (it.sender is Player){

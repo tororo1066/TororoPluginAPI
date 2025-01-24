@@ -9,8 +9,11 @@ class SCommandArg() {
 
     val allowType = ArrayList<SCommandArgType>()
 
-    val changeableAllowString = ArrayList<ChangeableAllowString>()
-    val changeableAlias = ArrayList<ChangeableAlias>()
+//    val changeableAllowString = ArrayList<ChangeableAllowString>()
+//    val changeableAlias = ArrayList<ChangeableAlias>()
+
+    var allowStringFunctions = ArrayList<Function<SCommandData,Collection<String>>>()
+    var aliasFunctions = ArrayList<Function<SCommandData,Collection<String>>>()
 
     constructor(allowString: String) : this() {
         addAllowString(allowString)
@@ -79,13 +82,23 @@ class SCommandArg() {
         return this
     }
 
-    fun addChangeableAllowString(changeableAllowString: ChangeableAllowString): SCommandArg {
-        this.changeableAllowString.add(changeableAllowString)
+//    fun addChangeableAllowString(changeableAllowString: ChangeableAllowString): SCommandArg {
+//        this.changeableAllowString.add(changeableAllowString)
+//        return this
+//    }
+//
+//    fun addChangeableAlias(changeableAlias: ChangeableAlias): SCommandArg {
+//        this.changeableAlias.add(changeableAlias)
+//        return this
+//    }
+
+    fun addAllowStringFunction(function: Function<SCommandData,Collection<String>>): SCommandArg {
+        this.allowStringFunctions.add(function)
         return this
     }
 
-    fun addChangeableAlias(changeableAlias: ChangeableAlias): SCommandArg {
-        this.changeableAlias.add(changeableAlias)
+    fun addAliasFunction(function: Function<SCommandData,Collection<String>>): SCommandArg {
+        this.aliasFunctions.add(function)
         return this
     }
 
@@ -102,12 +115,12 @@ class SCommandArg() {
 
     fun matches(arg : String, data: SCommandData): Boolean {
         if (!allMatch(arg))return false
-        if (allowString.isEmpty() && changeableAllowString.isEmpty())return true
+        if (allowString.isEmpty() && allowStringFunctions.isEmpty())return true
         for (string in allowString){
             if (string.equals(arg,true))return true
         }
-        for (changeable in changeableAllowString){
-            if (changeable.getAllowString(data).contains(arg))return true
+        for (function in allowStringFunctions){
+            if (function.apply(data).contains(arg))return true
         }
         return false
     }
