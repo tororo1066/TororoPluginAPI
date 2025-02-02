@@ -98,6 +98,8 @@ abstract class SJavaPlugin() : JavaPlugin() {
      */
     abstract fun onStart()
 
+    abstract fun onEnd()
+
     override fun onLoad() {
         plugin = this
     }
@@ -129,12 +131,21 @@ abstract class SJavaPlugin() : JavaPlugin() {
             folder = split
         }
         val instancedClasses = HashMap<Class<*>,Any>()
+        fun getOrCreate(clazz: Class<*>): Any {
+            if (clazz.superclass == JavaPlugin::class.java)return this
+            if (instancedClasses.contains(clazz))return instancedClasses[clazz]!!
+            return clazz.getConstructor().newInstance()
+        }
+
         javaClass.protectionDomain.codeSource.location.getClasses(folder).forEach { clazz ->
-            if (UsefulUtility.sTry({clazz.getConstructor()}) { null } == null){
+            if (clazz.isAnonymousClass)return@forEach
+            try {
+                clazz.getConstructor()
+            } catch (e: Throwable){
                 return@forEach
             }
             if (deprecatedMode && clazz.superclass == SCommand::class.java){
-                val instance = clazz.getConstructor().newInstance() as SCommand
+                val instance = getOrCreate(clazz) as SCommand
                 clazz.declaredFields.forEach second@ {
                     if (!it.isAnnotationPresent(SCommandBody::class.java))return@second
                     if (it.type != SCommandObject::class.java)return@second
@@ -155,10 +166,9 @@ abstract class SJavaPlugin() : JavaPlugin() {
                     if (!method.isAnnotationPresent(SEventHandler::class.java))return@second
                     if (method.parameterTypes.size != 1)return@second
                     val sEvent = method.getAnnotation(SEventHandler::class.java)
-                    val event = method.parameterTypes[0]
                     if (!sEvent.autoRegister)return@second
-                    val instance =
-                        if (instancedClasses.contains(clazz)) instancedClasses[clazz]!! else clazz.getConstructor().newInstance()
+                    val event = method.parameterTypes[0]
+                    val instance = getOrCreate(clazz)
                     instancedClasses[clazz] = instance
                     val listener = object : Listener, EventExecutor {
                         override fun execute(listener: Listener, e: Event) {
@@ -172,6 +182,11 @@ abstract class SJavaPlugin() : JavaPlugin() {
 
             }
         }
+    }
+
+    override fun onDisable() {
+        onEnd()
+        SQueue.shutdownAll()
     }
 
     /**
@@ -240,6 +255,7 @@ private fun URL.getClasses(folder: String): List<Class<*>> {
     src.forEach { s ->
         JarFile(s).stream().filter { it.name.endsWith(".class") }.forEach second@{
             val name = it.name.replace('/', '.').substring(0, it.name.length - 6)
+            if (name.startsWith("tororo1066.tororopluginapi"))return@second
             if (!name.contains(folder))return@second
 
             kotlin.runCatching {

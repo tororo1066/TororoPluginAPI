@@ -21,4 +21,6 @@ class TororoPlugin: SJavaPlugin() {
         TororoCommandV2()
     }
 
+    override fun onEnd() {}
+
 }

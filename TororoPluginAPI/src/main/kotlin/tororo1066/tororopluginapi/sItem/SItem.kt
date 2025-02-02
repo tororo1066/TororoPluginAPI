@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
+import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.SStr.Companion.toSStr
 import tororo1066.tororopluginapi.sInventory.SInventoryItem
@@ -292,6 +293,16 @@ open class SItem(protected var itemStack: ItemStack): Cloneable {
      */
     open fun <T : Any, Z: Any> getCustomData(plugin: JavaPlugin, key: String, type: PersistentDataType<T,Z>): Z? {
         return getMeta().persistentDataContainer.get(NamespacedKey(plugin, key), type)
+    }
+
+    open fun <T: Any, Z: Any> getCustomData(key: String, type: PersistentDataType<T,Z>): Z? {
+        return getMeta().persistentDataContainer.get(NamespacedKey(SJavaPlugin.plugin, key), type)
+    }
+
+    open fun removeCustomData(plugin: JavaPlugin, key: String) {
+        val meta = this.getMeta()
+        meta.persistentDataContainer.remove(NamespacedKey(plugin,key))
+        this.itemStack.itemMeta = meta
     }
 
 
