@@ -27,7 +27,7 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
         this.resourceList = items
     }
 
-    fun renderBar(){
+    open fun renderBar(){
         val slots = 45..53
 
         val backGround = SItem(Material.BLUE_STAINED_GLASS_PANE).setDisplayName(" ").toSInventoryItem().setCanClick(false)
@@ -69,7 +69,7 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
 
     }
 
-    fun renderInventory(category: String, page: Int) {
+    open fun renderInventory(category: String, page: Int) {
         clear()
         renderBar()
         setCategoryName(category)
