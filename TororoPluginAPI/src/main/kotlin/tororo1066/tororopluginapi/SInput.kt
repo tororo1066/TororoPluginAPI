@@ -17,8 +17,9 @@ import tororo1066.tororopluginapi.sEvent.SEvent
 import tororo1066.tororopluginapi.utils.toIntProgressionOrNull
 import tororo1066.tororopluginapi.utils.toIntRangeOrNull
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import java.util.function.Consumer
+import java.util.function.Predicate
 import kotlin.random.Random
 
 class SInput(private val plugin: JavaPlugin) {
@@ -27,7 +28,7 @@ class SInput(private val plugin: JavaPlugin) {
         p: Player,
         type: Class<*>,
         message: String = "§a/<入れるデータ(${type.simpleName})>\n§a/cancelでキャンセル",
-        action: Consumer<String>,
+        action: Predicate<String>,
         onCancel: ()->Unit = {}
     ) {
         p.sendMessage(message)
@@ -42,7 +43,9 @@ class SInput(private val plugin: JavaPlugin) {
                 return@biRegister
             }
             val msg = cEvent.message.replaceFirst("/", "")
-            action.accept(msg)
+            if (!action.test(msg)) {
+                return@biRegister
+            }
 
             unit.unregister()
         }
@@ -56,13 +59,14 @@ class SInput(private val plugin: JavaPlugin) {
         action: Consumer<T?>,
         onCancel: () -> Unit = {}
     ) {
-        sendInputCUI0(p, type, message, Consumer {
+        sendInputCUI0(p, type, message, Predicate {
             val (blank, value) = modifyClassValue(type, it, allowEmpty = true)
             if (!blank && value == null) {
                 p.sendMessage(errorMsg.invoke(it))
-                return@Consumer
+                return@Predicate false
             }
             action.accept(value)
+            true
         }, onCancel)
     }
 
@@ -74,13 +78,14 @@ class SInput(private val plugin: JavaPlugin) {
         action: Consumer<T>,
         onCancel: () -> Unit = {}
     ) {
-        sendInputCUI0(p, type, message, Consumer {
+        sendInputCUI0(p, type, message, Predicate {
             val (_, value) = modifyClassValue(type, it)
             if (value == null) {
                 p.sendMessage(errorMsg.invoke(it))
-                return@Consumer
+                return@Predicate false
             }
             action.accept(value)
+            true
         }, onCancel)
     }
 

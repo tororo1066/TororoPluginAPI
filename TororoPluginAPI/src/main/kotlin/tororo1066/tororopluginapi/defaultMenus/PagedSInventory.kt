@@ -1,7 +1,6 @@
 package tororo1066.tororopluginapi.defaultMenus
 
 import org.bukkit.Material
-import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.SJavaPlugin
 import tororo1066.tororopluginapi.sInventory.SInventory
@@ -78,7 +77,7 @@ open class PagedSInventory(plugin: JavaPlugin,name: String,row: Int): SInventory
     fun renderInventory(page: Int) {
         clear()
 
-        for (i in 0 until row*9) {
+        for (i in 0 until size*9) {
             setItem(i, this.resourceList[page][i]?:continue)
         }
         renderBar()

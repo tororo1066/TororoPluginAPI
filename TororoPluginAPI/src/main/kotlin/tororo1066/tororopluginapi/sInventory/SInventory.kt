@@ -7,8 +7,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.event.inventory.InventoryDragEvent
-import org.bukkit.event.inventory.InventoryMoveItemEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
@@ -37,7 +35,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
     }
 
     var name = "Inventory"
-    var row = 9
+    var size = 9
     var inv : Inventory
 
     protected val thread: ExecutorService = Executors.newCachedThreadPool()
@@ -65,12 +63,12 @@ abstract class SInventory(val plugin: JavaPlugin) {
         if (row !in 1..6){
             throw IndexOutOfBoundsException("SInventoryのrowは1~6で指定してください")
         }
-        this.row = row*9
-        this.inv = Bukkit.createInventory(null,this.row,this.name)
+        this.size = row*9
+        this.inv = Bukkit.createInventory(null,this.size,this.name)
     }
 
     init {
-        this.inv = Bukkit.createInventory(null,row,name)
+        this.inv = Bukkit.createInventory(null,size,name)
     }
 
     fun getSInvItems(): HashMap<Int, SInventoryItem> {
@@ -240,7 +238,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
      * @param item SInventoryItem
      */
     fun fillItem(item: SInventoryItem){
-        setItems(0 until row,item)
+        setItems(0 until size,item)
     }
 
 
@@ -331,7 +329,7 @@ abstract class SInventory(val plugin: JavaPlugin) {
             }
             val saveItems = HashMap<Int,ItemStack>()
             if (savePlaceItems){
-                (0 until row).forEach {
+                (0 until size).forEach {
                     if (items.containsKey(it))return@forEach
                     saveItems[it] = inv.getItem(it)?:return@forEach
                 }
