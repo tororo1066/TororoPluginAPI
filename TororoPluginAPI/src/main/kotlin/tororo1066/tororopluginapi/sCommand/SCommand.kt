@@ -77,6 +77,7 @@ abstract class SCommand(
         super.setPermission(perm)
         if (SStr.isPaper()) {
             super.setAliases(alias)
+            Bukkit.getCommandMap().knownCommands.remove(command)?.unregister(Bukkit.getCommandMap())
             Bukkit.getCommandMap().register(plugin.name, this)
         } else {
             val register = register() ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")
@@ -185,15 +186,6 @@ abstract class SCommand(
     }
 
     override fun tabComplete(sender: CommandSender, alias: String, args: Array<out String>): MutableList<String> {
-        return onTabComplete(sender, this, alias, args) ?: ArrayList()
-    }
-
-    override fun tabComplete(
-        sender: CommandSender,
-        alias: String,
-        args: Array<out String>,
-        location: Location?
-    ): MutableList<String> {
         return onTabComplete(sender, this, alias, args) ?: ArrayList()
     }
 
