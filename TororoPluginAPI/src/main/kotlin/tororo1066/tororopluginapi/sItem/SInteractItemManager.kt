@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.sItem
 
 import net.md_5.bungee.api.ChatMessageType
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerDropItemEvent
@@ -53,8 +54,12 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
         items.clear()
     }
 
-    private fun getItem(itemStack: ItemStack): SInteractItem? {
+    fun getItem(itemStack: ItemStack): SInteractItem? {
         return items.values.firstOrNull { it.equalFunc(itemStack,it) }
+    }
+
+    fun getItem(player: Player, slot: EquipmentSlot): SInteractItem? {
+        return getItem(player.inventory.getItem(slot))
     }
 
     init {
