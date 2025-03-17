@@ -42,7 +42,7 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
     }
 
     init {
-        itemStack = getItemStackForAdd.clone()
+        itemStack = itemStack.clone()
     }
 
     companion object{
@@ -148,12 +148,12 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
     }
 
     private fun getMeta(): ItemMeta {
-        return if (getItemStackForAdd.hasItemMeta()) getItemStackForAdd.itemMeta else Bukkit.getItemFactory().getItemMeta(getItemStackForAdd.type)
+        return if (itemStack.hasItemMeta()) itemStack.itemMeta else Bukkit.getItemFactory().getItemMeta(itemStack.type)
     }
 
 
     open fun setItemAmount(amount: Int): SItem {
-        getItemStackForAdd.amount = amount
+        itemStack.amount = amount
         return this
     }
 
@@ -164,7 +164,7 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
     open fun setDisplayName(name : String): SItem {
         val meta = getMeta()
         meta.setDisplayName(name)
-        getItemStackForAdd.itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -175,7 +175,7 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
         } else {
             meta.setDisplayNameComponent(sStr.toBukkitComponent())
         }
-        getItemStackForAdd.itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -194,7 +194,7 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
     open fun setLore(lore : List<String>): SItem {
         val meta = getMeta()
         meta.lore = lore
-        getItemStackForAdd.itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -209,7 +209,7 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
         } else {
             meta.loreComponents = sStr.map { it.toBukkitComponent() }
         }
-        getItemStackForAdd.itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -258,7 +258,7 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
     open fun setCustomModelData(cmd : Int): SItem {
         val meta = getMeta()
         meta.setCustomModelData(cmd)
-        getItemStackForAdd.itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -281,7 +281,7 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
     open fun <T : Any, Z: Any> setCustomData(plugin: JavaPlugin, key: String, type : PersistentDataType<T,Z>, value: Z): SItem {
         val meta = this.getMeta()
         meta.persistentDataContainer[NamespacedKey(plugin,key),type] = value
-        this.getItemStackForAdd.itemMeta = meta
+        this.itemStack.itemMeta = meta
         return this
     }
 
@@ -302,7 +302,7 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
     open fun removeCustomData(plugin: JavaPlugin, key: String) {
         val meta = this.getMeta()
         meta.persistentDataContainer.remove(NamespacedKey(plugin,key))
-        this.getItemStackForAdd.itemMeta = meta
+        this.itemStack.itemMeta = meta
     }
 
 
@@ -312,7 +312,7 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
      * @return 変更したアイテム
      */
     open fun setEnchantment(enchantment: Enchantment, level: Int): SItem {
-        getItemStackForAdd.addUnsafeEnchantment(enchantment,level)
+        itemStack.addUnsafeEnchantment(enchantment,level)
         return this
     }
 
@@ -325,28 +325,28 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
     open fun setSkullOwner(uuid: UUID): SItem {
         val meta = (getMeta()) as SkullMeta
         meta.owningPlayer = Bukkit.getOfflinePlayer(uuid)
-        getItemStackForAdd.itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
     open fun addPattern(pattern: Pattern): SItem {
         val meta = (getMeta()) as BannerMeta
         meta.addPattern(pattern)
-        getItemStackForAdd.itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
     open fun addItemFlags(vararg flags: ItemFlag): SItem {
         val meta = getMeta()
         meta.addItemFlags(*flags)
-        getItemStackForAdd.itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
     open fun removeItemFlags(vararg flags: ItemFlag): SItem {
         val meta = getMeta()
         meta.removeItemFlags(*flags)
-        getItemStackForAdd.itemMeta = meta
+        itemStack.itemMeta = meta
         return this
     }
 
@@ -358,15 +358,15 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
     }
 
     open fun build(): ItemStack {
-        return getItemStackForAdd.clone()
+        return itemStack.clone()
     }
 
     override fun getItemStackForAdd(): ItemStack {
-        return getItemStackForAdd.clone()
+        return itemStack.clone()
     }
 
     public override fun clone(): SItem {
-        return SItem(getItemStackForAdd.clone())
+        return SItem(itemStack.clone())
     }
 
     /**
