@@ -16,7 +16,7 @@ class SInteractItem(private val manager: SInteractItemManager, val itemStack: It
     var interactCoolDown = 0
     var initialCoolDown = 0
 
-    var equalFunc: (ItemStack, SInteractItem) -> Boolean =  { itemStack, sInteractItem -> itemStack == sInteractItem.itemStack }
+    var equalFunc: (ItemStack, SInteractItem) -> Boolean =  { itemStack, sInteractItem -> itemStack == sInteractItem.getItemStackForAdd }
 
     var task: BukkitTask? = null
 
@@ -25,11 +25,11 @@ class SInteractItem(private val manager: SInteractItemManager, val itemStack: It
     constructor(manager: SInteractItemManager,sItem: SItem): this(manager, sItem.build())
 
     init {
-        manager.items[itemStack.apply { amount = 1 }] = this
+        manager.items[getItemStackForAdd.apply { amount = 1 }] = this
     }
 
-    override fun getItemStack(): ItemStack {
-        return itemStack.clone()
+    override fun getItemStackForAdd(): ItemStack {
+        return getItemStackForAdd.clone()
     }
 
     fun setInteractEvent(e: (PlayerInteractEvent,SInteractItem) -> Boolean): SInteractItem {
@@ -79,7 +79,7 @@ class SInteractItem(private val manager: SInteractItemManager, val itemStack: It
 
     fun delete(){
         task?.cancel()
-        manager.items.remove(itemStack)
+        manager.items.remove(getItemStackForAdd)
     }
 
 

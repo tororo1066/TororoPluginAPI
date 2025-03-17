@@ -5,10 +5,10 @@ import tororo1066.tororopluginapi.sItem.InventoryAddable
 
 fun Inventory.addItem(vararg items: InventoryAddable) {
     items.forEach {
-        addItem(it.getItemStack())
+        addItem(it.getItemStackForAdd())
     }
 }
 
 fun Inventory.setItem(index: Int, item: InventoryAddable) {
-    setItem(index, item.getItemStack())
+    setItem(index, item.getItemStackForAdd())
 }
