@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
 
-class SInteractItem(private val manager: SInteractItemManager, itemStack: ItemStack): SItem(itemStack) {
+class SInteractItem(private val manager: SInteractItemManager, val itemStack: ItemStack): InventoryAddable {
 
     val interactEvents = ArrayList<(PlayerInteractEvent, SInteractItem)->Boolean>()
     val dropEvents = ArrayList<(PlayerDropItemEvent, SInteractItem)->Unit>()
@@ -26,6 +26,10 @@ class SInteractItem(private val manager: SInteractItemManager, itemStack: ItemSt
 
     init {
         manager.items[itemStack.apply { amount = 1 }] = this
+    }
+
+    override fun getItemStack(): ItemStack {
+        return itemStack.clone()
     }
 
     fun setInteractEvent(e: (PlayerInteractEvent,SInteractItem) -> Boolean): SInteractItem {

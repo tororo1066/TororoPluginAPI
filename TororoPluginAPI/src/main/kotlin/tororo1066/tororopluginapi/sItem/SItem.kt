@@ -29,7 +29,7 @@ import java.util.UUID
  * @constructor Material
  */
 @Suppress("DEPRECATION")
-open class SItem(protected var itemStack: ItemStack): Cloneable {
+open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddable {
 
     constructor(material: Material) : this(ItemStack(material))
 
@@ -358,7 +358,11 @@ open class SItem(protected var itemStack: ItemStack): Cloneable {
     }
 
     open fun build(): ItemStack {
-        return itemStack
+        return itemStack.clone()
+    }
+
+    override fun getItemStack(): ItemStack {
+        return itemStack.clone()
     }
 
     public override fun clone(): SItem {
