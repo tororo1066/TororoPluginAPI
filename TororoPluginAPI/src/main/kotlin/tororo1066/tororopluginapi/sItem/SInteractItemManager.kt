@@ -26,24 +26,20 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
     val items = HashMap<ItemStack,SInteractItem>()
     val sEvent = SEvent(plugin)
 
-    fun createSInteractItem(sItem: SItem): SInteractItem {
-        return SInteractItem(this,sItem)
-    }
-
-    fun createSInteractItem(itemStack: ItemStack): SInteractItem {
-        return SInteractItem(this,itemStack)
-    }
-
-    fun createSInteractItem(material: Material): SInteractItem {
-        return SInteractItem(this,material)
-    }
-
-    fun createSInteractItem(itemStack: ItemStack, noDump: Boolean): SInteractItem {
+    fun createSInteractItem(itemStack: ItemStack, noDump: Boolean = false): SInteractItem {
         return if (noDump){
             SInteractItem(this,SItem(itemStack).setCustomData(plugin,"tororopluginapi", PersistentDataType.DOUBLE,Random.nextDouble()))
         } else {
-            createSInteractItem(itemStack)
+            SInteractItem(this,itemStack)
         }
+    }
+
+    fun createSInteractItem(material: Material, noDump: Boolean = false): SInteractItem {
+        return createSInteractItem(ItemStack(material),noDump)
+    }
+
+    fun createSInteractItem(sItem: SItem, noDump: Boolean = false): SInteractItem {
+        return createSInteractItem(sItem.build(),noDump)
     }
 
     fun unregister() {
