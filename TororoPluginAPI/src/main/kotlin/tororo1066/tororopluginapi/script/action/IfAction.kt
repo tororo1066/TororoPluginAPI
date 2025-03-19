@@ -14,7 +14,6 @@ open class IfAction(name: String): AbstractAction(name) {
             .withVariables(function, scriptFile)
         if (expression.evaluate().booleanValue){
             val lines = loadNextLines(scriptFile, lineIndex, separator)
-            //TODO: 成功したときにIf外のActionが実行されないから修正する
             lines.forEach {
                 if (it.separator != separator+1){
                     return@forEach

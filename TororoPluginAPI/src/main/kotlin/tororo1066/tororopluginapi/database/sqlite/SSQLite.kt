@@ -109,6 +109,7 @@ class SSQLite: SDatabase {
 
         return try {
             stmt.execute()
+            true
         } catch (e: Exception){
             e.printStackTrace()
             false

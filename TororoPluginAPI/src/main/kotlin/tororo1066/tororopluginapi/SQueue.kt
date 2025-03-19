@@ -1,10 +1,11 @@
 package tororo1066.tororopluginapi
 
+import org.bukkit.Bukkit
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 
-class SQueue(val prefix: String = "Undefined") {
+class SQueue(val prefix: String = "Undefined", val sync: Boolean = false) {
 
     companion object {
         val queues = arrayListOf<SQueue>()
@@ -25,8 +26,13 @@ class SQueue(val prefix: String = "Undefined") {
         executor.execute {
             while (true) {
                 try {
-                    queue.take().invoke()
-                } catch (e: InterruptedException) {
+                    val task = queue.take()
+                    if (sync) {
+                        Bukkit.getScheduler().runTask(SJavaPlugin.plugin, task)
+                    } else {
+                        task.invoke()
+                    }
+                } catch (_: InterruptedException) {
                     break
                 } catch (e: Exception) {
                     SJavaPlugin.plugin.logger.warning("$prefix: Error in queue")
