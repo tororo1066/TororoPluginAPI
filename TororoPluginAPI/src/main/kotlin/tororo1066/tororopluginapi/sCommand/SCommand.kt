@@ -32,10 +32,6 @@ abstract class SCommand(
         super.setPermission(permission)
     }
 
-    private fun register(): PluginCommand? {
-        return Bukkit.getPluginCommand(this.command)
-    }
-
     fun addCommand(command : SCommandObject){
         if (this.commands.contains(command))return
         this.commands.add(command)
@@ -77,10 +73,17 @@ abstract class SCommand(
         super.setPermission(perm)
         if (SStr.isPaper()) {
             super.setAliases(alias)
-            Bukkit.getCommandMap().knownCommands.remove(command)?.unregister(Bukkit.getCommandMap())
-            Bukkit.getCommandMap().register(plugin.name, this)
+            val commandMap = Bukkit.getCommandMap()
+            val knownCommands = commandMap.knownCommands
+            knownCommands.remove(command)?.unregister(commandMap)
+            knownCommands.remove("${plugin.name}:${command}")?.unregister(commandMap)
+            for (a in alias) {
+                knownCommands.remove(a)?.unregister(commandMap)
+                knownCommands.remove("${plugin.name}:$a")?.unregister(commandMap)
+            }
+            commandMap.register(plugin.name, this)
         } else {
-            val register = register() ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")
+            val register = Bukkit.getPluginCommand(this.command) ?: throw NullPointerException("\"${command}\"の登録に失敗しました。plugin.ymlを確認してください。")
             register.setExecutor(this)
             register.tabCompleter = this
         }
