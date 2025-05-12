@@ -1,10 +1,14 @@
 package tororo1066.tororopluginapi.config.paramConfig
 
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import tororo1066.tororopluginapi.SInput
 import tororo1066.tororopluginapi.SJavaPlugin
+import tororo1066.tororopluginapi.defaultMenus.SingleItemInventory
 import tororo1066.tororopluginapi.sInventory.SInventory
 import java.lang.reflect.Field
+import java.util.function.Consumer
 
 abstract class AbstractParameterType<T> {
 
@@ -102,7 +106,7 @@ class IntParameterType : AbstractParameterType<Int>() {
     }
 }
 
-class EnumParameterType<T : Enum<T>>(private val enumClass: Class<T>) : AbstractParameterType<T>() {
+abstract class EnumParameterType<T : Enum<T>>(private val enumClass: Class<T>) : AbstractParameterType<T>() {
     override fun getConfigValue(value: T): Any {
         return value.name
     }
@@ -130,5 +134,42 @@ class EnumParameterType<T : Enum<T>>(private val enumClass: Class<T>) : Abstract
 
     override fun getStringInfo(value: T): String {
         return value.name
+    }
+}
+
+class ItemStackParameterType: AbstractParameterType<ItemStack>() {
+    override fun getConfigValue(value: ItemStack): Any {
+        return value
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun getValue(configValue: Any): ItemStack {
+        return ItemStack.deserialize(configValue as Map<String, Any>)
+    }
+
+    override fun sendUpdate(
+        p: Player,
+        inventory: SInventory,
+        instance: Any,
+        field: Field,
+        key: String,
+        currentValue: ItemStack?
+    ) {
+        val itemSelectMenu = SingleItemInventory(SJavaPlugin.plugin, "アイテムを選択してください")
+        itemSelectMenu.nowItem = currentValue ?: ItemStack(Material.AIR)
+        itemSelectMenu.onConfirm = Consumer { item ->
+            field.setWithAccessible(instance, item)
+            inventory.open(p)
+        }
+        inventory.moveChildInventory(itemSelectMenu, p)
+    }
+
+    override fun getStringInfo(value: ItemStack): String {
+        val itemMeta = if (value.hasItemMeta()) value.itemMeta else return value.type.name
+        return if (itemMeta.hasDisplayName()) {
+            itemMeta.displayName
+        } else {
+            value.type.name
+        }
     }
 }

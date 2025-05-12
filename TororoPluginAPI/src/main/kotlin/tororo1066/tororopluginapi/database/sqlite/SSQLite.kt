@@ -6,6 +6,7 @@ import tororo1066.tororopluginapi.database.SDBResultSet
 import tororo1066.tororopluginapi.database.SDBVariable
 import tororo1066.tororopluginapi.database.SDatabase
 import tororo1066.tororopluginapi.mysql.ultimate.USQLCondition
+import java.io.File
 import java.sql.*
 
 class SSQLite: SDatabase {
@@ -18,10 +19,15 @@ class SSQLite: SDatabase {
     override fun open(): Connection {
         val conn: Connection
         try {
+            val db = db
             if (db == null){
                 throw NullPointerException("[SQLite] Database name is empty.")
             }
             Class.forName("org.sqlite.JDBC")
+            val file = File(plugin.dataFolder, "$db.db")
+            if (!file.parentFile.exists()){
+                file.parentFile.mkdirs()
+            }
             conn = DriverManager.getConnection("jdbc:sqlite:${plugin.dataFolder.absolutePath.replace("\\","/")}/${db}.db")
         }catch (e : SQLException){
             throw e

@@ -2,7 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven {
-            url = "https://papermc.io/repo/repository/maven-public/"
+            url = "https://repo.papermc.io/repository/maven-public/"
         }
     }
 }
@@ -13,5 +13,6 @@ include("NMSUtils:v1_19_3")
 include("NMSUtils:v1_20_1")
 include("NMSUtils:v1_20_4")
 include("NMSUtils:v1_21_1")
+include("NMSUtils:v1_21_4")
 include("CommandAPI")
 

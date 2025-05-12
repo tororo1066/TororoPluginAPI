@@ -26,7 +26,7 @@ interface IConfigParameters {
         return type.java.getConstructor().newInstance()
     }
 
-    fun setParameters(configurationSection: ConfigurationSection) {
+    fun loadParameters(configurationSection: ConfigurationSection) {
         getParameters().forEach { field ->
             val annotation = field.getAnnotation(Parameter::class.java)
             val path = annotation.key.ifEmpty { field.name }
@@ -35,7 +35,7 @@ interface IConfigParameters {
         }
     }
 
-    fun editGUI(): SInventory {
+    fun editGUI(configurationSection: ConfigurationSection): SInventory {
         return object : LargeSInventory("Edit") {
             override fun renderMenu(): Boolean {
                 val items = ArrayList<SInventoryItem>()
@@ -47,6 +47,25 @@ interface IConfigParameters {
                 setResourceItems(items)
                 return true
             }
+        }
+    }
+
+    fun setParameters(configurationSection: ConfigurationSection) {
+        getParameters().forEach { field ->
+            val annotation = field.getAnnotation(Parameter::class.java)
+            val path = annotation.key.ifEmpty { field.name }
+            val type = getTypeInstance(annotation.type)
+            configurationSection.setValue(path, field, type)
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> ConfigurationSection.setValue(path: String, field: Field, type: AbstractParameterType<T>) {
+        val value = field.get(this@IConfigParameters)
+        if (value is List<*>) {
+            set(path, value.map { type.getConfigValue(it as T) })
+        } else {
+            set(path, type.getConfigValue(value as T))
         }
     }
 

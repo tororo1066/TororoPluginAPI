@@ -1,4 +1,4 @@
-package tororo1066.nmsutils.v1_19_3
+package tororo1066.nmsutils.v1_21_4
 
 import com.mojang.brigadier.Message
 import com.mojang.brigadier.arguments.ArgumentType
@@ -15,8 +15,8 @@ import net.minecraft.network.chat.Component
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.block.Block
-import org.bukkit.craftbukkit.v1_19_R2.CraftServer
-import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock
+import org.bukkit.craftbukkit.CraftServer
+import org.bukkit.craftbukkit.block.CraftBlock
 import tororo1066.commandapi.SCommandV2Arg
 import tororo1066.commandapi.SCommandV2Argument
 import tororo1066.commandapi.SCommandV2Data
@@ -24,7 +24,7 @@ import tororo1066.commandapi.SCommandV2Literal
 import tororo1066.commandapi.argumentType.bukkit.EnchantArgument
 import tororo1066.commandapi.argumentType.bukkit.EntityArgument
 import tororo1066.nmsutils.SNms
-import tororo1066.nmsutils.v1_19_3.command.CommandArgumentsImpl
+import tororo1066.nmsutils.v1_21_4.command.CommandArgumentsImpl
 
 class SNmsImpl: SNms {
 
@@ -34,11 +34,11 @@ class SNmsImpl: SNms {
     }
 
     override fun registerCommand(command: SCommandV2Literal) {
-        val server = (Bukkit.getServer() as CraftServer).server
+        val craftServer = Bukkit.getServer() as CraftServer
+        val server = craftServer.server
         val converted = convertToBrigadier(command)
         converted.forEach {
-            server.vanillaCommandDispatcher.dispatcher.root.addChild(it.build())
-            server.resources.managers.commands.dispatcher.register(it)
+            server.commands.dispatcher.register(it)
         }
     }
 
@@ -113,7 +113,7 @@ class SNmsImpl: SNms {
 
         if (command.executors.isNotEmpty()) {
             builder.executes { context ->
-                val sender = context.source.entity?.getBukkitSender(context.source)?: context.source.bukkitSender
+                val sender = context.source.entity?.bukkitEntity?: context.source.bukkitSender
                 command.executors.forEach {
                     it(SCommandV2Data(sender, context.input.split(" ")[0], CommandArgumentsImpl(context)))
                 }
@@ -123,7 +123,7 @@ class SNmsImpl: SNms {
 
         if (command.requirements.isNotEmpty()) {
             builder.requires { source ->
-                val sender = source.entity?.getBukkitSender(source)?: source.bukkitSender
+                val sender = source.entity?.bukkitEntity?: source.bukkitSender
                 return@requires command.requirements.all {
                     it(sender)
                 }
@@ -138,5 +138,4 @@ class SNmsImpl: SNms {
     override fun translate(text: String, vararg variable: Any): Message {
         return Component.translatable(text, *variable)
     }
-
 }

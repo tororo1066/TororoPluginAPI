@@ -1,6 +1,9 @@
+import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
+
 plugins {
-    id "io.papermc.paperweight.userdev" version "1.7.4"
+    id "io.papermc.paperweight.userdev" version "2.0.0-beta.16"
 }
+paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.getREOBF_PRODUCTION()
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT'
     compileOnly project(":NMSUtils:base")
@@ -10,6 +13,6 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
-tasks.assemble {
-    dependsOn(tasks.reobfJar)
+tasks.jar {
+    dependsOn reobfJar
 }

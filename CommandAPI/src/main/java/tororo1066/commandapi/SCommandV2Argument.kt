@@ -38,4 +38,11 @@ class SCommandV2Argument(val name: String, val type: SCommandV2ArgType<*>) : SCo
             suggest(sender, data.label, data.args)
         }
     }
+
+    override fun copy(): SCommandV2Argument {
+        val copy = SCommandV2Argument(name, type)
+        super.copyTo(copy)
+        copy.suggests.addAll(suggests)
+        return copy
+    }
 }

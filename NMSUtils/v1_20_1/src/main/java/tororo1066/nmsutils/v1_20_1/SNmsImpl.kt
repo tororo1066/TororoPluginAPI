@@ -36,11 +36,13 @@ class SNmsImpl: SNms {
     override fun registerCommand(command: SCommandV2Literal) {
         val server = (Bukkit.getServer() as CraftServer).server
         val converted = convertToBrigadier(command)
-        server.vanillaCommandDispatcher.dispatcher.root.addChild(converted.build())
-        server.resources.managers.commands.dispatcher.register(converted)
+        converted.forEach {
+            server.vanillaCommandDispatcher.dispatcher.root.addChild(it.build())
+            server.resources.managers.commands.dispatcher.register(it)
+        }
     }
 
-    private fun convert(command: SCommandV2Arg): ArgumentBuilder<CommandSourceStack, *> {
+    private fun convert(command: SCommandV2Arg): List<ArgumentBuilder<CommandSourceStack, *>> {
         return when(command) {
             is SCommandV2Literal -> convertToBrigadier(command)
             is SCommandV2Argument -> convertToBrigadier(command, convertArgumentType(command))
@@ -48,13 +50,19 @@ class SNmsImpl: SNms {
         }
     }
 
-    private fun convertToBrigadier(command: SCommandV2Literal): LiteralArgumentBuilder<CommandSourceStack> {
-        return LiteralArgumentBuilder.literal<CommandSourceStack>(command.literal).apply {
-            applyCommand(command, this)
+    private fun convertToBrigadier(command: SCommandV2Literal): List<LiteralArgumentBuilder<CommandSourceStack>> {
+        val commands = ArrayList<LiteralArgumentBuilder<CommandSourceStack>>()
+        command.literal.forEach { literal ->
+            val builder = LiteralArgumentBuilder.literal<CommandSourceStack>(literal).apply {
+                applyCommand(command, this)
+            }
+            commands.add(builder)
         }
+
+        return commands
     }
 
-    private fun <T>convertToBrigadier(command: SCommandV2Argument, argumentType: ArgumentType<T>): RequiredArgumentBuilder<CommandSourceStack, T> {
+    private fun <T>convertToBrigadier(command: SCommandV2Argument, argumentType: ArgumentType<T>): List<RequiredArgumentBuilder<CommandSourceStack, T>> {
         val builder = RequiredArgumentBuilder.argument<CommandSourceStack, T>(command.name, argumentType).apply {
             if (command.suggests.isNotEmpty()) {
                 suggests { context, suggestionsBuilder ->
@@ -72,7 +80,7 @@ class SNmsImpl: SNms {
         builder.apply {
             applyCommand(command, this)
         }
-        return builder
+        return listOf(builder)
     }
 
     private val context: CommandBuildContext = Commands.createValidationContext(VanillaRegistries.createLookup())
@@ -96,8 +104,10 @@ class SNmsImpl: SNms {
             element.children.forEach { child ->
                 val converted = convert(child)
 
-                registerChildren(converted, child)
-                builder.then(converted)
+                converted.forEach {
+                    registerChildren(it, child)
+                    builder.then(it)
+                }
             }
         }
 

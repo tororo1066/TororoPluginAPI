@@ -11,12 +11,27 @@ abstract class SCommandV2Arg {
     val requirements = ArrayList<Requirement>()
     val executors = ArrayList<Executor>()
 
+    abstract fun copy(): SCommandV2Arg
+
+    protected fun copyTo(target: SCommandV2Arg) {
+        target.children.addAll(children.map { it.copy() })
+        target.requirements.addAll(requirements)
+        target.executors.addAll(executors)
+    }
+
     fun literal(literal: String): SCommandV2Literal {
         return literal(literal) {}
     }
 
     fun literal(literal: String, init: SCommandV2Literal.() -> Unit): SCommandV2Literal {
         val element = SCommandV2Literal(literal)
+        element.init()
+        children.add(element)
+        return element
+    }
+
+    fun literal(vararg literal: String, init: SCommandV2Literal.() -> Unit): SCommandV2Literal {
+        val element = SCommandV2Literal(*literal)
         element.init()
         children.add(element)
         return element

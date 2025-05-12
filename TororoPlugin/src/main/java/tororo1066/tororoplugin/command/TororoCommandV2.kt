@@ -79,7 +79,8 @@ class TororoCommandV2: SCommandV2("tororo") {
     }
 
 
-    lateinit var test: SCommandV2Arg
+    lateinit var rename: SCommandV2Arg
+    lateinit var relore: SCommandV2Arg
 
     @SCommandV2Body
     val item = command {
@@ -147,7 +148,7 @@ class TororoCommandV2: SCommandV2("tororo") {
             }
 
             literal("displayName") {
-                test = argument("name", StringArg.greedyPhrase()) {
+                rename = argument("name", StringArg.greedyPhrase()) {
                     playerSuggest { sender, _, _ ->
                         val item = sender.noMessageItemInMainHand()?:return@playerSuggest emptyList()
                         listOf(item.itemMeta.displayName.replace("§","&") toolTip "現在の名前")
@@ -165,7 +166,7 @@ class TororoCommandV2: SCommandV2("tororo") {
             }
 
             literal("lore") {
-                argument("lore", StringArg.greedyPhrase()) {
+                relore = argument("lore", StringArg.greedyPhrase()) {
                     playerSuggest { sender, _, _ ->
                         val item = sender.noMessageItemInMainHand()?:return@playerSuggest emptyList()
                         listOf((item.itemMeta.lore?.joinToString("\\n") { it.replace("§", "&") } ?: "") toolTip "現在のlore")
@@ -366,7 +367,23 @@ class TororoCommandV2: SCommandV2("tororo") {
     @SCommandV2Body(asRoot = true)
     val tororo = command {
         literal("rename") {
-            arg(test)
+            setPermission("tororo.op")
+            arg(rename)
+        }
+        literal("relore") {
+            setPermission("tororo.op")
+            arg(relore)
+        }
+    }
+
+    @SCommandV2Body(asRoot = true)
+    val userUtils = command {
+        setPermission("tororo.userutils")
+        literal("ec", "enderchest") {
+            setPermission("tororo.userutils.ec")
+            setPlayerFunctionExecutor { sender, _, _ ->
+                sender.openInventory(sender.enderChest)
+            }
         }
     }
 }

@@ -23,7 +23,6 @@ abstract class SDatabase {
     protected var db: String?
     protected var user: String?
     protected var url: String?
-    protected var loggerLevel: String = "INFO"
 
     protected var plugin: JavaPlugin
 
@@ -42,7 +41,6 @@ abstract class SDatabase {
         user = yml.getString("database.user")
         db = yml.getString("database.db")
         url = yml.getString("database.url")
-        loggerLevel = yml.getString("database.loggerLevel")?:"INFO"
     }
 
     constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): this(plugin){
@@ -60,7 +58,6 @@ abstract class SDatabase {
             user = yml.getString("$configPath.user")
             db = yml.getString("$configPath.db")
             url = yml.getString("$configPath.url")
-            loggerLevel = yml.getString("$configPath.loggerLevel")?:"INFO"
         } else {
             host = yml.getString("database.host")
             if (yml.isSet("database.port")){
@@ -70,7 +67,6 @@ abstract class SDatabase {
             user = yml.getString("database.user")
             db = yml.getString("database.db")
             url = yml.getString("database.url")
-            loggerLevel = yml.getString("database.loggerLevel")?:"INFO"
         }
     }
 

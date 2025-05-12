@@ -1,13 +1,11 @@
-package tororo1066.nmsutils.v1_20_4
+package tororo1066.nmsutils.v1_21_4
 
-import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelDuplexHandler
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelPromise
-import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.network.syncher.SynchedEntityData
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer
+import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.entity.Player
 import tororo1066.nmsutils.PacketListener
 import kotlin.experimental.or
@@ -23,20 +21,18 @@ class PacketListenerImpl: PacketListener {
                 if (msg is ClientboundSetEntityDataPacket) {
                     val p = player.player as? CraftPlayer ?: return
                     if (SEntityImpl.glowData[p.entityId]?.contains(msg.id) == true) {
-                        val buf = FriendlyByteBuf(Unpooled.buffer())
-                        buf.writeVarInt(msg.id)
+                        val dataList = ArrayList<SynchedEntityData.DataValue<*>>()
                         msg.packedItems.forEach { data ->
                             if (data.id == 0) {
-                                SynchedEntityData.DataValue.create(
+                                dataList.add(SynchedEntityData.DataValue.create(
                                     SEntityImpl.SHARED_FLAGS,
                                     data.value as Byte or 0x40
-                                ).write(buf)
+                                ))
                             } else {
-                                data.write(buf)
+                                dataList.add(data)
                             }
                         }
-                        buf.writeByte(255)
-                        super.write(ctx, ClientboundSetEntityDataPacket(buf), promise)
+                        super.write(ctx, ClientboundSetEntityDataPacket(msg.id, dataList), promise)
                         return
                     }
                 }

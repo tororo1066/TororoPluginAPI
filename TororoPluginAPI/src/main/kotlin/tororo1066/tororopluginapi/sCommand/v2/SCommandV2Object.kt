@@ -7,6 +7,7 @@ import tororo1066.tororopluginapi.SJavaPlugin
 class SCommandV2Object() {
 
     val args = ArrayList<SCommandV2Arg>()
+    val requirements = ArrayList<Requirement>()
 
     constructor(init: SCommandV2Object.() -> Unit) : this() {
         init.invoke(this)
@@ -17,8 +18,8 @@ class SCommandV2Object() {
         return this
     }
 
-    fun literal(literal: String, init: SCommandV2Literal.() -> Unit): SCommandV2Literal {
-        return SCommandV2Literal(literal).apply(init).also { addArg(it) }
+    fun literal(vararg literal: String, init: SCommandV2Literal.() -> Unit): SCommandV2Literal {
+        return SCommandV2Literal(*literal).apply(init).also { addArg(it) }
     }
 
     fun argument(name: String, type: SCommandV2ArgType<*>, init: SCommandV2Argument.() -> Unit): SCommandV2Argument {
@@ -29,18 +30,34 @@ class SCommandV2Object() {
 
     infix fun String.toolTip(toolTip: Message?) = ToolTip(this, toolTip)
 
+    fun setRequirement(requirement: Requirement): SCommandV2Object {
+        requirements.add(requirement)
+        return this
+    }
+
+    fun setPermission(permission: String): SCommandV2Object {
+        requirements.add {
+            it.hasPermission(permission)
+        }
+        return this
+    }
+
     fun register(command: SCommandV2Literal) {
         val sNms = SJavaPlugin.getSNms()
         args.forEach {
             command.children.add(it)
-            sNms.registerCommand(command)
+            sNms.registerCommand(command.copy().also { arg ->
+                arg.requirements.addAll(requirements)
+            })
         }
     }
 
     fun register() {
         val sNms = SJavaPlugin.getSNms()
         args.forEach {
-            sNms.registerCommand(it as SCommandV2Literal)
+            sNms.registerCommand((it as SCommandV2Literal).copy().also { arg ->
+                arg.requirements.addAll(requirements)
+            })
         }
     }
 }
