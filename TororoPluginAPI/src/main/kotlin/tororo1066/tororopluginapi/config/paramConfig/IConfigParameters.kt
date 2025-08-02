@@ -9,6 +9,7 @@ import tororo1066.tororopluginapi.sInventory.SInventoryItem
 import java.lang.reflect.Field
 import kotlin.reflect.KClass
 
+@Suppress("unused")
 interface IConfigParameters {
 
     private fun Field.setWithAccessible(obj: Any, value: Any) {
@@ -28,7 +29,7 @@ interface IConfigParameters {
 
     fun loadParameters(configurationSection: ConfigurationSection) {
         getParameters().forEach { field ->
-            val annotation = field.getAnnotation(Parameter::class.java)
+            val annotation = field.getAnnotation(Parameter::class.java) ?: return@forEach
             val path = annotation.key.ifEmpty { field.name }
             val value = configurationSection.get(path) ?: return@forEach
             field.setWithAccessible(this, getTypeInstance(annotation.type).getValue(value) ?: return@forEach)
@@ -40,7 +41,7 @@ interface IConfigParameters {
             override fun renderMenu(): Boolean {
                 val items = ArrayList<SInventoryItem>()
                 getParameters().forEach { field ->
-                    val annotation = field.getAnnotation(Parameter::class.java)
+                    val annotation = field.getAnnotation(Parameter::class.java) ?: return@forEach
                     val type = getTypeInstance(annotation.type)
                     items.add(getItem(field, annotation, type))
                 }
@@ -52,7 +53,7 @@ interface IConfigParameters {
 
     fun setParameters(configurationSection: ConfigurationSection) {
         getParameters().forEach { field ->
-            val annotation = field.getAnnotation(Parameter::class.java)
+            val annotation = field.getAnnotation(Parameter::class.java) ?: return@forEach
             val path = annotation.key.ifEmpty { field.name }
             val type = getTypeInstance(annotation.type)
             configurationSection.setValue(path, field, type)

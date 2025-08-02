@@ -71,8 +71,8 @@ open class CategorySInventory(plugin: JavaPlugin, title: String) : SInventory(pl
 
     open fun renderInventory(category: String, page: Int) {
         clear()
-        renderBar()
         setCategoryName(category)
+        renderBar()
         if (!resourceList.containsKey(category)){
             if (resourceList.size == 0)return
             setCategoryName(resourceList.entries.first().key)
