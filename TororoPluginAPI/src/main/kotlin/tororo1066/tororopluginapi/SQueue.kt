@@ -1,6 +1,7 @@
 package tororo1066.tororopluginapi
 
 import org.bukkit.Bukkit
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
@@ -8,7 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue
 class SQueue(val prefix: String = "Undefined", val sync: Boolean = false) {
 
     companion object {
-        val queues = arrayListOf<SQueue>()
+        val queues = CopyOnWriteArrayList<SQueue>()
 
         fun shutdownAll() {
             queues.forEach {
@@ -35,7 +36,7 @@ class SQueue(val prefix: String = "Undefined", val sync: Boolean = false) {
                 } catch (_: InterruptedException) {
                     break
                 } catch (e: Exception) {
-                    SJavaPlugin.plugin.logger.warning("$prefix: Error in queue")
+                    SJavaPlugin.plugin.getLogger().warning("$prefix: Error in queue")
                     e.printStackTrace()
                 }
             }
@@ -48,5 +49,9 @@ class SQueue(val prefix: String = "Undefined", val sync: Boolean = false) {
 
     fun shutdown() {
         executor.shutdown()
+        queues.remove(this)
+        queue.add {
+            throw InterruptedException("Queue $prefix is shutting down")
+        }
     }
 }
