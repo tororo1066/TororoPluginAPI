@@ -72,7 +72,7 @@ class EmptyWorldGenerator(val plugin: JavaPlugin) {
             }
         }
 
-        fun deleteWorld(world: World, teleportLocation: Location? = null) {
+        fun deleteWorld(world: World, teleportLocation: Location? = null): Boolean {
             world.players.forEach { player ->
                 if (teleportLocation != null) {
                     player.teleport(teleportLocation)
@@ -84,9 +84,9 @@ class EmptyWorldGenerator(val plugin: JavaPlugin) {
             world.loadedChunks.forEach { chunk ->
                 chunk.unload(false)
             }
-            Bukkit.unloadWorld(world, false)
+            if (!Bukkit.unloadWorld(world, false)) return false
             val worldFolder = world.worldFolder
-            worldFolder.deleteRecursively()
+            return worldFolder.deleteRecursively()
         }
     }
 }
