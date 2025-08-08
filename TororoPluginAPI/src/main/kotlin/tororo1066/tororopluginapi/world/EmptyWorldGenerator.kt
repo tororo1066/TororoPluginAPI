@@ -1,6 +1,7 @@
 package tororo1066.tororopluginapi.world
 
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.WorldCreator
 import org.bukkit.generator.ChunkGenerator
@@ -71,7 +72,18 @@ class EmptyWorldGenerator(val plugin: JavaPlugin) {
             }
         }
 
-        fun deleteWorld(world: World) {
+        fun deleteWorld(world: World, teleportLocation: Location? = null) {
+            world.players.forEach { player ->
+                if (teleportLocation != null) {
+                    player.teleport(teleportLocation)
+                } else {
+                    @Suppress("DEPRECATION")
+                    player.kickPlayer("The world is being deleted.")
+                }
+            }
+            world.loadedChunks.forEach { chunk ->
+                chunk.unload(false)
+            }
             Bukkit.unloadWorld(world, false)
             val worldFolder = world.worldFolder
             worldFolder.deleteRecursively()
