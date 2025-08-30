@@ -1,5 +1,6 @@
-sourceCompatibility = '16'
-targetCompatibility = '16'
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'

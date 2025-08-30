@@ -2,8 +2,9 @@ apply plugin: 'kotlin'
 group = 'tororo1066'
 version = '1.0-SNAPSHOT'
 
-sourceCompatibility = '16'
-targetCompatibility = '16'
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(16))
+}
 
 repositories {
     mavenCentral()
@@ -30,17 +31,6 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(sourceSets.main.resources.srcDirs) {
         filter ReplaceTokens, tokens: [version: version]
-    }
-}
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
 

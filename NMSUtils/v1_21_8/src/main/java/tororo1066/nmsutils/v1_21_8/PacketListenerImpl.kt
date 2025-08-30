@@ -1,4 +1,4 @@
-package tororo1066.nmsutils.v1_21_1
+package tororo1066.nmsutils.v1_21_8
 
 import io.netty.channel.ChannelDuplexHandler
 import io.netty.channel.ChannelHandlerContext

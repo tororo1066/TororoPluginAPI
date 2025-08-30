@@ -85,7 +85,6 @@ class TororoCommandV2: SCommandV2("tororo") {
     @SCommandV2Body
     val item = command {
         literal("item") {
-            setPermission("tororo.item")
 
             literal("info") {
 
@@ -348,7 +347,6 @@ class TororoCommandV2: SCommandV2("tororo") {
     @SCommandV2Body
     val sudo = command {
         literal("sudo") {
-            setPermission("tororo.op")
             argument("player", EntityArg(singleTarget = false, playersOnly = true)) {
                 argument("command", StringArg.greedyPhrase()) {
                     setFunctionExecutor { sender, _, args ->
@@ -366,24 +364,12 @@ class TororoCommandV2: SCommandV2("tororo") {
 
     @SCommandV2Body(asRoot = true)
     val tororo = command {
+        setPermission("tororo.op")
         literal("rename") {
-            setPermission("tororo.op")
             arg(rename)
         }
         literal("relore") {
-            setPermission("tororo.op")
             arg(relore)
-        }
-    }
-
-    @SCommandV2Body(asRoot = true)
-    val userUtils = command {
-        setPermission("tororo.userutils")
-        literal("ec", "enderchest") {
-            setPermission("tororo.userutils.ec")
-            setPlayerFunctionExecutor { sender, _, _ ->
-                sender.openInventory(sender.enderChest)
-            }
         }
     }
 }

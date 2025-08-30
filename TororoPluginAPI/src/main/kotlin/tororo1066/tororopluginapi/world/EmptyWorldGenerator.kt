@@ -1,5 +1,6 @@
 package tororo1066.tororopluginapi.world
 
+import net.kyori.adventure.util.TriState
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
@@ -19,8 +20,8 @@ class EmptyWorldGenerator(val plugin: JavaPlugin) {
 
     fun createEmptyWorld(name: String): World {
         val worldName = "${plugin.name.lowercase()}_${name}_${instanceId.getAndIncrement()}"
-        val world = plugin.server.getWorld(worldName)
-        if (world != null) {
+        val alreadyWorld = plugin.server.getWorld(worldName)
+        if (alreadyWorld != null) {
             throw IllegalArgumentException("World $worldName already exists")
         }
 
@@ -32,8 +33,14 @@ class EmptyWorldGenerator(val plugin: JavaPlugin) {
             throw RuntimeException("Failed to copy world files", e)
         }
 
+        val creator = WorldCreator(worldName)
+        creator.generator(EmptyChunkGenerator)
+        creator.keepSpawnLoaded(TriState.TRUE)
+        creator.generateStructures(false)
+        val world = creator.createWorld() ?: throw RuntimeException("Failed to create world $worldName")
+        world.isAutoSave = false
 
-        return Bukkit.createWorld(WorldCreator(worldName).generator(EmptyChunkGenerator))!!
+        return world
     }
 
     fun clearWorlds(name: String) {
