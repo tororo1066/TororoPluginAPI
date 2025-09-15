@@ -14,7 +14,7 @@ public class NMSUtilsPluginLoader implements PluginLoader {
     public void classloader(@NotNull PluginClasspathBuilder builder) {
         MavenLibraryResolver resolver = new MavenLibraryResolver();
 
-        resolver.addRepository(new RemoteRepository.Builder("mavenCentral", "default", "https://repo.maven.apache.org/maven2/").build());
+        resolver.addRepository(new RemoteRepository.Builder("mavenCentral", "default", "https://maven-central.storage-download.googleapis.com/maven2").build());
         resolver.addDependency(new Dependency(new DefaultArtifact("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.10"), "compile"));
         builder.addLibrary(resolver);
     }
