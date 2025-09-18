@@ -65,6 +65,10 @@ tasks.withType(JavaCompile).configureEach {
     options.release.set(17)
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 tasks.register("sourcesJar", org.gradle.jvm.tasks.Jar) {
     archiveClassifier.set("sources")
     from sourceSets.main.allSource

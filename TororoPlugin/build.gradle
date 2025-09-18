@@ -49,6 +49,10 @@ tasks.withType(JavaCompile).configureEach {
     options.release.set(17)
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 shadowJar {
     archiveFileName = "${project.name}-${project.version}.jar"
 }
