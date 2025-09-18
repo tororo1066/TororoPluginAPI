@@ -2,9 +2,7 @@ apply plugin: 'kotlin'
 group = 'tororo1066'
 version = '1.0-SNAPSHOT'
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(16))
-}
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 
 repositories {
     mavenCentral()
@@ -34,8 +32,13 @@ processResources {
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.release.set(17)
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 jar {
@@ -67,11 +70,6 @@ publishing {
         }
     }
 }
-
-
-//shadowJar {
-//    relocate 'kotlin', 'tororo1066.libs.kotlin'
-//}
 
 tasks.register("shadowJarForBuild", ShadowJar) {
     dependsOn(shadowJar {

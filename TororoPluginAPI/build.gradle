@@ -4,9 +4,7 @@ apply plugin: 'maven-publish'
 group = 'tororo1066'
 version = '1.0-SNAPSHOT'
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 
 repositories {
     mavenCentral()
@@ -62,8 +60,9 @@ dependencies {
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.release.set(17)
 }
 
 tasks.register("sourcesJar", org.gradle.jvm.tasks.Jar) {

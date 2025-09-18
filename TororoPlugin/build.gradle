@@ -2,9 +2,7 @@ apply plugin: 'kotlin'
 group = 'tororo1066'
 version = '1.0-SNAPSHOT'
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 
 repositories {
     mavenCentral()
@@ -46,8 +44,9 @@ buildscript {
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.release.set(17)
 }
 
 shadowJar {

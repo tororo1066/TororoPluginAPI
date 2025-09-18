@@ -3,14 +3,22 @@ import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 plugins {
     id "io.papermc.paperweight.userdev" version "2.0.0-beta.18"
 }
+
 paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.getREOBF_PRODUCTION()
+
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT'
     compileOnly project(":NMSUtils:base")
     paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.19.3-R0.1-SNAPSHOT")
 }
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+    options.release.set(17)
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 tasks.jar {

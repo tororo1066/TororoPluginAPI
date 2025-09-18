@@ -12,8 +12,11 @@ tasks {
     }
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+    options.release.set(17)
 }
 
 dependencies {
@@ -30,6 +33,7 @@ dependencies {
 }
 
 subprojects {
+    java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     dependencies {
         compileOnly 'com.mojang:brigadier:1.0.18'
         compileOnly project(':CommandAPI')
