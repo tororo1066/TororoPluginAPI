@@ -350,6 +350,11 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
         return this
     }
 
+    open fun editRaw(action: (ItemStack) -> Unit): SItem {
+        action(itemStack)
+        return this
+    }
+
     /**
      * @return SInventoryItem
      */

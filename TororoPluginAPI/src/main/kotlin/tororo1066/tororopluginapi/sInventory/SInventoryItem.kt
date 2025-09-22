@@ -177,6 +177,10 @@ open class SInventoryItem(itemStack: ItemStack) : SItem(itemStack) {
         return super.removeItemFlags(*flags) as SInventoryItem
     }
 
+    override fun editRaw(action: (ItemStack) -> Unit): SInventoryItem {
+        return super.editRaw(action) as SInventoryItem
+    }
+
     override fun clone(): SInventoryItem {
         return super.clone() as SInventoryItem
     }
