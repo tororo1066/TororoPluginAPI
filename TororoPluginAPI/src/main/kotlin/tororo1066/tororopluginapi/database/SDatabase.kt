@@ -5,15 +5,10 @@ import org.bukkit.plugin.java.JavaPlugin
 import tororo1066.tororopluginapi.database.mongo.SMongo
 import tororo1066.tororopluginapi.database.mysql.SMySQL
 import tororo1066.tororopluginapi.database.sqlite.SSQLite
-import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import java.util.logging.FileHandler
-import java.util.logging.Level
-import java.util.logging.Logger
 
 abstract class SDatabase {
 
@@ -159,8 +154,8 @@ abstract class SDatabase {
 
 
     companion object {
-        fun Any.toSQLVariable(type: SDBVariable.VariableType<*>): String {
-            return SDBCondition.modifySQLString(type, this)
+        fun Any.toSQLVariable(type: SDBVariable.VariableType<*>): Any {
+            return SDBCondition.modifySQLVariable(type, this)
         }
 
         fun newInstance(plugin: JavaPlugin): SDatabase {

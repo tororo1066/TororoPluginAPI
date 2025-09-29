@@ -2,78 +2,102 @@ package tororo1066.tororopluginapi.database
 
 import com.mongodb.client.model.Filters
 import org.bson.conversions.Bson
-import org.bukkit.Bukkit
+import java.sql.PreparedStatement
 import java.text.SimpleDateFormat
 import java.util.*
 
 class SDBCondition {
 
     private val builder = StringBuilder("where ")
+    private val parameters = ArrayList<Pair<Any, SDBVariable.VariableType<*>>>()
+
     private var filter = Filters.empty()
 
     fun equal(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.eq(variable, value)
-        builder.append("$variable = ${modifySQLString(type?: SDBVariable.Text,value)}")
+//        builder.append("$variable = ${modifySQLString(type?: SDBVariable.Text,value)}")
+        builder.append("$variable = ?")
+        parameters.add(value to (type?: SDBVariable.Text))
         return this
     }
 
     fun orHigher(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.gte(variable, value)
-        builder.append("$variable >= ${modifySQLString(type?: SDBVariable.Text,value)}")
+//        builder.append("$variable >= ${modifySQLString(type?: SDBVariable.Text,value)}")
+        builder.append("$variable >= ?")
+        parameters.add(value to (type?: SDBVariable.Text))
         return this
     }
 
     fun orLower(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.lte(variable, value)
-        builder.append("$variable <= ${modifySQLString(type?: SDBVariable.Text,value)}")
+//        builder.append("$variable <= ${modifySQLString(type?: SDBVariable.Text,value)}")
+        builder.append("$variable <= ?")
+        parameters.add(value to (type?: SDBVariable.Text))
         return this
     }
 
     fun moreThan(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.gt(variable, value)
-        builder.append("$variable > ${modifySQLString(type?: SDBVariable.Text,value)}")
+//        builder.append("$variable > ${modifySQLString(type?: SDBVariable.Text,value)}")
+        builder.append("$variable > ?")
+        parameters.add(value to (type?: SDBVariable.Text))
         return this
     }
 
     fun lessThan(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.lt(variable, value)
-        builder.append("$variable < ${modifySQLString(type?: SDBVariable.Text,value)}")
+//        builder.append("$variable < ${modifySQLString(type?: SDBVariable.Text,value)}")
+        builder.append("$variable < ?")
+        parameters.add(value to (type?: SDBVariable.Text))
         return this
     }
 
     fun like(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.regex(variable, value.toString())
-        builder.append("$variable like ${modifySQLString(type?: SDBVariable.Text,value)}")
+//        builder.append("$variable like ${modifySQLString(type?: SDBVariable.Text,value)}")
+        builder.append("$variable like ?")
+        parameters.add(value to (type?: SDBVariable.Text))
         return this
     }
 
     fun include(variable: String, values: List<Any>, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.`in`(variable, values)
-        builder.append("$variable in (${values.joinToString(",") { modifySQLString(type?: SDBVariable.Text,it) }})")
+//        builder.append("$variable in (${values.joinToString(",") { modifySQLString(type?: SDBVariable.Text,it) }})")
+        builder.append("$variable in (${values.joinToString(",") { "?" }})")
+        values.forEach {
+            parameters.add(it to (type?: SDBVariable.Text))
+        }
         return this
     }
 
     fun between(variable: String, value1: Any, value2: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.and(Filters.gte(variable, value1), Filters.lte(variable, value2))
-        builder.append("$variable between ${modifySQLString(type?: SDBVariable.Text,value1)} and ${modifySQLString(type?: SDBVariable.Text,value2)}")
+//        builder.append("$variable between ${modifySQLString(type?: SDBVariable.Text,value1)} and ${modifySQLString(type?: SDBVariable.Text,value2)}")
+        builder.append("$variable between ? and ?")
+        parameters.add(value1 to (type?: SDBVariable.Text))
+        parameters.add(value2 to (type?: SDBVariable.Text))
         return this
     }
 
     fun and(condition: SDBCondition): SDBCondition {
         this.filter = Filters.and(this.filter, condition.filter)
         builder.append(" and (${replaceWhere(condition)})")
+        parameters.addAll(condition.parameters)
         return this
     }
 
     fun or(condition: SDBCondition): SDBCondition {
         this.filter = Filters.or(this.filter, condition.filter)
         builder.append(" or (${replaceWhere(condition)})")
+        parameters.addAll(condition.parameters)
         return this
     }
 
     fun not(condition: SDBCondition): SDBCondition {
         this.filter = Filters.not(condition.filter)
         builder.append(" not (${replaceWhere(condition)})")
+        parameters.addAll(condition.parameters)
         return this
     }
 
@@ -89,18 +113,30 @@ class SDBCondition {
         return filter
     }
 
+    fun processPreparedStatement(preparedStatement: PreparedStatement, currentIndex: Int = 1): Int {
+        var index = currentIndex
+        parameters.forEach { (value, type) ->
+            preparedStatement.setObject(
+                index,
+                modifySQLVariable(type, value)
+            )
+            index++
+        }
+        return index
+    }
+
     override fun toString(): String {
         return build()
     }
 
     companion object{
-        fun modifySQLString(variable: SDBVariable.VariableType<*>, value: Any): String {
+        fun modifySQLVariable(variable: SDBVariable.VariableType<*>, value: Any): Any {
             return when(variable.javaClass){
                 SDBVariable.DATE::class.java, SDBVariable.DATETIME::class.java,
                 SDBVariable.TIME::class.java, SDBVariable.YEAR::class.java -> {
                     if (value.toString() == "now()") value.toString() else dateModify(value,variable)
                 }
-                else -> "'$value'"
+                else -> value
             }
         }
 

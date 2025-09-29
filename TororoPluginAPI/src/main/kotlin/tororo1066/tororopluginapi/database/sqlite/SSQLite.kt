@@ -98,7 +98,33 @@ class SSQLite: SDatabase {
     }
 
     override fun select(table: String, condition: SDBCondition): List<SDBResultSet> {
-        return query("select * from $table ${condition.build()}")
+        val conn = open()
+        val query = "select * from $table ${condition.build()}"
+        val stmt = conn.prepareStatement(query)
+        condition.processPreparedStatement(stmt)
+
+        val rs: ResultSet
+        try {
+            rs = stmt.executeQuery()
+        } catch (e : SQLException) {
+            e.printStackTrace()
+            return arrayListOf()
+        }
+
+        val result = ArrayList<SDBResultSet>()
+        try {
+            while (rs.next()){
+                result.add(formatToSDBResultSet(rs))
+            }
+            return result
+        } catch (e : Exception){
+            e.printStackTrace()
+            return arrayListOf()
+        } finally {
+            rs.close()
+            stmt.close()
+            conn.close()
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -112,6 +138,7 @@ class SSQLite: SDatabase {
         map.values.forEachIndexed { index, any ->
             stmt.setObject(index+1, any)
         }
+        condition.processPreparedStatement(stmt, map.size + 1)
 
         return try {
             stmt.execute()
@@ -128,9 +155,9 @@ class SSQLite: SDatabase {
 
     override fun delete(table: String, condition: SDBCondition): Boolean {
         val conn = open()
-        val query = "delete from $table ?"
+        val query = "delete from $table ${condition.build()}"
         val stmt = conn.prepareStatement(query)
-        stmt.setObject(1, condition.build())
+        condition.processPreparedStatement(stmt)
 
         return try {
             stmt.execute()
@@ -159,18 +186,7 @@ class SSQLite: SDatabase {
         val result = ArrayList<SDBResultSet>()
         try {
             while (rs.next()){
-                val meta = rs.metaData
-                val data = HashMap<String,Any?>()
-                for (i in 1 until meta.columnCount + 1) {
-                    val name = meta.getColumnName(i)
-                    val obj = rs.getObject(name)
-                    if (obj == "true" || obj == "false"){
-                        data[name] = obj.toString().toBoolean()
-                    } else {
-                        data[name] = obj
-                    }
-                }
-                result.add(SDBResultSet(data))
+                result.add(formatToSDBResultSet(rs))
             }
             return result
         } catch (e : Exception){
@@ -196,5 +212,20 @@ class SSQLite: SDatabase {
             stmt.close()
             conn.close()
         }
+    }
+
+    private fun formatToSDBResultSet(rs: ResultSet): SDBResultSet {
+        val meta = rs.metaData
+        val data = HashMap<String,Any?>()
+        for (i in 1 until meta.columnCount + 1) {
+            val name = meta.getColumnName(i)
+            val obj = rs.getObject(name)
+            if (obj == "true" || obj == "false"){
+                data[name] = obj.toString().toBoolean()
+            } else {
+                data[name] = obj
+            }
+        }
+        return SDBResultSet(data)
     }
 }
