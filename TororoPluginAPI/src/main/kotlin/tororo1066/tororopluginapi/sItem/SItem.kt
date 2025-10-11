@@ -51,6 +51,7 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
          * @param data Base64
          * @return SItem
          */
+        @Deprecated("Use byByteArrayBase64 instead")
         fun fromBase64(data: String): SItem? {
             return try {
 
@@ -69,82 +70,18 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
             }
         }
 
+        fun byBase64(data: String): SItem? {
+            return try {
+                val byteArray = Base64Coder.decodeLines(data)
+                ItemStack.deserializeBytes(byteArray).toSItem()
+            } catch (_: Exception) {
+                null
+            }
+        }
+
         fun ItemStack.toSItem(): SItem {
             return SItem(this)
         }
-
-        fun List<ItemStack>.toBase64Items(): String {
-            try {
-                val outputStream = ByteArrayOutputStream()
-                val dataOutput = BukkitObjectOutputStream(outputStream)
-
-                // Write the size of the inventory
-                dataOutput.writeInt(this.size)
-
-                // Save every element in the list
-                for (i in this.indices) {
-                    dataOutput.writeObject(this[i])
-                }
-
-                // Serialize that array
-                dataOutput.close()
-                return Base64Coder.encodeLines(outputStream.toByteArray())
-
-            } catch (e: Exception) {
-                throw IllegalStateException("Failed ItemStack to Base64.",e)
-            }
-        }
-
-        fun String.toItems(): MutableList<ItemStack> {
-            try {
-
-                val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(this))
-                val dataInput = BukkitObjectInputStream(inputStream)
-                val items = arrayOfNulls<ItemStack>(dataInput.readInt())
-
-                // Read the serialized inventory
-                for (i in items.indices) {
-                    items[i] = dataInput.readObject() as ItemStack
-                }
-
-                dataInput.close()
-
-                val mutableList = mutableListOf<ItemStack>()
-                items.forEach {
-                    if (it != null) mutableList.add(it)
-                }
-
-                return mutableList
-            } catch (e: Exception) {
-                throw IllegalStateException("Failed Base64 to ItemStack List.",e)
-            }
-        }
-
-        fun String.toSItems(): MutableList<SItem> {
-            try {
-
-                val inputStream = ByteArrayInputStream(Base64Coder.decodeLines(this))
-                val dataInput = BukkitObjectInputStream(inputStream)
-                val items = arrayOfNulls<ItemStack>(dataInput.readInt())
-
-                // Read the serialized inventory
-                for (i in items.indices) {
-                    items[i] = dataInput.readObject() as ItemStack
-                }
-
-                dataInput.close()
-
-                val mutableList = mutableListOf<SItem>()
-                items.forEach {
-                    if (it != null) mutableList.add(SItem(it))
-                }
-
-                return mutableList
-            } catch (e: Exception) {
-                throw IllegalStateException("Failed Base64 to ItemStack List.",e)
-            }
-        }
-
     }
 
     private fun getMeta(): ItemMeta {
@@ -377,6 +314,7 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
     /**
      * @return  変換後のBase64
      */
+    @Deprecated("Use toByteArrayBase64 instead")
     fun toBase64(): String {
         return try {
             val outputStream = ByteArrayOutputStream()
@@ -389,7 +327,15 @@ open class SItem(protected var itemStack: ItemStack): Cloneable, InventoryAddabl
         } catch (e: Exception) {
             throw IllegalStateException("Failed itemStack to Base64",e)
         }
+    }
 
+    fun toByteArrayBase64(): String {
+        return try {
+            val byteArray = build().serializeAsBytes()
+            Base64Coder.encodeLines(byteArray)
+        } catch (e: Exception) {
+            throw IllegalStateException("Failed itemStack to Base64",e)
+        }
     }
 
 
