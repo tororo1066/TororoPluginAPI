@@ -10,16 +10,15 @@ import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.database.SDBResultSet
 import tororo1066.tororopluginapi.database.SDBVariable
 import tororo1066.tororopluginapi.database.SDatabase
+import tororo1066.tororopluginapi.database.SSession
 
 
 class SMongo: SDatabase {
 
+    override val isSQL: Boolean = false
     override val isMongo: Boolean = true
 
-    constructor(plugin: JavaPlugin): super(plugin)
-    constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): super(plugin, configFile, configPath)
-
-    override fun open(): Pair<MongoClient, MongoDatabase> {
+    val client: MongoClient by lazy {
         var url = this.url
 
         if (url == null){
@@ -37,60 +36,68 @@ class SMongo: SDatabase {
                     "/?retryWrites=true&w=majority"
         }
 
-        if (db == null){
-            throw NullPointerException("[MongoDB] Database name is empty.")
-        }
-
         try {
-            val client = MongoClients.create(url)
-            val pair = Pair(client, client.getDatabase(this.db!!))
-            return pair
+            MongoClients.create(url)
         } catch (e: Exception) {
             throw e
         }
     }
 
-    override fun createTable(table: String, map: Map<String, SDBVariable<*>>): Boolean {
-        var client: MongoClient? = null
+    constructor(plugin: JavaPlugin): super(plugin)
+    constructor(plugin: JavaPlugin, configFile: String?, configPath: String?): super(plugin, configFile, configPath)
+
+    override fun open(): MongoDatabase {
+        val db = this.db ?: throw NullPointerException("[MongoDB] Database name is empty.")
+
+        try {
+            return client.getDatabase(db)
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun createTable(table: String, map: Map<String, SDBVariable<*>>, session: SSession?): Boolean {
         return try {
-            val open = open()
-            client = open.first
-            val db = open.second
-            db.getCollection(table)
+            val db = open()
+            if (session != null) {
+                db.createCollection(session.getMongoSession(), table)
+            } else {
+                db.createCollection(table)
+            }
             true
         } catch (e: Exception){
             e.printStackTrace()
             false
-        } finally {
-            client?.close()
         }
     }
 
-    override fun insert(table: String, map: Map<String, Any?>): Boolean {
-        var client: MongoClient? = null
+    override fun insert(table: String, map: Map<String, Any?>, session: SSession?): Boolean {
         return try {
-            val open = open()
-            client = open.first
-            val db = open.second
+            val db = open()
             val collection = db.getCollection(table)
-            collection.insertOne(Document(map)).wasAcknowledged()
+            if (session != null) {
+                collection.insertOne(session.getMongoSession(), Document(map))
+            } else {
+                collection.insertOne(Document(map))
+            }
+            true
         } catch (e: Exception){
             e.printStackTrace()
             false
-        } finally {
-            client?.close()
         }
     }
 
-    override fun select(table: String, condition: SDBCondition): List<SDBResultSet> {
-        var client: MongoClient? = null
+    override fun select(table: String, condition: SDBCondition, session: SSession?): List<SDBResultSet> {
         try {
-            val open = open()
-            client = open.first
-            val db = open.second
+            val db = open()
             val collection = db.getCollection(table)
             val list = ArrayList<SDBResultSet>()
-            collection.find(condition.buildAsMongo()).forEach {
+            val findIterable = if (session != null) {
+                collection.find(session.getMongoSession(), condition.buildAsMongo())
+            } else {
+                collection.find(condition.buildAsMongo())
+            }
+            findIterable.forEach {
                 list.add(SDBResultSet(HashMap(it)))
             }
 
@@ -98,75 +105,75 @@ class SMongo: SDatabase {
         } catch (e: Exception){
             e.printStackTrace()
             return arrayListOf()
-        } finally {
-            client?.close()
         }
     }
 
-    override fun update(table: String, update: Any, condition: SDBCondition): Boolean {
-        var client: MongoClient? = null
+    override fun update(table: String, update: Any, condition: SDBCondition, session: SSession?): Boolean {
         return try {
-            val open = open()
-            client = open.first
-            val db = open.second
+            val db = open()
             val collection = db.getCollection(table)
-            collection.updateMany(condition.buildAsMongo(), update as Bson).wasAcknowledged()
+            val updateBson = update as Bson
+            if (session != null) {
+                collection.updateMany(session.getMongoSession(), condition.buildAsMongo(), updateBson).wasAcknowledged()
+            } else {
+                collection.updateMany(condition.buildAsMongo(), updateBson).wasAcknowledged()
+            }
         } catch (e: Exception){
             e.printStackTrace()
             false
-        } finally {
-            client?.close()
         }
     }
 
-    override fun delete(table: String, condition: SDBCondition): Boolean {
-        var client: MongoClient? = null
+    override fun delete(table: String, condition: SDBCondition, session: SSession?): Boolean {
         return try {
-            val open = open()
-            client = open.first
-            val db = open.second
+            val db = open()
             val collection = db.getCollection(table)
-            collection.deleteMany(condition.buildAsMongo()).wasAcknowledged()
+            if (session != null) {
+                collection.deleteMany(session.getMongoSession(), condition.buildAsMongo()).wasAcknowledged()
+            } else {
+                collection.deleteMany(condition.buildAsMongo()).wasAcknowledged()
+            }
         } catch (e: Exception){
             e.printStackTrace()
             false
-        } finally {
-            client?.close()
         }
     }
 
-    override fun query(query: String): List<SDBResultSet> {
-        var client: MongoClient? = null
+    override fun query(query: String, session: SSession?): List<SDBResultSet> {
         return try {
-            val open = open()
-            client = open.first
-            val db = open.second
+            val db = open()
             val list = ArrayList<SDBResultSet>()
-            db.runCommand(Document.parse(query)).forEach {
+            val result = if (session != null) {
+                db.runCommand(session.getMongoSession(), Document.parse(query))
+            } else {
+                db.runCommand(Document.parse(query))
+            }
+            result.forEach {
                 list.add(SDBResultSet(hashMapOf(it.toPair())))
             }
             return list
         } catch (e: Exception){
             e.printStackTrace()
             arrayListOf()
-        } finally {
-            client?.close()
         }
     }
 
-    override fun execute(query: String): Boolean {
-        var client: MongoClient? = null
+    override fun execute(query: String, session: SSession?): Boolean {
         return try {
-            val open = open()
-            client = open.first
-            val db = open.second
-            db.runCommand(Document.parse(query))
+            val db = open()
+            if (session != null) {
+                db.runCommand(session.getMongoSession(), Document.parse(query))
+            } else {
+                db.runCommand(Document.parse(query))
+            }
             true
         } catch (e: Exception){
             e.printStackTrace()
             false
-        } finally {
-            client?.close()
         }
+    }
+
+    override fun close() {
+        client.close()
     }
 }

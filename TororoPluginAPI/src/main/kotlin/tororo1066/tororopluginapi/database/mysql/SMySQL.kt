@@ -5,11 +5,13 @@ import tororo1066.tororopluginapi.database.SDBCondition
 import tororo1066.tororopluginapi.database.SDBResultSet
 import tororo1066.tororopluginapi.database.SDBVariable
 import tororo1066.tororopluginapi.database.SDatabase
+import tororo1066.tororopluginapi.database.SSession
 import tororo1066.tororopluginapi.mysql.ultimate.USQLCondition
 import java.sql.*
 
 class SMySQL: SDatabase {
 
+    override val isSQL: Boolean = true
     override val isMongo: Boolean = false
 
     constructor(plugin: JavaPlugin): super(plugin)
@@ -42,8 +44,8 @@ class SMySQL: SDatabase {
         return conn
     }
 
-    override fun createTable(table: String, map: Map<String, SDBVariable<*>>): Boolean {
-        val conn = open()
+    override fun createTable(table: String, map: Map<String, SDBVariable<*>>, session: SSession?): Boolean {
+        val conn = session?.getSQLConnection() ?: open()
         val queryBuilder = StringBuilder()
         queryBuilder.append("create table if not exists $table (")
         queryBuilder.append(map.entries.joinToString(",") { it.key + " " + it.value.type.variableName.lowercase() + (if (it.value.length != -1) "(${it.value.length})" else "") +
@@ -63,12 +65,14 @@ class SMySQL: SDatabase {
             e.printStackTrace()
             false
         } finally {
-            conn.close()
+            if (session == null){
+                conn.close()
+            }
         }
     }
 
-    override fun insert(table: String, map: Map<String, Any?>): Boolean {
-        val conn = open()
+    override fun insert(table: String, map: Map<String, Any?>, session: SSession?): Boolean {
+        val conn = session?.getSQLConnection() ?: open()
         val builder = StringBuilder("?")
         for (i in 1 until map.size){
             builder.append(",?")
@@ -86,12 +90,14 @@ class SMySQL: SDatabase {
             false
         } finally {
             stmt.close()
-            conn.close()
+            if (session == null){
+                conn.close()
+            }
         }
     }
 
-    override fun select(table: String, condition: SDBCondition): List<SDBResultSet> {
-        val conn = open()
+    override fun select(table: String, condition: SDBCondition, session: SSession?): List<SDBResultSet> {
+        val conn = session?.getSQLConnection() ?: open()
         val query = "select * from $table ${condition.build()}"
         val stmt = conn.prepareStatement(query)
         condition.processPreparedStatement(stmt)
@@ -116,13 +122,15 @@ class SMySQL: SDatabase {
         } finally {
             rs.close()
             stmt.close()
-            conn.close()
+            if (session == null){
+                conn.close()
+            }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun update(table: String, update: Any, condition: SDBCondition): Boolean {
-        val conn = open()
+    override fun update(table: String, update: Any, condition: SDBCondition, session: SSession?): Boolean {
+        val conn = session?.getSQLConnection() ?: open()
         val map = update as Map<String, Any>
         val query = "update $table set ${
             map.entries.joinToString(",") { "${it.key} = ?" }
@@ -141,13 +149,15 @@ class SMySQL: SDatabase {
             false
         } finally {
             stmt.close()
-            conn.close()
+            if (session == null){
+                conn.close()
+            }
         }
 
     }
 
-    override fun delete(table: String, condition: SDBCondition): Boolean {
-        val conn = open()
+    override fun delete(table: String, condition: SDBCondition, session: SSession?): Boolean {
+        val conn = session?.getSQLConnection() ?: open()
         val query = "delete from $table ${condition.build()}"
         val stmt = conn.prepareStatement(query)
         condition.processPreparedStatement(stmt)
@@ -159,12 +169,14 @@ class SMySQL: SDatabase {
             false
         } finally {
             stmt.close()
-            conn.close()
+            if (session == null){
+                conn.close()
+            }
         }
     }
 
-    override fun query(query: String): List<SDBResultSet> {
-        val conn = open()
+    override fun query(query: String, session: SSession?): List<SDBResultSet> {
+        val conn = session?.getSQLConnection() ?: open()
         val stmt: Statement
         val rs: ResultSet
 
@@ -188,12 +200,14 @@ class SMySQL: SDatabase {
         } finally {
             rs.close()
             stmt.close()
-            conn.close()
+            if (session == null){
+                conn.close()
+            }
         }
     }
 
-    override fun execute(query: String): Boolean {
-        val conn = open()
+    override fun execute(query: String, session: SSession?): Boolean {
+        val conn = session?.getSQLConnection() ?: open()
         val stmt = conn.createStatement()
 
         return try {
@@ -203,7 +217,9 @@ class SMySQL: SDatabase {
             false
         } finally {
             stmt.close()
-            conn.close()
+            if (session == null){
+                conn.close()
+            }
         }
     }
 

@@ -23,6 +23,7 @@ abstract class SDatabase {
 
     private val thread: ExecutorService = Executors.newCachedThreadPool()
 
+    abstract val isSQL: Boolean
     abstract val isMongo: Boolean
 
     constructor(plugin: JavaPlugin){
@@ -68,87 +69,180 @@ abstract class SDatabase {
 
     abstract fun open(): Any
 
-    abstract fun createTable(table: String, map: Map<String, SDBVariable<*>>): Boolean
+    abstract fun createTable(
+        table: String,
+        map: Map<String, SDBVariable<*>>,
+        session: SSession? = null
+    ): Boolean
 
-    abstract fun insert(table: String, map: Map<String, Any?>): Boolean
+    abstract fun insert(
+        table: String,
+        map: Map<String, Any?>,
+        session: SSession? = null
+    ): Boolean
 
-    abstract fun select(table: String, condition: SDBCondition = SDBCondition.empty()): List<SDBResultSet>
+    abstract fun select(
+        table: String,
+        condition: SDBCondition = SDBCondition.empty(),
+        session: SSession? = null
+    ): List<SDBResultSet>
 
-    abstract fun update(table: String, update: Any, condition: SDBCondition = SDBCondition.empty()): Boolean
+    abstract fun update(
+        table: String,
+        update: Any,
+        condition: SDBCondition = SDBCondition.empty(),
+        session: SSession? = null
+    ): Boolean
 
-    abstract fun delete(table: String, condition: SDBCondition = SDBCondition.empty()): Boolean
+    abstract fun delete(
+        table: String,
+        condition: SDBCondition = SDBCondition.empty(),
+        session: SSession? = null
+    ): Boolean
 
-    abstract fun query(query: String): List<SDBResultSet>
+    abstract fun query(
+        query: String,
+        session: SSession? = null
+    ): List<SDBResultSet>
 
-    abstract fun execute(query: String): Boolean
+    abstract fun execute(
+        query: String,
+        session: SSession? = null
+    ): Boolean
 
-    fun asyncCreateTable(table: String, map: Map<String, SDBVariable<*>>): CompletableFuture<Boolean> {
-        return CompletableFuture.supplyAsync({ createTable(table, map) }, thread)
+    open fun close() {}
+
+    fun asyncCreateTable(
+        table: String,
+        map: Map<String, SDBVariable<*>>,
+        session: SSession? = null
+    ): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({ createTable(table, map, session) }, thread)
     }
 
-    fun asyncInsert(table: String, map: Map<String, Any?>): CompletableFuture<Boolean> {
-        return CompletableFuture.supplyAsync({ insert(table, map) }, thread)
+    fun asyncInsert(
+        table: String,
+        map: Map<String, Any?>,
+        session: SSession? = null
+    ): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({ insert(table, map, session) }, thread)
     }
 
-    fun asyncSelect(table: String, condition: SDBCondition = SDBCondition.empty()): CompletableFuture<List<SDBResultSet>> {
-        return CompletableFuture.supplyAsync({ select(table, condition) }, thread)
+    fun asyncSelect(
+        table: String,
+        condition: SDBCondition = SDBCondition.empty(),
+        session: SSession? = null
+    ): CompletableFuture<List<SDBResultSet>> {
+        return CompletableFuture.supplyAsync({ select(table, condition, session) }, thread)
     }
 
-    fun asyncUpdate(table: String, update: Any, condition: SDBCondition): CompletableFuture<Boolean> {
-        return CompletableFuture.supplyAsync({ update(table, update, condition) }, thread)
+    fun asyncUpdate(
+        table: String,
+        update: Any,
+        condition: SDBCondition = SDBCondition.empty(),
+        session: SSession? = null
+    ): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({ update(table, update, condition, session) }, thread)
     }
 
-    fun asyncDelete(table: String, condition: SDBCondition = SDBCondition.empty()): CompletableFuture<Boolean> {
-        return CompletableFuture.supplyAsync({ delete(table, condition) }, thread)
+    fun asyncDelete(
+        table: String,
+        condition: SDBCondition = SDBCondition.empty(),
+        session: SSession? = null
+    ): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({ delete(table, condition, session) }, thread)
     }
 
-    fun asyncQuery(query: String): CompletableFuture<List<SDBResultSet>> {
-        return CompletableFuture.supplyAsync({ query(query) }, thread)
+    fun asyncQuery(query: String, session: SSession? = null): CompletableFuture<List<SDBResultSet>> {
+        return CompletableFuture.supplyAsync({ query(query, session) }, thread)
     }
 
-    fun asyncExecute(query: String): CompletableFuture<Boolean> {
-        return CompletableFuture.supplyAsync({ execute(query) }, thread)
+    fun asyncExecute(query: String, session: SSession? = null): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync({ execute(query, session) }, thread)
     }
 
-    fun backGroundCreateTable(table: String, map: Map<String, SDBVariable<*>>, callback: (Boolean) -> Unit = {}){
+    fun backGroundCreateTable(
+        table: String,
+        map: Map<String, SDBVariable<*>>,
+        session: SSession? = null,
+        callback: (Boolean) -> Unit = {}
+    ) {
         thread.execute {
-            callback(createTable(table, map))
+            callback(createTable(table, map, session))
         }
     }
 
-    fun backGroundInsert(table: String, map: Map<String, Any?>, callback: (Boolean) -> Unit = {}){
+    fun backGroundInsert(
+        table: String,
+        map: Map<String, Any?>,
+        session: SSession? = null,
+        callback: (Boolean) -> Unit = {}
+    ) {
         thread.execute {
-            callback(insert(table, map))
+            callback(insert(table, map, session))
         }
     }
 
-    fun backGroundSelect(table: String, condition: SDBCondition = SDBCondition.empty(), callback: (List<SDBResultSet>) -> Unit = {}){
+    fun backGroundSelect(
+        table: String,
+        condition: SDBCondition = SDBCondition.empty(),
+        session: SSession? = null,
+        callback: (List<SDBResultSet>) -> Unit = {}
+    ) {
         thread.execute {
-            callback(select(table, condition))
+            callback(select(table, condition, session))
         }
     }
 
-    fun backGroundUpdate(table: String, update: Any, condition: SDBCondition = SDBCondition.empty(), callback: (Boolean) -> Unit = {}){
+    fun backGroundUpdate(
+        table: String,
+        update: Any,
+        condition: SDBCondition = SDBCondition.empty(),
+        session: SSession? = null,
+        callback: (Boolean) -> Unit = {}
+    ) {
         thread.execute {
-            callback(update(table, update, condition))
+            callback(update(table, update, condition, session))
         }
     }
 
-    fun backGroundDelete(table: String, condition: SDBCondition = SDBCondition.empty(), callback: (Boolean) -> Unit = {}){
+    fun backGroundDelete(
+        table: String,
+        condition: SDBCondition = SDBCondition.empty(),
+        session: SSession? = null,
+        callback: (Boolean) -> Unit = {}
+    ) {
         thread.execute {
-            callback(delete(table, condition))
+            callback(delete(table, condition, session))
         }
     }
 
-    fun backGroundQuery(query: String, callback: (List<SDBResultSet>) -> Unit = {}){
+    fun backGroundQuery(
+        query: String,
+        session: SSession? = null,
+        callback: (List<SDBResultSet>) -> Unit = {}
+    ) {
         thread.execute {
-            callback(query(query))
+            callback(query(query, session))
         }
     }
 
-    fun backGroundExecute(query: String, callback: (Boolean) -> Unit = {}){
+    fun backGroundExecute(
+        query: String,
+        session: SSession? = null,
+        callback: (Boolean) -> Unit = {}
+    ) {
         thread.execute {
-            callback(execute(query))
+            callback(execute(query, session))
+        }
+    }
+
+    fun transaction(block: (SSession) -> Unit) {
+        val session = SSession(this)
+        try {
+            block(session)
+        } finally {
+            session.close()
         }
     }
 
