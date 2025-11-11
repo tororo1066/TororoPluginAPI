@@ -9,6 +9,9 @@ import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 abstract class SDatabase {
 
@@ -237,7 +240,11 @@ abstract class SDatabase {
         }
     }
 
+    @OptIn(ExperimentalContracts::class)
     fun transaction(block: (SSession) -> Unit) {
+        contract {
+            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        }
         val session = SSession(this)
         try {
             block(session)
