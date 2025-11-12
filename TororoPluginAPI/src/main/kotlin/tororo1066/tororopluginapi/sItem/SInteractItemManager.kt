@@ -1,10 +1,8 @@
 package tororo1066.tororopluginapi.sItem
 
-import net.md_5.bungee.api.ChatMessageType
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
-import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
@@ -14,7 +12,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
-import tororo1066.tororopluginapi.SDebug
 import tororo1066.tororopluginapi.SDebug.Companion.sendDebug
 import tororo1066.tororopluginapi.SStr
 import tororo1066.tororopluginapi.sEvent.SEvent
@@ -25,6 +22,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
 
     val items = HashMap<ItemStack,SInteractItem>()
     val sEvent = SEvent(plugin)
+    private var interactEvent: ((PlayerInteractEvent, SInteractItem) -> Unit)? = null
 
     fun createSInteractItem(itemStack: ItemStack, noDump: Boolean = false): SInteractItem {
         return if (noDump){
@@ -58,6 +56,10 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
         return getItem(player.inventory.getItem(slot))
     }
 
+    fun setGlobalInteractEvent(event: ((PlayerInteractEvent, SInteractItem) -> Unit)?) {
+        this.interactEvent = event
+    }
+
     init {
         sEvent.register(PlayerInteractEvent::class.java) { e ->
             if (e.useItemInHand() != Event.Result.DEFAULT)return@register
@@ -74,6 +76,9 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
                 SStr("&c&l使用まで&f:&e&l${ceil(interactItem.interactCoolDown.toDouble() / 2.0) / 10.0}&b&l秒").actionBar(e.player)
                 return@register
             }
+
+            interactEvent?.invoke(e,interactItem)
+
             interactItem.interactEvents.forEach {
                 if (!it.invoke(e,interactItem))return@register
             }
