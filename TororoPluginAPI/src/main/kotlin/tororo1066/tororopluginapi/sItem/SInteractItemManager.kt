@@ -22,7 +22,8 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
 
     val items = HashMap<ItemStack,SInteractItem>()
     val sEvent = SEvent(plugin)
-    private var interactEvent: ((PlayerInteractEvent, SInteractItem) -> Unit)? = null
+    internal var interactEvent: ((PlayerInteractEvent, SInteractItem) -> Unit)? = null
+    internal var onSetCoolDownEvent: ((Int, SInteractItem) -> Unit)? = null
 
     fun createSInteractItem(itemStack: ItemStack, noDump: Boolean = false): SInteractItem {
         return if (noDump){
@@ -60,6 +61,10 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
         this.interactEvent = event
     }
 
+    fun setOnSetCoolDownEvent(event: ((Int, SInteractItem) -> Unit)?) {
+        this.onSetCoolDownEvent = event
+    }
+
     init {
         sEvent.register(PlayerInteractEvent::class.java) { e ->
             if (e.useItemInHand() != Event.Result.DEFAULT)return@register
@@ -84,6 +89,7 @@ class SInteractItemManager(val plugin: JavaPlugin, disableCoolTimeView: Boolean 
             }
 
             interactItem.interactCoolDown = interactItem.initialCoolDown
+            onSetCoolDownEvent?.invoke(interactItem.initialCoolDown,interactItem)
 
             object : BukkitRunnable() {
                 override fun run() {

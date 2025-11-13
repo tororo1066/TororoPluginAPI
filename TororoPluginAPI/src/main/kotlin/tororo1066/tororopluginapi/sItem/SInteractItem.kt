@@ -54,7 +54,6 @@ class SInteractItem(private val manager: SInteractItemManager, val itemStack: It
 
     fun setInteractCoolDown(coolDown: Int): SInteractItem {
         if (interactCoolDown <= 0){
-            interactCoolDown = coolDown
             object : BukkitRunnable() {
                 override fun run() {
                     if (interactCoolDown <= 0){
@@ -65,9 +64,9 @@ class SInteractItem(private val manager: SInteractItemManager, val itemStack: It
                     interactCoolDown--
                 }
             }.runTaskTimer(manager.plugin,0,1)
-            return this
         }
         interactCoolDown = coolDown
+        manager.onSetCoolDownEvent?.invoke(coolDown, this)
 
         return this
     }
