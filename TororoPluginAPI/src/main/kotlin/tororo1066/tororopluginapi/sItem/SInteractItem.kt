@@ -29,7 +29,7 @@ class SInteractItem(private val manager: SInteractItemManager, val itemStack: It
     }
 
     override fun getItemStackForAdd(): ItemStack {
-        return itemStack.clone()
+        return itemStack
     }
 
     fun setInteractEvent(e: (PlayerInteractEvent,SInteractItem) -> Boolean): SInteractItem {
