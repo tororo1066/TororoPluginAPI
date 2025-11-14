@@ -59,6 +59,8 @@ class SMongo: SDatabase {
     override fun createTable(table: String, map: Map<String, SDBVariable<*>>, session: SSession?): Boolean {
         return try {
             val db = open()
+            val alreadyExists = db.listCollectionNames().toList().contains(table)
+            if (alreadyExists) return true
             if (session != null) {
                 db.createCollection(session.getMongoSession(), table)
             } else {
