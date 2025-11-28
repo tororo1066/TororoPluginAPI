@@ -221,7 +221,7 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
                     this.color = ChatFormatting.getByName(color.colorName.uppercase()) ?: ChatFormatting.WHITE
                 }
             val removeTeamPacket = ClientboundSetPlayerTeamPacket.createRemovePacket(team)
-            val addTeamPacket = ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(team, false)
+            val addTeamPacket = ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(team, true)
 
             handle.connection.send(ClientboundBundlePacket(listOf(removeTeamPacket, addTeamPacket)))
         }

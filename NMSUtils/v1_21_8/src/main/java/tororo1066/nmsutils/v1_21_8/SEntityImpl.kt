@@ -22,7 +22,7 @@ class SEntityImpl(entity: Entity): SEntity, CraftEntity((entity as CraftEntity).
 
     companion object {
         val SHARED_FLAGS = EntityDataAccessor(0, EntityDataSerializers.BYTE)
-        val glowData = HashMap<Int, ArrayList<Int>>() //key: receiver entityId, value: List of entityIds
+        val glowData = HashMap<Int, HashMap<Int, GlowColor>>() //key: receiver entityId, value: Map of entityId to GlowColor
     }
 
     override fun sendGlow(glow: Boolean, receivers: Collection<Player>, glowColor: GlowColor) {
@@ -38,10 +38,17 @@ class SEntityImpl(entity: Entity): SEntity, CraftEntity((entity as CraftEntity).
 
         receivers.forEach {
             (it as CraftPlayer).handle.connection.run {
-                send(teamPacket)
+                if (!glow) {
+                    val currentGlowData = glowData[it.entityId]?.get(entityId)
+                    if (currentGlowData != null && currentGlowData == glowColor) {
+                        send(teamPacket) // Only send REMOVE if the glow color matches
+                    }
+                } else {
+                    send(teamPacket)
+                }
                 send(glowPacket)
                 if (glow) {
-                    glowData.computeIfAbsent(it.entityId) { ArrayList() }.add(entityId)
+                    glowData.computeIfAbsent(it.entityId) { HashMap() }[entityId] = glowColor
                 } else {
                     glowData[it.entityId]?.remove(entityId)
                 }

@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import tororo1066.commandapi.SCommandV2Arg
 import tororo1066.commandapi.argumentType.EntityArg
 import tororo1066.commandapi.argumentType.StringArg
 import tororo1066.tororoplugin.TororoPlugin
