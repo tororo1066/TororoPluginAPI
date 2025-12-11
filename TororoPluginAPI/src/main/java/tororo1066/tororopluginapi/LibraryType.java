@@ -2,10 +2,14 @@ package tororo1066.tororopluginapi;
 
 public enum LibraryType {
 
-    KOTLIN("org.jetbrains.kotlin:kotlin-stdlib", "1.7.20", Repository.MAVEN_CENTRAL),
-    KOTLIN_JDK8("org.jetbrains.kotlin:kotlin-stdlib-jdk8", "1.7.20", Repository.MAVEN_CENTRAL),
-    MONGODB("org.mongodb:mongodb-driver-sync", "4.11.1", Repository.MAVEN_CENTRAL),
-    EVALEX("com.ezylang:EvalEx", "3.1.2", Repository.MAVEN_CENTRAL),;
+    KOTLIN("org.jetbrains.kotlin:kotlin-stdlib", "2.2.0", Repository.MAVEN_CENTRAL),
+    KOTLIN_JDK8("org.jetbrains.kotlin:kotlin-stdlib-jdk8", "2.2.0", Repository.MAVEN_CENTRAL),
+    MONGODB("org.mongodb:mongodb-driver-sync", "5.6.2", Repository.MAVEN_CENTRAL),
+    EVALEX("com.ezylang:EvalEx", "3.1.2", Repository.MAVEN_CENTRAL),
+    OPENTELEMETRY_API("io.opentelemetry:opentelemetry-api", "1.57.0", Repository.MAVEN_CENTRAL),
+    OPENTELEMETRY_SDK("io.opentelemetry:opentelemetry-sdk", "1.57.0", Repository.MAVEN_CENTRAL),
+    OPENTELEMETRY_EXPORTER_OTLP("io.opentelemetry:opentelemetry-exporter-otlp", "1.57.0", Repository.MAVEN_CENTRAL)
+    ;
 
     public final String name;
     public final String defaultVersion;

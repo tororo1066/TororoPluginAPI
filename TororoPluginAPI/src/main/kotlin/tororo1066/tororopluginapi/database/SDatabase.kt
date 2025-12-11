@@ -241,7 +241,7 @@ abstract class SDatabase {
     }
 
     @OptIn(ExperimentalContracts::class)
-    inline fun transaction(block: SDatabase.(SSession) -> Unit) {
+    fun transaction(block: SDatabase.(SSession) -> Unit) {
         contract {
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         }

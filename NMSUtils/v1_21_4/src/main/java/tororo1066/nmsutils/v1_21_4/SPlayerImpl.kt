@@ -68,7 +68,7 @@ class SPlayerImpl(p: Player): SPlayer, CraftPlayer((p as CraftPlayer).handle.lev
     }
 
     override fun moveRotation(yaw: Float, pitch: Float) {
-        val packet = ClientboundPlayerRotationPacket(yaw,pitch)
+        val packet = ClientboundPlayerRotationPacket(this.yaw + yaw, this.pitch + pitch)
         handle.connection.send(packet)
     }
 

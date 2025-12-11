@@ -30,8 +30,14 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT'
     compileOnly 'net.kyori:adventure-text-serializer-bungeecord:4.0.1'
     compileOnly 'com.ezylang:EvalEx:3.1.2'
-    compileOnly 'org.mongodb:mongodb-driver-sync:4.11.1'
+    compileOnly 'org.mongodb:mongodb-driver-sync:5.6.2'
+    // for redis
     compileOnly 'io.lettuce:lettuce-core:7.0.0.RELEASE'
+    // for opentelemetry
+    compileOnly 'io.opentelemetry:opentelemetry-api:1.57.0'
+    compileOnly 'io.opentelemetry:opentelemetry-sdk:1.57.0'
+    compileOnly 'io.opentelemetry:opentelemetry-exporter-otlp:1.57.0'
+
     compileOnly 'com.mojang:brigadier:1.0.18'
     compileOnly project(':NMSUtils:base')
     compileOnly project(':CommandAPI')
