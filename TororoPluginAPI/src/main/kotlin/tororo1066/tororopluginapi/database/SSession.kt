@@ -5,14 +5,15 @@ import tororo1066.tororopluginapi.database.mongo.SMongo
 import java.sql.Connection
 
 class SSession(val sDatabase: SDatabase): AutoCloseable {
-    private val sqlConnection: Connection? = null
-    private val mongoSession: ClientSession? = null
+    private var sqlConnection: Connection? = null
+    private var mongoSession: ClientSession? = null
 
     fun getSQLConnection(): Connection {
         sqlConnection?.let { return it }
         if (sDatabase.isSQL) {
             val conn = sDatabase.open() as Connection
             conn.autoCommit = false
+            sqlConnection = conn
             return conn
         } else {
             throw IllegalStateException("This session is not for SQL database.")
@@ -23,7 +24,9 @@ class SSession(val sDatabase: SDatabase): AutoCloseable {
         mongoSession?.let { return it }
         if (sDatabase.isMongo) {
             val sMongo = sDatabase as SMongo
-            return sMongo.client.startSession().also { it.startTransaction() }
+            val session = sMongo.client.startSession().also { it.startTransaction() }
+            mongoSession = session
+            return session
         } else {
             throw IllegalStateException("This session is not for MongoDB database.")
         }
