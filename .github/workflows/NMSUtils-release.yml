@@ -3,14 +3,18 @@ name: NMSUtils
 on:
   push:
     branches: [ master ]
-    tags:
-    - v*
+    paths:
+    - 'NMSUtils/**'
+    - 'NMSUtils-release.yml'
 env:
   GITHUB_USERNAME: ${{secrets.USERNAME}}
   GITHUB_TOKEN: ${{secrets.TOKEN}}
 
 jobs:
   build:
+
+    permissions:
+      contents: write
 
     runs-on: ubuntu-latest
 
@@ -33,3 +37,14 @@ jobs:
       with:
         name: NMSUtils-1.0-SNAPSHOT.jar
         path: NMSUtils/build/libs/NMSUtils-1.0-SNAPSHOT.jar
+
+    - name: Release JAR
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: nmsutils-${{ github.sha }}
+        name: NMSUtils build ${{ github.sha }}
+        prerelease: true
+        files: NMSUtils/build/libs/NMSUtils-1.0-SNAPSHOT.jar
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
