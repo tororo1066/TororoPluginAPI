@@ -1,5 +1,7 @@
-package tororo1066.tororopluginapi.sInventory.v2
+package tororo1066.tororopluginapiextended.sInventoryV2
 
+import io.papermc.paper.datacomponent.DataComponentTypes
+import io.papermc.paper.datacomponent.item.TooltipDisplay
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
@@ -73,6 +75,13 @@ open class ModernItemStack(itemStack: ItemStack): SItem(itemStack) {
         get() = lore?.map { miniMessageSerializer.serialize(it) }
         set(value) {
             lore = value?.map { miniMessageSerializer.deserialize(it) }
+        }
+
+    var hideTooltip: Boolean
+        get() = itemStack.getData(DataComponentTypes.TOOLTIP_DISPLAY)?.hideTooltip() ?: false
+        set(value) {
+            val currentData = itemStack.getData(DataComponentTypes.TOOLTIP_DISPLAY)
+
         }
 
     inline fun displayName(builder: () -> Component) {

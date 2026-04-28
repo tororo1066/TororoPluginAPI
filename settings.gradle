@@ -16,3 +16,5 @@ include("NMSUtils:v1_21_1")
 include("NMSUtils:v1_21_4")
 include("NMSUtils:v1_21_8")
 include("CommandAPI")
+include 'TororoPluginAPIExtended'
+include 'TororoPluginAPIExtended'

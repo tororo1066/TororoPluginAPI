@@ -1,4 +1,4 @@
-package tororo1066.tororopluginapi.sInventory.v2
+package tororo1066.tororopluginapiextended.sInventoryV2
 
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
