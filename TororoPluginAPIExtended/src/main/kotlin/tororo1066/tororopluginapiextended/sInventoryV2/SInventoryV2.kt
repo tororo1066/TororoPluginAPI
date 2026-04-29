@@ -10,8 +10,8 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 import tororo1066.tororopluginapi.sEvent.SEvent
-import tororo1066.tororopluginapi.sInventory.v2.context.InventoryClickContext
-import tororo1066.tororopluginapi.sInventory.v2.context.InventoryCloseContext
+import tororo1066.tororopluginapiextended.sInventoryV2.context.InventoryClickContext
+import tororo1066.tororopluginapiextended.sInventoryV2.context.InventoryCloseContext
 import java.util.concurrent.ConcurrentHashMap
 
 abstract class SInventoryV2(val title: Component, val row: Int): InventoryHolder {
@@ -28,6 +28,7 @@ abstract class SInventoryV2(val title: Component, val row: Int): InventoryHolder
             sEvent.register<InventoryClickEvent> { e ->
                 val holder = e.inventory.holder as? SInventoryV2 ?: return@register
                 val modernItemStack = holder.items[e.slot] ?: return@register
+                e.isCancelled = true
                 val context = InventoryClickContext(e, modernItemStack)
                 modernItemStack.handleOnClick(context)
             }
@@ -69,47 +70,26 @@ abstract class SInventoryV2(val title: Component, val row: Int): InventoryHolder
 //        items[index] = item
 //    }
 
-    fun set(index: Int, itemStack: ItemStack, scope: ModernItemStack.() -> Unit) {
+    fun set(index: Int, itemStack: ItemStack, scope: ModernItemStack.() -> Unit = {}) {
         val item = ModernItemStack(itemStack).apply(scope)
         items[index] = item
     }
 
-    fun set(index: Int, material: Material, scope: ModernItemStack.() -> Unit) =
+    fun set(index: Int, material: Material, scope: ModernItemStack.() -> Unit = {}) =
         set(index, ItemStack(material), scope)
+
+    fun set(range: IntRange, modernItemStack: ModernItemStack, scope: ModernItemStack.() -> Unit = {}) {
+        val item = modernItemStack.apply(scope)
+        range.forEach { index ->
+            items[index] = item
+        }
+    }
+
+    fun set(index: Int, modernItemStack: ModernItemStack, scope: ModernItemStack.() -> Unit = {}) =
+        set(index..index, modernItemStack, scope)
 
 
     internal fun handleOnClose(context: InventoryCloseContext) {
         onClose.forEach { it(context) }
-    }
-}
-
-class TestSInventoryV2: SInventoryV2("TestSInventoryV2", 1) {
-//    init {
-//        set(0, Material.DIAMOND) {
-//            displayNameText = "§bTest Item"
-//            loreText {
-//                +"This is a test item"
-//                +"Created using SInventoryV2"
-//            }
-//            customClickAction()
-//        }
-//    }
-
-    override fun render() {
-        set(0, Material.DIAMOND) {
-            displayNameText = "§bTest Item"
-            loreText {
-                +"This is a test item"
-                +"Created using SInventoryV2"
-            }
-            customClickAction()
-        }
-    }
-
-    fun ModernItemStack.customClickAction() {
-        cancelClickEvent()
-        onClick {
-            player.sendMessage("You clicked on $displayNameText")
-        }
     }
 }

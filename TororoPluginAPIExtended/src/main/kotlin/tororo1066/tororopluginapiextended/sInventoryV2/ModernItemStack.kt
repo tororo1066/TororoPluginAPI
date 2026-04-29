@@ -8,9 +8,10 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
-import tororo1066.tororopluginapi.sInventory.v2.context.InventoryClickContext
 import tororo1066.tororopluginapi.sItem.SItem
+import tororo1066.tororopluginapiextended.sInventoryV2.context.InventoryClickContext
 
+@Suppress("UnstableApiUsage")
 open class ModernItemStack(itemStack: ItemStack): SItem(itemStack) {
 
     companion object {
@@ -80,8 +81,13 @@ open class ModernItemStack(itemStack: ItemStack): SItem(itemStack) {
     var hideTooltip: Boolean
         get() = itemStack.getData(DataComponentTypes.TOOLTIP_DISPLAY)?.hideTooltip() ?: false
         set(value) {
-            val currentData = itemStack.getData(DataComponentTypes.TOOLTIP_DISPLAY)
-
+            val hiddenComponents = itemStack.getData(DataComponentTypes.TOOLTIP_DISPLAY)?.hiddenComponents() ?: setOf()
+            itemStack.setData(
+                DataComponentTypes.TOOLTIP_DISPLAY,
+                TooltipDisplay.tooltipDisplay()
+                    .hiddenComponents(hiddenComponents)
+                    .hideTooltip(value)
+            )
         }
 
     inline fun displayName(builder: () -> Component) {
