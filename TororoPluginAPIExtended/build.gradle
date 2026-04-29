@@ -50,12 +50,6 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-dependencies {
-    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
