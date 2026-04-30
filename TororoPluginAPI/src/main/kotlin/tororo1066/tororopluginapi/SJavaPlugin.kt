@@ -239,14 +239,14 @@ abstract class SJavaPlugin() : JavaPlugin() {
 
 }
 
-private fun URL.getClasses(folder: String): List<Class<*>> {
+internal fun URL.getClasses(folder: String): List<Class<*>> {
     val classes = ArrayList<Class<*>>()
     val src = ArrayList<File>()
     val srcFile = try {
         File(toURI())
-    } catch (ex: IllegalArgumentException) {
+    } catch (_: IllegalArgumentException) {
         File((openConnection() as JarURLConnection).jarFileURL.toURI())
-    } catch (ex: URISyntaxException) {
+    } catch (_: URISyntaxException) {
         File(path)
     }
 
