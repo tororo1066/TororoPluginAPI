@@ -46,4 +46,8 @@ class MultiFileConfigManager(
     inline fun <reified T: AbstractConfig> getConfig(): T? {
         return subConfigs.firstOrNull { it is T } as? T
     }
+
+    inline fun <reified T: AbstractConfig> getOrThrowConfig(): T {
+        return getConfig<T>() ?: throw IllegalStateException("Config of type ${T::class.java.name} not found")
+    }
 }
