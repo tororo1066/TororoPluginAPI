@@ -30,7 +30,7 @@ dependencies {
     compileOnly 'com.mojang:brigadier:1.0.18'
     compileOnly project(':NMSUtils:base')
     compileOnly project(':CommandAPI')
-    implementation project(':TororoPluginAPI')
+    api project(':TororoPluginAPI')
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens

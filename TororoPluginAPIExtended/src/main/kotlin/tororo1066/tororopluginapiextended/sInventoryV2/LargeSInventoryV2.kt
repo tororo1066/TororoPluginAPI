@@ -29,17 +29,17 @@ abstract class LargeSInventoryV2(title: Component): SInventoryV2(title, 6) {
         }
     }
 
+    abstract val resource: () -> List<ModernItemStack>
+
     constructor(title: String): this(Component.text(title))
 
-    abstract fun resource(): List<ModernItemStack>
-
-    override fun render() {
+    override fun renderContents() {
         val resourceItems = resource()
 
         set(45..53, barItem)
 
         val hasPreviousPage = currentPage > 0
-        val hasNextPage = (currentPage + 1) * 45 <= resourceItems.size
+        val hasNextPage = resourceItems.size > (currentPage + 1) * 45
 
         if (hasPreviousPage) {
             set(45, previousBarItem)
@@ -49,11 +49,8 @@ abstract class LargeSInventoryV2(title: Component): SInventoryV2(title, 6) {
             set(53, nextBarItem)
         }
 
-        val start = currentPage * 45
-        var end = resourceItems.size - currentPage
-        if (end > 45) end = 45
-        for (i in 0 until end) {
-            set(i, resourceItems[start + i])
+        resourceItems.drop(currentPage * 45).take(45).forEachIndexed { index, item ->
+            set(index, item)
         }
     }
 }

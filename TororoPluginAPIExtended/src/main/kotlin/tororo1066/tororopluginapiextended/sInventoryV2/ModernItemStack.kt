@@ -21,6 +21,12 @@ open class ModernItemStack(itemStack: ItemStack): SItem(itemStack) {
             .build()
 
         private val miniMessageSerializer = MiniMessage.miniMessage()
+
+        private var defaultItalics = true
+
+        fun setDefaultItalics(italics: Boolean) {
+            defaultItalics = italics
+        }
     }
 
     constructor(

@@ -9,12 +9,13 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
+import org.jetbrains.annotations.Range
 import tororo1066.tororopluginapi.sEvent.SEvent
 import tororo1066.tororopluginapiextended.sInventoryV2.context.InventoryClickContext
 import tororo1066.tororopluginapiextended.sInventoryV2.context.InventoryCloseContext
 import java.util.concurrent.ConcurrentHashMap
 
-abstract class SInventoryV2(val title: Component, val row: Int): InventoryHolder {
+abstract class SInventoryV2(val title: Component, val row: @Range(from = 1, to = 6) Int): InventoryHolder {
 
     constructor(
         title: String,
@@ -45,30 +46,29 @@ abstract class SInventoryV2(val title: Component, val row: Int): InventoryHolder
 
     val onClose: MutableList<InventoryCloseContext.() -> Unit> = mutableListOf()
 
-    private var inventory: Inventory = Bukkit.createInventory(this, row, title)
+    private val inventory: Inventory = Bukkit.createInventory(this, row * 9, title)
 
-    abstract fun render()
+    abstract fun renderContents()
 
-    fun open(player: Player) {
-        val inventory = Bukkit.createInventory(this, row, title)
-        this.inventory = inventory
-        render()
+    fun render() {
+        items.clear()
+        inventory.clear()
+
+        renderContents()
+
         items.forEach { (slot, item) ->
             inventory.setItem(slot, item.build())
         }
+    }
 
+    fun open(player: Player) {
+        render()
         player.openInventory(inventory)
     }
 
     override fun getInventory(): Inventory {
         return inventory
     }
-
-//    fun set(index: Int, material: Material, scope: ModernItemStack.() -> Unit) {
-//        val item = ModernItemStack(ItemStack(material))
-//        item.scope()
-//        items[index] = item
-//    }
 
     fun set(index: Int, itemStack: ItemStack, scope: ModernItemStack.() -> Unit = {}) {
         val item = ModernItemStack(itemStack).apply(scope)
