@@ -1,4 +1,4 @@
-package tororo1066.tororopluginapiextended.sInventoryV2
+package tororo1066.tororopluginapiextended.sInventoryV2.itemStack
 
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.TooltipDisplay
@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import tororo1066.tororopluginapi.sItem.SItem
 import tororo1066.tororopluginapiextended.sInventoryV2.context.InventoryClickContext
+import tororo1066.tororopluginapiextended.sInventoryV2.utils.UnaryPlusBuilder
 
 @Suppress("UnstableApiUsage")
 open class ModernItemStack(itemStack: ItemStack): SItem(itemStack) {
@@ -22,11 +23,11 @@ open class ModernItemStack(itemStack: ItemStack): SItem(itemStack) {
 
         private val miniMessageSerializer = MiniMessage.miniMessage()
 
-        private var defaultItalics = true
-
-        fun setDefaultItalics(italics: Boolean) {
-            defaultItalics = italics
-        }
+//        private var defaultItalics = true
+//
+//        fun setDefaultItalics(italics: Boolean) {
+//            defaultItalics = italics
+//        }
     }
 
     constructor(
@@ -108,22 +109,22 @@ open class ModernItemStack(itemStack: ItemStack): SItem(itemStack) {
         displayNameMiniMessage = builder()
     }
 
-    inline fun lore(builder: LoreBuilders.LoreBuilder<Component>.() -> Unit) {
-        val loreBuilder = LoreBuilders.Component()
+    fun lore(builder: UnaryPlusBuilder<Component>.() -> Unit) {
+        val loreBuilder = UnaryPlusBuilder<Component>()
         loreBuilder.builder()
         lore = loreBuilder.build()
     }
 
-    inline fun loreText(builder: LoreBuilders.LoreBuilder<String>.() -> Unit) {
-        val loreBuilder = LoreBuilders.Text()
+    fun loreText(builder: UnaryPlusBuilder<String>.() -> Unit) {
+        val loreBuilder = UnaryPlusBuilder<String>()
         loreBuilder.builder()
-        lore = loreBuilder.build()
+        loreText = loreBuilder.build()
     }
 
-    inline fun loreMiniMessage(builder: LoreBuilders.LoreBuilder<String>.() -> Unit) {
-        val loreBuilder = LoreBuilders.MiniMessage()
+    fun loreMiniMessage(builder: UnaryPlusBuilder<String>.() -> Unit) {
+        val loreBuilder = UnaryPlusBuilder<String>()
         loreBuilder.builder()
-        lore = loreBuilder.build()
+        loreMiniMessage = loreBuilder.build()
     }
 
     fun onClick(action: InventoryClickContext.() -> Unit) {
@@ -136,38 +137,5 @@ open class ModernItemStack(itemStack: ItemStack): SItem(itemStack) {
 
     internal fun handleOnClick(context: InventoryClickContext) {
         onClick.forEach { it(context) }
-    }
-
-
-    sealed class LoreBuilders {
-        abstract class LoreBuilder<T> {
-            protected val loreList = mutableListOf<net.kyori.adventure.text.Component>()
-
-            abstract fun addLine(line: T)
-
-            operator fun T.unaryPlus() {
-                addLine(this)
-            }
-
-            fun build(): List<net.kyori.adventure.text.Component> = loreList
-        }
-
-        class Component: LoreBuilder<net.kyori.adventure.text.Component>() {
-            override fun addLine(line: net.kyori.adventure.text.Component) {
-                loreList.add(line)
-            }
-        }
-
-        class Text: LoreBuilder<String>() {
-            override fun addLine(line: String) {
-                loreList.add(legacyComponentSerializer.deserialize(line))
-            }
-        }
-
-        class MiniMessage: LoreBuilder<String>() {
-            override fun addLine(line: String) {
-                loreList.add(miniMessageSerializer.deserialize(line))
-            }
-        }
     }
 }

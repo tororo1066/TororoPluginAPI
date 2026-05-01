@@ -1,7 +1,9 @@
-package tororo1066.tororopluginapiextended.sInventoryV2
+package tororo1066.tororopluginapiextended.sInventoryV2.builtin
 
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
+import tororo1066.tororopluginapiextended.sInventoryV2.SInventoryV2
+import tororo1066.tororopluginapiextended.sInventoryV2.itemStack.ModernItemStack
 
 abstract class LargeSInventoryV2(title: Component): SInventoryV2(title, 6) {
     var currentPage = 0

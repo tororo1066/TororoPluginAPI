@@ -13,9 +13,11 @@ import org.jetbrains.annotations.Range
 import tororo1066.tororopluginapi.sEvent.SEvent
 import tororo1066.tororopluginapiextended.sInventoryV2.context.InventoryClickContext
 import tororo1066.tororopluginapiextended.sInventoryV2.context.InventoryCloseContext
+import tororo1066.tororopluginapiextended.sInventoryV2.itemStack.InputItemStack
+import tororo1066.tororopluginapiextended.sInventoryV2.itemStack.ModernItemStack
 import java.util.concurrent.ConcurrentHashMap
 
-abstract class SInventoryV2(val title: Component, val row: @Range(from = 1, to = 6) Int): InventoryHolder {
+abstract class SInventoryV2(title: Component, row: @Range(from = 1, to = 6) Int): InventoryHolder {
 
     constructor(
         title: String,
@@ -88,6 +90,45 @@ abstract class SInventoryV2(val title: Component, val row: @Range(from = 1, to =
     fun set(index: Int, modernItemStack: ModernItemStack, scope: ModernItemStack.() -> Unit = {}) =
         set(index..index, modernItemStack, scope)
 
+    fun <T: Any> inputItem(modernItemStack: ModernItemStack, type: Class<T>, builder: InputItemStack.InputItemStack<T>.() -> Unit): ModernItemStack {
+        return InputItemStack.InputItemStack(this, modernItemStack, type).apply(builder).applyToModernItemStack()
+    }
+
+    fun <T: Any> inputItem(itemStack: ItemStack, type: Class<T>, builder: InputItemStack.InputItemStack<T>.() -> Unit) =
+        inputItem(ModernItemStack(itemStack), type, builder)
+
+    fun <T: Any> inputItem(material: Material, type: Class<T>, builder: InputItemStack.InputItemStack<T>.() -> Unit) =
+        inputItem(ItemStack(material), type, builder)
+
+    fun <T: Any> setInputItem(index: Int, modernItemStack: ModernItemStack, type: Class<T>, builder: InputItemStack.InputItemStack<T>.() -> Unit) {
+        set(index, inputItem(modernItemStack, type, builder))
+    }
+
+    fun <T: Any> setInputItem(index: Int, itemStack: ItemStack, type: Class<T>, builder: InputItemStack.InputItemStack<T>.() -> Unit) =
+        setInputItem(index, ModernItemStack(itemStack), type, builder)
+
+    fun <T: Any> setInputItem(index: Int, material: Material, type: Class<T>, builder: InputItemStack.InputItemStack<T>.() -> Unit) =
+        setInputItem(index, ItemStack(material), type, builder)
+
+    fun <T: Any> nullableInputItem(modernItemStack: ModernItemStack, type: Class<T>, builder: InputItemStack.NullableInputItemStack<T>.() -> Unit): ModernItemStack {
+        return InputItemStack.NullableInputItemStack(this, modernItemStack, type).apply(builder).applyToModernItemStack()
+    }
+
+    fun <T: Any> nullableInputItem(itemStack: ItemStack, type: Class<T>, builder: InputItemStack.NullableInputItemStack<T>.() -> Unit) =
+        nullableInputItem(ModernItemStack(itemStack), type, builder)
+
+    fun <T: Any> nullableInputItem(material: Material, type: Class<T>, builder: InputItemStack.NullableInputItemStack<T>.() -> Unit) =
+        nullableInputItem(ItemStack(material), type, builder)
+
+    fun <T: Any> setNullableInputItem(index: Int, modernItemStack: ModernItemStack, type: Class<T>, builder: InputItemStack.NullableInputItemStack<T>.() -> Unit) {
+        set(index, nullableInputItem(modernItemStack, type, builder))
+    }
+
+    fun <T: Any> setNullableInputItem(index: Int, itemStack: ItemStack, type: Class<T>, builder: InputItemStack.NullableInputItemStack<T>.() -> Unit) =
+        setNullableInputItem(index, ModernItemStack(itemStack), type, builder)
+
+    fun <T: Any> setNullableInputItem(index: Int, material: Material, type: Class<T>, builder: InputItemStack.NullableInputItemStack<T>.() -> Unit) =
+        setNullableInputItem(index, ItemStack(material), type, builder)
 
     internal fun handleOnClose(context: InventoryCloseContext) {
         onClose.forEach { it(context) }

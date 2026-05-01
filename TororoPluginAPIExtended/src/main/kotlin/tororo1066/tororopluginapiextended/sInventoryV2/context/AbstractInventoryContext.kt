@@ -1,10 +1,11 @@
 package tororo1066.tororopluginapiextended.sInventoryV2.context
 
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryEvent
 
 abstract class AbstractInventoryContext(
     val inventoryEvent: InventoryEvent
 ) {
     val player
-        get() = inventoryEvent.view.player
+        get() = inventoryEvent.view.player as Player
 }
