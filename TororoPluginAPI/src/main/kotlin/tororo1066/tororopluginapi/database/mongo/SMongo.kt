@@ -78,11 +78,10 @@ class SMongo: SDatabase {
             val db = open()
             val collection = db.getCollection(table)
             if (session != null) {
-                collection.insertOne(session.getMongoSession(), Document(map))
+                collection.insertOne(session.getMongoSession(), Document(map)).wasAcknowledged()
             } else {
-                collection.insertOne(Document(map))
+                collection.insertOne(Document(map)).wasAcknowledged()
             }
-            true
         } catch (e: Exception){
             e.printStackTrace()
             false

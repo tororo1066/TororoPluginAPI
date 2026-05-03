@@ -87,7 +87,7 @@ class SSQLite: SDatabase {
         }
 
         return try {
-            stmt.execute()
+            stmt.executeUpdate() > 0
         } catch (e: Exception){
             e.printStackTrace()
             false
@@ -145,8 +145,7 @@ class SSQLite: SDatabase {
         condition.processPreparedStatement(stmt, map.size + 1)
 
         return try {
-            stmt.execute()
-            true
+            stmt.executeUpdate() > 0
         } catch (e: Exception){
             e.printStackTrace()
             false
@@ -166,7 +165,7 @@ class SSQLite: SDatabase {
         condition.processPreparedStatement(stmt)
 
         return try {
-            stmt.execute()
+            stmt.executeUpdate() > 0
         } catch (e: Exception){
             e.printStackTrace()
             false
