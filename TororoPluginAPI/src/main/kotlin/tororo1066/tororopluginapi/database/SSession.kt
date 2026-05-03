@@ -2,6 +2,7 @@ package tororo1066.tororopluginapi.database
 
 import com.mongodb.client.ClientSession
 import tororo1066.tororopluginapi.database.mongo.SMongo
+import tororo1066.tororopluginapi.database.sqlite.SSQLite
 import java.sql.Connection
 
 class SSession(val sDatabase: SDatabase): AutoCloseable {
@@ -40,6 +41,15 @@ class SSession(val sDatabase: SDatabase): AutoCloseable {
     fun rollback() {
         sqlConnection?.rollback()
         mongoSession?.abortTransaction()
+    }
+
+    fun sqliteLock() {
+        if (sDatabase is SSQLite) {
+            val conn = getSQLConnection()
+            conn.prepareStatement("begin immediate").use { it.execute() }
+        } else {
+            throw IllegalStateException("This session is not for SQLite database.")
+        }
     }
 
     override fun close() {
