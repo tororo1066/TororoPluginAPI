@@ -47,7 +47,7 @@ class SMySQL: SDatabase {
         val conn = session?.getSQLConnection() ?: open()
         val queryBuilder = StringBuilder()
         queryBuilder.append("create table if not exists $table (")
-        queryBuilder.append(map.entries.joinToString(",") { it.key + " " + it.value.type.variableName.lowercase() + (if (it.value.length != -1) "(${it.value.length})" else "") +
+        queryBuilder.append(map.entries.joinToString(",") { "\"${it.key}\"" + " " + it.value.type.variableName.lowercase() + (if (it.value.length != -1) "(${it.value.length})" else "") +
                 (if (!it.value.nullable) " not null" else " null") +
                 (if (it.value.autoIncrement || !it.value.nullable) "" else if (it.value.default == null) " default null" else " default " + SDBCondition.modifySQLVariable(it.value.type,it.value.default!!)) +
                 if (it.value.autoIncrement) " auto_increment" else "" })
