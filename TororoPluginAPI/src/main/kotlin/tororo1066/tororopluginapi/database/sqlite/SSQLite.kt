@@ -6,7 +6,6 @@ import tororo1066.tororopluginapi.database.SDBResultSet
 import tororo1066.tororopluginapi.database.SDBVariable
 import tororo1066.tororopluginapi.database.SDatabase
 import tororo1066.tororopluginapi.database.SSession
-import tororo1066.tororopluginapi.mysql.ultimate.USQLCondition
 import java.io.File
 import java.sql.*
 
@@ -42,7 +41,7 @@ class SSQLite: SDatabase {
         queryBuilder.append(map.entries.joinToString(",") { it.key + " " + (if (it.value.type is SDBVariable.INT) "integer" else it.value.type.variableName.lowercase()) +
                 (if (it.value.index == SDBVariable.Index.PRIMARY) " ${it.value.index!!.tableString}" else "") +
                 (if (!it.value.nullable && !it.value.autoIncrement) " not null" else "") +
-                (if (it.value.autoIncrement || !it.value.nullable) "" else if (it.value.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.value.type,it.value.default!!)) +
+                (if (it.value.autoIncrement || !it.value.nullable) "" else if (it.value.default == null) " default null" else " default " + SDBCondition.modifySQLVariable(it.value.type,it.value.default!!)) +
                 if (it.value.autoIncrement) " autoincrement" else "" })
         if (map.any { it.value.index == SDBVariable.Index.UNIQUE }){
             queryBuilder.append(",")

@@ -1,7 +1,5 @@
 package tororo1066.tororopluginapi.database
 
-import tororo1066.tororopluginapi.mysql.SMySQLResultSet
-import tororo1066.tororopluginapi.mysql.ultimate.USQLCondition
 import java.time.LocalDateTime
 
 @Suppress("UNUSED")
@@ -101,259 +99,169 @@ class SDBVariable<V: SDBVariable.VariableType<*>>(val type: V) {
         SPATIAL("spatial index",false)
     }
 
-    fun equal(value: Any): USQLCondition {
-        return USQLCondition().equal(this,value)
+    fun equal(value: Any): SDBCondition {
+        return SDBCondition().equal(this.name, value)
     }
 
-    fun orHigher(value: Any): USQLCondition {
-        return USQLCondition().orHigher(this,value)
+    fun orHigher(value: Any): SDBCondition {
+        return SDBCondition().orHigher(this.name, value)
     }
 
-    fun orLower(value: Any): USQLCondition {
-        return USQLCondition().orLower(this,value)
+    fun orLower(value: Any): SDBCondition {
+        return SDBCondition().orLower(this.name, value)
     }
 
-    fun moreThan(value: Any): USQLCondition {
-        return USQLCondition().moreThan(this,value)
+    fun moreThan(value: Any): SDBCondition {
+        return SDBCondition().moreThan(this.name, value)
     }
 
-    fun lessThan(value: Any): USQLCondition {
-        return USQLCondition().lessThan(this,value)
+    fun lessThan(value: Any): SDBCondition {
+        return SDBCondition().lessThan(this.name, value)
     }
 
     abstract class VariableType<V>{
 
         abstract val variableName: String
         var name: String = ""
-        abstract fun getNullableVal(sqlResultSet: SMySQLResultSet): V?
-
-        fun getVal(sqlResultSet: SMySQLResultSet): V {
-            return getNullableVal(sqlResultSet)!!
-        }
-
     }
 
     class BOOLEAN: VariableType<Boolean>(){
 
         override val variableName = "tinytext"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Boolean? {
-            return sqlResultSet.getNullableBoolean(name)
-        }
     }
 
     class TINYINT: VariableType<Int>(){
 
         override val variableName = "tinyint"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
-            return sqlResultSet.getNullableInt(name)
-        }
     }
 
     class SMALLINT: VariableType<Int>(){
 
         override val variableName = "smallint"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
-            return sqlResultSet.getNullableInt(name)
-        }
     }
 
     class MEDIUMINT: VariableType<Int>(){
 
         override val variableName = "mediumint"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
-            return sqlResultSet.getNullableInt(name)
-        }
     }
 
     class INT: VariableType<Int>(){
 
         override val variableName = "int"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
-            return sqlResultSet.getNullableInt(name)
-        }
     }
 
     class BIGINT: VariableType<Long>(){
 
         override val variableName = "bigint"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Long? {
-            return sqlResultSet.getNullableLong(name)
-        }
     }
 
     class BIT: VariableType<Int>(){
 
         override val variableName = "bit"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Int? {
-            return sqlResultSet.getNullableInt(name)
-        }
     }
 
     class FLOAT: VariableType<Float>(){
 
         override val variableName = "float"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Float? {
-            return sqlResultSet.getNullableFloat(name)
-        }
     }
 
     class DOUBLE: VariableType<Double>(){
 
         override val variableName = "double"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Double? {
-            return sqlResultSet.getNullableDouble(name)
-        }
     }
 
     class DECIMAL: VariableType<Double>(){
 
         override val variableName = "decimal"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): Double? {
-            return sqlResultSet.getNullableDouble(name)
-        }
     }
 
     class DATE: VariableType<LocalDateTime>(){
 
         override val variableName = "date"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): LocalDateTime? {
-            return sqlResultSet.getNullableDate(name)
-        }
     }
 
     class DATETIME: VariableType<LocalDateTime>(){
 
         override val variableName = "datetime"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): LocalDateTime? {
-            return sqlResultSet.getNullableDate(name)
-        }
     }
 
     class TIMESTAMP: VariableType<LocalDateTime>(){
 
         override val variableName = "timestamp"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): LocalDateTime? {
-            return sqlResultSet.getNullableDate(name)
-        }
     }
 
     class TIME: VariableType<LocalDateTime>(){
 
         override val variableName = "time"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): LocalDateTime? {
-            return sqlResultSet.getNullableDate(name)
-        }
     }
 
     class YEAR: VariableType<LocalDateTime>(){
 
         override val variableName = "year"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): LocalDateTime? {
-            return sqlResultSet.getNullableDate(name)
-        }
     }
 
     class CHAR: VariableType<String>(){
 
         override val variableName = "char"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
-            return sqlResultSet.getNullableString(name)
-        }
     }
 
     class VARCHAR: VariableType<String>(){
 
         override val variableName = "varchar"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
-            return sqlResultSet.getNullableString(name)
-        }
     }
 
     class TINYTEXT: VariableType<String>(){
 
         override val variableName = "tinytext"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
-            return sqlResultSet.getNullableString(name)
-        }
     }
 
     class TEXT: VariableType<String>(){
 
         override val variableName = "text"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
-            return sqlResultSet.getNullableString(name)
-        }
     }
 
     class MEDIUMTEXT: VariableType<String>(){
 
         override val variableName = "mediumtext"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
-            return sqlResultSet.getNullableString(name)
-        }
     }
 
     class LONGTEXT: VariableType<String>(){
 
         override val variableName = "longtext"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
-            return sqlResultSet.getNullableString(name)
-        }
     }
 
     class JSON: VariableType<String>(){
 
         override val variableName = "json"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): String? {
-            return sqlResultSet.getNullableString(name)
-        }
     }
 
     class BINARY: VariableType<ByteArray>(){
 
         override val variableName = "binary"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
-            return sqlResultSet.getNullableBytes(name)
-        }
     }
 
     class VARBINARY: VariableType<ByteArray>(){
 
         override val variableName = "varbinary"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
-            return sqlResultSet.getNullableBytes(name)
-        }
     }
 
     class TINYBLOB: VariableType<ByteArray>(){
 
         override val variableName = "tinyblob"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
-            return sqlResultSet.getNullableBytes(name)
-        }
     }
 
     class MEDIUMBLOB: VariableType<ByteArray>(){
 
         override val variableName = "mediumblob"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
-            return sqlResultSet.getNullableBytes(name)
-        }
     }
 
     class BLOB: VariableType<ByteArray>(){
 
         override val variableName = "blob"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
-            return sqlResultSet.getNullableBytes(name)
-        }
     }
 
     class LONGBLOB: VariableType<ByteArray>(){
 
         override val variableName = "longblob"
-        override fun getNullableVal(sqlResultSet: SMySQLResultSet): ByteArray? {
-            return sqlResultSet.getNullableBytes(name)
-        }
     }
 }

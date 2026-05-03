@@ -8,7 +8,6 @@ import tororo1066.nmsutils.SNms
 import tororo1066.tororopluginapi.annotation.SCommandBody
 import tororo1066.tororopluginapi.annotation.SEventHandler
 import tororo1066.tororopluginapi.config.SConfig
-import tororo1066.tororopluginapi.mysql.SMySQL
 import tororo1066.tororopluginapi.otherPlugin.SVault
 import tororo1066.tororopluginapi.otherUtils.UsefulUtility
 import tororo1066.tororopluginapi.sCommand.SCommand
@@ -40,7 +39,6 @@ abstract class SJavaPlugin() : JavaPlugin() {
 
     companion object {
         lateinit var sConfig: SConfig
-        lateinit var mysql: SMySQL
         lateinit var vault: SVault
         lateinit var sInput: SInput
         lateinit var util: UsefulUtility
@@ -111,9 +109,6 @@ abstract class SJavaPlugin() : JavaPlugin() {
             saveDefaultConfig()
             sConfig = SConfig(this)
         }
-        if (useOptions.contains(UseOption.MySQL)){
-            mysql = SMySQL(this)
-        }
         if (useOptions.contains(UseOption.Vault)){
             vault = SVault()
         }
@@ -141,7 +136,7 @@ abstract class SJavaPlugin() : JavaPlugin() {
             if (clazz.isAnonymousClass)return@forEach
             try {
                 clazz.getConstructor()
-            } catch (e: Throwable){
+            } catch (_: Throwable){
                 return@forEach
             }
             if (deprecatedMode && clazz.superclass == SCommand::class.java){
@@ -195,23 +190,6 @@ abstract class SJavaPlugin() : JavaPlugin() {
      * SJavaPlugin.mysql、SJavaPlugin.vault、SJavaPlugin.sConfigでそれぞれ取得できる
      */
     enum class UseOption {
-        /**
-         * MySQLのシステムを使う
-         *
-         * config.ymlから
-         * ```yaml
-         * mysql:
-         *   host: localhost
-         *   port: 3306
-         *   user: root
-         *   pass: pass
-         *   db: test_db
-         * ```
-         * といった形で設定できる
-         * @see SMySQL
-         */
-        MySQL,
-
         /**
          * Vaultのシステムを使う
          * @see SVault

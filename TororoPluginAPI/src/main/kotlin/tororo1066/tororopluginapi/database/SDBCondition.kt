@@ -15,7 +15,6 @@ class SDBCondition {
 
     fun equal(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.eq(variable, value)
-//        builder.append("$variable = ${modifySQLString(type?: SDBVariable.Text,value)}")
         builder.append("$variable = ?")
         parameters.add(value to (type?: SDBVariable.Text))
         return this
@@ -23,7 +22,6 @@ class SDBCondition {
 
     fun orHigher(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.gte(variable, value)
-//        builder.append("$variable >= ${modifySQLString(type?: SDBVariable.Text,value)}")
         builder.append("$variable >= ?")
         parameters.add(value to (type?: SDBVariable.Text))
         return this
@@ -31,7 +29,6 @@ class SDBCondition {
 
     fun orLower(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.lte(variable, value)
-//        builder.append("$variable <= ${modifySQLString(type?: SDBVariable.Text,value)}")
         builder.append("$variable <= ?")
         parameters.add(value to (type?: SDBVariable.Text))
         return this
@@ -39,7 +36,6 @@ class SDBCondition {
 
     fun moreThan(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.gt(variable, value)
-//        builder.append("$variable > ${modifySQLString(type?: SDBVariable.Text,value)}")
         builder.append("$variable > ?")
         parameters.add(value to (type?: SDBVariable.Text))
         return this
@@ -47,7 +43,6 @@ class SDBCondition {
 
     fun lessThan(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.lt(variable, value)
-//        builder.append("$variable < ${modifySQLString(type?: SDBVariable.Text,value)}")
         builder.append("$variable < ?")
         parameters.add(value to (type?: SDBVariable.Text))
         return this
@@ -55,7 +50,6 @@ class SDBCondition {
 
     fun like(variable: String, value: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.regex(variable, value.toString())
-//        builder.append("$variable like ${modifySQLString(type?: SDBVariable.Text,value)}")
         builder.append("$variable like ?")
         parameters.add(value to (type?: SDBVariable.Text))
         return this
@@ -63,7 +57,6 @@ class SDBCondition {
 
     fun include(variable: String, values: List<Any>, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.`in`(variable, values)
-//        builder.append("$variable in (${values.joinToString(",") { modifySQLString(type?: SDBVariable.Text,it) }})")
         builder.append("$variable in (${values.joinToString(",") { "?" }})")
         values.forEach {
             parameters.add(it to (type?: SDBVariable.Text))
@@ -73,7 +66,6 @@ class SDBCondition {
 
     fun between(variable: String, value1: Any, value2: Any, type: SDBVariable.VariableType<*>? = null): SDBCondition {
         filter = Filters.and(Filters.gte(variable, value1), Filters.lte(variable, value2))
-//        builder.append("$variable between ${modifySQLString(type?: SDBVariable.Text,value1)} and ${modifySQLString(type?: SDBVariable.Text,value2)}")
         builder.append("$variable between ? and ?")
         parameters.add(value1 to (type?: SDBVariable.Text))
         parameters.add(value2 to (type?: SDBVariable.Text))
