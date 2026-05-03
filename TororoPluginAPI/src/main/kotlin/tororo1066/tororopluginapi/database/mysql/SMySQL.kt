@@ -6,7 +6,6 @@ import tororo1066.tororopluginapi.database.SDBResultSet
 import tororo1066.tororopluginapi.database.SDBVariable
 import tororo1066.tororopluginapi.database.SDatabase
 import tororo1066.tororopluginapi.database.SSession
-import tororo1066.tororopluginapi.mysql.ultimate.USQLCondition
 import java.sql.*
 
 class SMySQL: SDatabase {
@@ -50,7 +49,7 @@ class SMySQL: SDatabase {
         queryBuilder.append("create table if not exists $table (")
         queryBuilder.append(map.entries.joinToString(",") { it.key + " " + it.value.type.variableName.lowercase() + (if (it.value.length != -1) "(${it.value.length})" else "") +
                 (if (!it.value.nullable) " not null" else " null") +
-                (if (it.value.autoIncrement || !it.value.nullable) "" else if (it.value.default == null) " default null" else " default " + USQLCondition.modifySQLString(it.value.type,it.value.default!!)) +
+                (if (it.value.autoIncrement || !it.value.nullable) "" else if (it.value.default == null) " default null" else " default " + SDBCondition.modifySQLVariable(it.value.type,it.value.default!!)) +
                 if (it.value.autoIncrement) " auto_increment" else "" })
         queryBuilder.append(if (map.entries.find { it.value.index != null } != null) ", " + map.entries.filter { it.value.index != null }.joinToString(",")
         { (if (it.value.index == SDBVariable.Index.PRIMARY) "${it.value.index!!.tableString} (${it.key})" else "${it.value.index!!.tableString} ${it.key} (${it.key})") + if (it.value.index!!.usingBTREE) " using btree" else "" } else "")
