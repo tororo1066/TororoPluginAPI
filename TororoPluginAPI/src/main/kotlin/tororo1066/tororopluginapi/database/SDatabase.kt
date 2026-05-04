@@ -241,11 +241,11 @@ abstract class SDatabase {
     }
 
     @OptIn(ExperimentalContracts::class)
-    inline fun transaction(block: SDatabase.(SSession) -> Unit) {
+    inline fun transaction(sqliteImmediateLock: Boolean = false, block: SDatabase.(SSession) -> Unit) {
         contract {
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         }
-        val session = SSession(this)
+        val session = SSession(this, sqliteImmediateLock)
         try {
             block(session)
         } finally {
