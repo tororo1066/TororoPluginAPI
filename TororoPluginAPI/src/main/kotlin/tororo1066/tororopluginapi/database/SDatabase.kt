@@ -13,6 +13,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@Suppress("unused")
 abstract class SDatabase {
 
     protected var host: String?
@@ -246,10 +247,8 @@ abstract class SDatabase {
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         }
         val session = SSession(this, sqliteImmediateLock)
-        try {
+        session.use { session ->
             block(session)
-        } finally {
-            session.close()
         }
     }
 
