@@ -38,7 +38,7 @@ class SSQLite: SDatabase {
         val conn = session?.getSQLConnection() ?: open()
         val queryBuilder = StringBuilder()
         queryBuilder.append("create table if not exists $table (")
-        queryBuilder.append(map.entries.joinToString(",") { "\"${it.key}\"" + " " + (if (it.value.type is SDBVariable.INT) "integer" else it.value.type.variableName.lowercase()) +
+        queryBuilder.append(map.entries.joinToString(",") { "`${it.key}`" + " " + (if (it.value.type is SDBVariable.INT) "integer" else it.value.type.variableName.lowercase()) +
                 (if (it.value.index == SDBVariable.Index.PRIMARY) " ${it.value.index!!.tableString}" else "") +
                 (if (!it.value.nullable && !it.value.autoIncrement) " not null" else "") +
                 (if (it.value.autoIncrement || !it.value.nullable) "" else if (it.value.default == null) " default null" else " default " + SDBCondition.modifySQLVariable(it.value.type,it.value.default!!)) +
@@ -80,7 +80,7 @@ class SSQLite: SDatabase {
         for (i in 1 until map.size){
             builder.append(",?")
         }
-        val query = "insert into $table (${map.keys.joinToString(",")}) values($builder)"
+        val query = "insert into $table (${map.keys.joinToString(",") { "`${it}`" }}) values($builder)"
         val stmt = conn.prepareStatement(query)
         map.values.forEachIndexed { index, any ->
             stmt.setObject(index+1, any)
@@ -136,7 +136,7 @@ class SSQLite: SDatabase {
         val conn = session?.getSQLConnection() ?: open()
         val map = update as Map<String, Any>
         val query = "update $table set ${
-            map.entries.joinToString(",") { "${it.key} = ?" }
+            map.entries.joinToString(",") { "`${it.key}` = ?" }
         } ${condition.build()}"
         val stmt = conn.prepareStatement(query)
         map.values.forEachIndexed { index, any ->
