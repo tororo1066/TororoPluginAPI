@@ -49,17 +49,17 @@ interface SPlayer {
 
     companion object{
         fun getSPlayer(p: Player): SPlayer {
-            return fromPlayer(p) ?:throw UnsupportedOperationException("SPlayer not supported mc_version ${Bukkit.getServer().minecraftVersion}.")
+            return fromPlayer(p) ?: throw UnsupportedOperationException("SPlayer not supported mc_version ${Bukkit.getServer().minecraftVersion}.")
         }
 
         private fun fromPlayer(p: Player?): SPlayer? {
-            p?:return null
+            p ?: return null
             return try {
                 val version = Bukkit.getServer().bukkitVersion.split("-")[0].replace(".","_")
                 val clazz = Class.forName("tororo1066.nmsutils.v${version}.SPlayerImpl")
                 val instance = clazz.getConstructor(Player::class.java).newInstance(p) as SPlayer
                 instance
-            } catch (e: Exception){
+            } catch (_: Exception) {
                 null
             }
         }

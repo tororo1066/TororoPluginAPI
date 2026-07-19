@@ -5,7 +5,7 @@ on:
     branches: [ master ]
     paths:
     - 'NMSUtils/**'
-    - 'NMSUtils-release.yml'
+    - '.github/workflows/NMSUtils-release.yml'
 env:
   GITHUB_USERNAME: ${{secrets.USERNAME}}
   GITHUB_TOKEN: ${{secrets.TOKEN}}
