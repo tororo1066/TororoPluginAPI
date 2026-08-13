@@ -133,8 +133,8 @@ abstract class SJavaPlugin() : JavaPlugin() {
         }
 
         javaClass.protectionDomain.codeSource.location.getClasses(folder).forEach { clazz ->
-            if (clazz.isAnonymousClass)return@forEach
             try {
+                if (clazz.isAnonymousClass)return@forEach
                 clazz.getConstructor()
             } catch (_: Throwable){
                 return@forEach
