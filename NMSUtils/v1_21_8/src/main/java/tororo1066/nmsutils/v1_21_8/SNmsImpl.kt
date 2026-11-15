@@ -12,8 +12,12 @@ import net.minecraft.commands.arguments.ResourceArgument
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.registries.VanillaRegistries
 import net.minecraft.network.chat.Component
+import net.minecraft.world.entity.EntitySpawnReason
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LightningBolt
 import org.bukkit.Bukkit
 import org.bukkit.Color
+import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.craftbukkit.CraftServer
 import org.bukkit.craftbukkit.block.CraftBlock
@@ -139,5 +143,14 @@ class SNmsImpl: SNms {
 
     override fun translate(text: String, vararg variable: Any): Message {
         return Component.translatable(text, *variable)
+    }
+
+    override fun fakeLightning(location: Location) {
+        val level = (location.world as org.bukkit.craftbukkit.CraftWorld).handle
+        val lightning = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.EVENT) ?: return
+        lightning.isEffect = true
+        lightning.setVisualOnly(true)
+        lightning.snapTo(location.x, location.y, location.z)
+        level.addFreshEntity(lightning)
     }
 }
